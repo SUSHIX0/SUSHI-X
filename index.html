@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SUSHI メ — Меню</title>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f10;
+  --muted:#b9b9b9;
+  --accent:#ff2d2d;
+  --maxw:1600px;
+  --unavailable:#555;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255,45,45,0.04), transparent 6%),
+    radial-gradient(800px 400px at 90% 90%, rgba(255,255,255,0.02), transparent 8%),
+    linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
+  color:#eaeaea;
+  -webkit-font-smoothing:antialiased;
+  padding:36px 20px;
+  display:flex;
+  justify-content:center;
+}
+.wrap{width:100%; max-width:var(--maxw);}
+header.brand{
+  display:flex;
+  justify-content:center;
+  margin-bottom:30px;
+}
+header.brand h1{
+  font-size:3rem;
+  gap:8px;
+  justify-content:center;
+}
+header.brand h1 .jp{
+  font-family:"Noto Sans JP"; 
+  font-weight:700; 
+  font-size:3.2rem; 
+  color:var(--accent);
+}
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap:30px;
+}
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));
+  border-radius:12px;
+  overflow:hidden;
+  border: 1px solid rgba(255,45,45,0.2);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  display:flex;
+  flex-direction:column;
+  position: relative;
+}
+.card:hover{
+  transform: translateY(-6px); 
+  box-shadow: 0 18px 40px rgba(255,45,45,0.6);
+  border-color: var(--accent);
+}
+.photo{
+  width:100%; 
+  height:250px; 
+  background-size:cover; 
+  background-position:center; 
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  position: relative;
+}
+.overlay-unavailable{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.7);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:700;
+  font-size:1.2rem;
+  border-radius:12px 12px 0 0;
+  pointer-events:none;
+  opacity:0;
+  transition: opacity 0.2s ease;
+}
+.card.unavailable .overlay-unavailable{
+  opacity:1;
+}
+.body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
+.title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
+.title .name{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.label-jp {
+  font-family: "Noto Sans JP";
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: rgba(255,43,43,0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  max-width: 70px;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+}
+.card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
+.label-jp .scroll-text {
+  display: inline-block;
+  animation: scroll-marquee 4s linear infinite alternate;
+}
+@keyframes scroll-marquee {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
+.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
+.price{font-weight:800; color:var(--accent); font-size:1.05rem;}
+.card.unavailable .price { color: #aaa; }
+.note{color:var(--muted); font-size:0.9rem;}
+.cart-icon{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:36px;
+  height:36px;
+  background: rgba(0,0,0,0.6);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.card.unavailable .cart-icon { display:none; }
+.cart-icon img{
+  width:26px;
+  height:26px;
+  object-fit:contain;
+}
+.cart-icon:hover{
+  transform: scale(1.2);
+}
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 44px 56px;
+  border-radius: 12px;
+  z-index: 9999;
+  display: none;
+  text-align: center;
+}
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255,43,43,0.45);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.floating-cart img { width: 30px; height: 30px; }
+.floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+  </header>
+  <main>
+    <section class="grid" aria-label="Меню роллов">
+
+      <!-- Карточки роллов с пустыми ценами -->
+      <article class="card" data-id="филадельфия">
+        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
+          <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="снежный_краб">
+        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+          <p class="ingredients">Крабовое мясо · Philadelphia · Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="калифорния">
+        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
+          <p class="ingredients">Крабовое мясо · Philadelphia · Огурец · Масаго</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="аляска">
+        <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+          <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="маки_с_огурцом">
+        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
+          <p class="ingredients">Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="маки_с_омлетом">
+        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
+          <p class="ingredients">Японский омлет</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="нигири_с_креветкой">
+        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
+          <p class="ingredients">Креветка</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="нигири_с_угрём">
+        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
+          <p class="ingredients">Угорь</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast">Товар добавлен в корзину</div>
+<div class="floating-cart">
+  <img src="Foto/cart.png" alt="Корзина">
+  <span>Корзина</span>
+</div>
+
+<script>
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.style.display='block';
+  setTimeout(()=>{toast.style.display='none';},2500);
+}
+document.querySelectorAll('.cart-icon').forEach(icon=>{icon.addEventListener('click',showToast)});
+document.querySelector('.floating-cart').addEventListener('click',()=>{showToast()});
+
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
+
+async function updateMenuFromSheet(){
+  try{
+    const res = await fetch(sheetUrl);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r=>r.split(','));
+    const headers = rows[0].map(h=>h.trim());
+    const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
+
+    data.forEach(item=>{
+      const id = item['id'];
+      let price = parseFloat(item['Цена'].replace(',', '.'));
+      price = price.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      const available = (item['Доступно']||'').toLowerCase() === 'true';
+      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
+      const el = document.querySelector(`.card[data-id="${id}"]`);
+      if(!el) return;
+      const priceEl = el.querySelector('.price');
+      if(priceEl) priceEl.textContent = price + ' €';
+      el.style.display = hidden ? 'none' : '';
+      const note = el.querySelector('.note');
+      const overlay = el.querySelector('.overlay-unavailable');
+      if(!available){
+        el.classList.add('unavailable'); 
+        if(note) note.textContent = note.textContent; // количество шт сохраняется
+        if(overlay) overlay.textContent = 'Временно недоступно';
+      } else {
+        el.classList.remove('unavailable'); 
+        if(overlay) overlay.textContent = '';
+      }
+    });
+  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets',e); }
+}
+updateMenuFromSheet();
+</script>
+</body>
+</html>
