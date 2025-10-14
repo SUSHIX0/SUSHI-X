@@ -12,6 +12,7 @@
   --muted:#b9b9b9;
   --accent:#ff2d2d;
   --maxw:1600px;
+  --unavailable:#555;
 }
 *{box-sizing:border-box;}
 body{
@@ -54,26 +55,15 @@ header.brand h1 .jp{
   border-radius:12px;
   overflow:hidden;
   border: 1px solid rgba(255,45,45,0.2);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease, transform 0.5s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   display:flex;
   flex-direction:column;
   position: relative;
-  opacity:0;
-  transform: translateY(20px);
-}
-.card.show{
-  opacity:1;
-  transform: translateY(0);
 }
 .card:hover{
   transform: translateY(-6px); 
   box-shadow: 0 18px 40px rgba(255,45,45,0.6);
-  border-color: var(--accent);
-}
-.card.unavailable:hover{
-  transform: none;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
-  border-color: #555;
+  border-color: var(--muted);
 }
 .photo{
   width:100%; 
@@ -97,10 +87,9 @@ header.brand h1 .jp{
   pointer-events:none;
   opacity:0;
   transition: opacity 0.2s ease;
+  text-align:center;
 }
-.card.unavailable .overlay-unavailable{
-  opacity:1;
-}
+.card.unavailable .overlay-unavailable{ opacity:1; }
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
@@ -136,12 +125,23 @@ header.brand h1 .jp{
   100% { transform: translateX(0); }
 }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
-.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto; gap:6px;}
-.price-container{display:flex; flex-direction:column; gap:2px;}
-.old-price{color:#aaa; text-decoration:line-through; font-weight:500; font-size:0.95rem;}
-.price{font-weight:800; color:var(--accent); font-size:1.05rem;}
-.discount-badge{font-weight:800; color:var(--accent); font-size:0.95rem;}
-.card.unavailable .price, .card.unavailable .discount-badge, .card.unavailable .old-price { color:#aaa; }
+.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
+.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:6px;}
+.old-price{
+  display:block;
+  color: var(--muted);
+  text-decoration: line-through;
+  font-weight:500;
+  font-size:0.95rem;
+}
+.discount{
+  color: var(--accent);
+  font-weight:700;
+  font-size:1rem;
+}
+.card.unavailable .price,
+.card.unavailable .discount,
+.card.unavailable .old-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
 .cart-icon{
   position:absolute;
@@ -159,14 +159,8 @@ header.brand h1 .jp{
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .card.unavailable .cart-icon { display:none; }
-.cart-icon img{
-  width:26px;
-  height:26px;
-  object-fit:contain;
-}
-.cart-icon:hover{
-  transform: scale(1.2);
-}
+.cart-icon img{width:26px;height:26px;object-fit:contain;}
+.cart-icon:hover{transform: scale(1.2);}
 .toast {
   position: fixed;
   top: 50%;
@@ -206,192 +200,111 @@ header.brand h1 .jp{
 </head>
 <body>
 <div class="wrap">
-  <header class="brand">
-    <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
-  </header>
-  <main>
-    <section class="grid" aria-label="Меню роллов">
+<header class="brand">
+<h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+</header>
+<main>
+<section class="grid" aria-label="Меню роллов">
 
-      <!-- Все позиции карточек -->
+<!-- Все карточки товаров -->
+<article class="card" data-id="филадельфия">
+  <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
+    <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Филадельфия -->
-      <article class="card" data-id="филадельфия">
-        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
-          <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="снежный_краб">
+  <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+    <p class="ingredients">Крабовое мясо · Philadelphia · Огурец</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Снежный краб -->
-      <article class="card" data-id="снежный_краб">
-        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
-          <p class="ingredients">Крабовое мясо · Philadelphia · Огурец</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="калифорния">
+  <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
+    <p class="ingredients">Крабовое мясо · Philadelphia · Огурец · Масаго</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Калифорния -->
-      <article class="card" data-id="калифорния">
-        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
-          <p class="ingredients">Крабовое мясо · Philadelphia · Огурец · Масаго</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="аляска">
+  <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+    <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Аляска -->
-      <article class="card" data-id="аляска">
-        <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
-          <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="маки_с_огурцом">
+  <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
+    <p class="ingredients">Огурец</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Маки с огурцом -->
-      <article class="card" data-id="маки_с_огурцом">
-        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
-          <p class="ingredients">Огурец</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="маки_с_омлетом">
+  <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
+    <p class="ingredients">Японский омлет</p>
+    <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Маки с омлетом -->
-      <article class="card" data-id="маки_с_омлетом">
-        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
-          <p class="ingredients">Японский омлет</p>
-          <div class="bottom">
-            <div class="note">8 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="нигири_с_креветкой">
+  <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
+    <p class="ingredients">Креветка</p>
+    <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Нигири с креветкой -->
-      <article class="card" data-id="нигири_с_креветкой">
-        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
-          <p class="ingredients">Креветка</p>
-          <div class="bottom">
-            <div class="note">2 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
+<article class="card" data-id="нигири_с_угрём">
+  <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
+    <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+    <div class="overlay-unavailable"></div>
+  </div>
+  <div class="body">
+    <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
+    <p class="ingredients">Угорь</p>
+    <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+  </div>
+</article>
 
-      <!-- Нигири с угрём -->
-      <article class="card" data-id="нигири_с_угрём">
-        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
-          <p class="ingredients">Угорь</p>
-          <div class="bottom">
-            <div class="note">2 шт</div>
-            <div class="price-container">
-              <span class="old-price"></span>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="discount-badge"></span>
-                <span class="price"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-    </section>
-  </main>
+</section>
+</main>
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
@@ -421,46 +334,43 @@ async function updateMenuFromSheet(){
 
     data.forEach(item=>{
       const id = item['id'];
-      let price = parseFloat(item['Цена'].replace(',', '.'));
-      price = price.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-      const discount = item['Скидка'] ? parseFloat(item['Скидка'].replace(',', '.')) : 0;
-      let discountedPrice = discount ? (price*(1 - discount/100)).toFixed(2) : price;
-      discountedPrice = parseFloat(discountedPrice).toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-      const available = (item['Доступно']||'').toLowerCase() === 'true';
-      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       const el = document.querySelector(`.card[data-id="${id}"]`);
       if(!el) return;
 
-      el.style.display = hidden ? 'none' : '';
-      const note = el.querySelector('.note');
+      const priceEl = el.querySelector('.price');
       const overlay = el.querySelector('.overlay-unavailable');
+      const note = el.querySelector('.note');
+
+      const available = (item['Доступно']||'').toLowerCase() === 'true';
+      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
+      el.style.display = hidden ? 'none' : '';
+
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+
+      let priceHTML = '';
+
+      if(discountPrice > 0 && discountPrice < basePrice){
+        const formattedOld = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `${formattedBase} €`;
+      }
+
+      if(priceEl) priceEl.innerHTML = priceHTML;
+
       if(!available){
         el.classList.add('unavailable'); 
-        if(note) note.textContent = note.textContent;
         if(overlay) overlay.textContent = 'Временно недоступно';
       } else {
         el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
       }
-
-      const priceEl = el.querySelector('.price');
-      const oldPriceEl = el.querySelector('.old-price');
-      const discountBadge = el.querySelector('.discount-badge');
-
-      if(discount){
-        if(oldPriceEl) oldPriceEl.textContent = price + ' €';
-        if(priceEl) priceEl.textContent = discountedPrice + ' €';
-        if(discountBadge) discountBadge.textContent = '-' + discount + '%';
-      } else {
-        if(oldPriceEl) oldPriceEl.textContent = '';
-        if(priceEl) priceEl.textContent = price + ' €';
-        if(discountBadge) discountBadge.textContent = '';
-      }
-
-      setTimeout(()=>{ el.classList.add('show'); }, 100);
     });
-  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets',e); }
+  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
 updateMenuFromSheet();
 </script>
