@@ -88,9 +88,7 @@ header.brand h1 .jp{
   opacity:0;
   transition: opacity 0.2s ease;
 }
-.card.unavailable .overlay-unavailable{
-  opacity:1;
-}
+.card.unavailable .overlay-unavailable{ opacity:1; }
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
@@ -127,47 +125,21 @@ header.brand h1 .jp{
 }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
-.price{
-  font-weight:800;
-  color:var(--accent);
-  font-size:1.05rem;
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  min-height: 40px;
-}
-.price .top{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:6px;
-  width:100%;
-}
-.old-price {
+.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px;}
+.old-price{
   color: var(--muted);
   text-decoration: line-through;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-weight:500;
+  font-size:0.95rem;
 }
-.new-price {
+.discount{
   color: var(--accent);
-  font-weight: 800;
-  font-size: 1.05rem;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: slideIn 0.4s ease forwards;
+  font-weight:700;
+  font-size:1rem;
 }
-.discount {
-  font-size: 0.9rem;
-  color: var(--accent);
-}
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.card.unavailable .price { color: #aaa; }
+.card.unavailable .price,
+.card.unavailable .discount,
+.card.unavailable .old-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
 .cart-icon{
   position:absolute;
@@ -185,8 +157,8 @@ header.brand h1 .jp{
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .card.unavailable .cart-icon { display:none; }
-.cart-icon img{ width:26px; height:26px; object-fit:contain; }
-.cart-icon:hover{ transform: scale(1.2); }
+.cart-icon img{width:26px;height:26px;object-fit:contain;}
+.cart-icon:hover{transform: scale(1.2);}
 .toast {
   position: fixed;
   top: 50%;
@@ -231,29 +203,40 @@ header.brand h1 .jp{
   </header>
 
   <main>
-    <section class="grid">
+    <section class="grid" aria-label="Меню роллов">
       <article class="card" data-id="филадельфия">
-        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');"><div class="cart-icon"><img src="Foto/cart.png"></div><div class="overlay-unavailable"></div></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
         <div class="body">
           <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
           <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
+      <article class="card" data-id="снежный_краб">
+        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+          <p class="ingredients">Крабовое мясо · Philadelphia · Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
       <article class="card" data-id="калифорния">
-        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');"><div class="cart-icon"><img src="Foto/cart.png"></div><div class="overlay-unavailable"></div></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
         <div class="body">
           <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
           <p class="ingredients">Крабовое мясо · Philadelphia · Огурец · Масаго</p>
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-      <article class="card" data-id="нигири_с_креветкой">
-        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');"><div class="cart-icon"><img src="Foto/cart.png"></div><div class="overlay-unavailable"></div></div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
-          <p class="ingredients">Креветка</p>
-          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
     </section>
@@ -261,56 +244,69 @@ header.brand h1 .jp{
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
-<div class="floating-cart"><img src="Foto/cart.png"><span>Корзина</span></div>
+<div class="floating-cart">
+  <img src="Foto/cart.png" alt="Корзина">
+  <span>Корзина</span>
+</div>
 
 <script>
-function showToast(){
-  const t=document.getElementById('toast');
-  t.style.display='block';
-  setTimeout(()=>t.style.display='none',2000);
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.style.display='block';
+  setTimeout(()=>{toast.style.display='none';},2500);
 }
-document.querySelectorAll('.cart-icon').forEach(i=>i.addEventListener('click',showToast));
+document.querySelectorAll('.cart-icon').forEach(icon=>{icon.addEventListener('click',showToast)});
+document.querySelector('.floating-cart').addEventListener('click',()=>{showToast()});
 
-const sheetUrl='https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
 async function updateMenuFromSheet(){
-  const res=await fetch(sheetUrl);
-  const text=await res.text();
-  const rows=text.trim().split('\n').map(r=>r.split(','));
-  const headers=rows[0].map(h=>h.trim());
-  const data=rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
-  data.forEach(item=>{
-    const id=item['id'];
-    const el=document.querySelector(`.card[data-id="${id}"]`);
-    if(!el)return;
-    const priceEl=el.querySelector('.price');
-    const overlay=el.querySelector('.overlay-unavailable');
-    const available=(item['Доступно']||'').toLowerCase()==='true';
-    const hidden=(item['Скрыто']||'').toLowerCase()==='true';
-    el.style.display=hidden?'none':'';
-    const oldPrice=parseFloat(item['Цена']?.replace(',','.')||0);
-    const newPrice=parseFloat(item['Цена_со_скидкой']?.replace(',','.')||0);
-    const discount=parseFloat(item['Скидка']?.replace(',','.')||0);
+  try{
+    const res = await fetch(sheetUrl);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r=>r.split(','));
+    const headers = rows[0].map(h=>h.trim());
+    const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
 
-    if(newPrice && newPrice<oldPrice){
-      priceEl.innerHTML=`
-        <div class="old-price">${oldPrice.toLocaleString('ru-RU',{minimumFractionDigits:2})} €</div>
-        <div class="top">
-          ${discount?`<span class="discount">-${discount}%</span>`:''}
-          <div class="new-price">${newPrice.toLocaleString('ru-RU',{minimumFractionDigits:2})} €</div>
-        </div>`;
-    }else{
-      priceEl.innerHTML=`<div class="new-price" style="opacity:1;transform:none;">${oldPrice.toLocaleString('ru-RU',{minimumFractionDigits:2})} €</div>`;
-    }
+    data.forEach(item=>{
+      const id = item['id'];
+      const el = document.querySelector(`.card[data-id="${id}"]`);
+      if(!el) return;
 
-    if(!available){
-      el.classList.add('unavailable');
-      overlay.textContent='Временно недоступно';
-    }else{
-      el.classList.remove('unavailable');
-      overlay.textContent='';
-    }
-  });
+      const priceEl = el.querySelector('.price');
+      const overlay = el.querySelector('.overlay-unavailable');
+      const note = el.querySelector('.note');
+
+      const available = (item['Доступно']||'').toLowerCase() === 'true';
+      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
+      el.style.display = hidden ? 'none' : '';
+
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+
+      let priceHTML = '';
+
+      if(discountPrice > 0 && discountPrice < basePrice){
+        const formattedOld = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `${formattedBase} €`;
+      }
+
+      if(priceEl) priceEl.innerHTML = priceHTML;
+
+      if(!available){
+        el.classList.add('unavailable'); 
+        if(overlay) overlay.textContent = 'Временно недоступно';
+      } else {
+        el.classList.remove('unavailable'); 
+        if(overlay) overlay.textContent = '';
+      }
+    });
+  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
 updateMenuFromSheet();
 </script>
