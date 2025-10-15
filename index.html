@@ -26,19 +26,19 @@ body{
   padding:36px 20px;
   display:flex;
   justify-content:center;
+  flex-direction:column;
 }
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
   flex-direction:column;
   align-items:center;
-  margin-bottom:30px;
+  margin-bottom:50px;
 }
 header.brand h1{
   font-size:3rem;
   gap:8px;
   justify-content:center;
-  margin-bottom:20px;
 }
 header.brand h1 .jp{
   font-family:"Noto Sans JP"; 
@@ -46,12 +46,11 @@ header.brand h1 .jp{
   font-size:3.2rem; 
   color:var(--accent);
 }
-.nb-orders-disabled {
+.header-note {
+  margin-top:10px;
   color: var(--accent);
   font-weight:700;
   font-size:1rem;
-  margin-bottom:20px;
-  display:none;
 }
 .grid{
   display:grid;
@@ -174,8 +173,11 @@ header.brand h1 .jp{
   opacity:0;
   transition: opacity 0.5s ease;
 }
-.toast.show { display:block; opacity:1; }
-.toast.error { color: var(--accent); }
+.toast.show {
+  display:block;
+  opacity:1;
+}
+.toast.red { color: var(--accent); }
 .floating-cart {
   position: fixed;
   bottom: 20px;
@@ -202,12 +204,12 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
-    <div class="nb-orders-disabled" id="ordersDisabledText">NB! Заказы временно не принимаются</div>
+    <div class="header-note" id="orders-note"></div>
   </header>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Все позиции -->
+      <!-- Карточки всех позиций -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -219,7 +221,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="снежный_краб">
         <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -231,7 +232,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="калифорния">
         <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -243,7 +243,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="аляска">
         <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -255,7 +254,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="маки_с_огурцом">
         <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -267,7 +265,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="маки_с_омлетом">
         <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -279,7 +276,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="нигири_с_креветкой">
         <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -291,7 +287,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
-
       <article class="card" data-id="нигири_с_угрём">
         <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -303,7 +298,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
-
     </section>
   </main>
 </div>
@@ -316,31 +310,31 @@ header.brand h1 .jp{
 
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
-let ordersEnabled = true;
 
-function showToast(message, isError=false) {
+function showToast(text, red=false){
   const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = 'toast' + (isError ? ' error' : '');
+  toast.textContent = text;
+  toast.classList.toggle('red', red);
   toast.classList.add('show');
   setTimeout(()=>{ toast.classList.remove('show'); },5000);
 }
 
 document.querySelectorAll('.cart-icon').forEach(icon=>{
-  icon.addEventListener('click',()=>{
-    if(!ordersEnabled || icon.closest('.card').classList.contains('unavailable')){
+  icon.addEventListener('click', ()=>{
+    if(window.ordersEnabled===false){
       showToast('Заказы временно не принимаются', true);
-      return;
+    } else {
+      showToast('Товар добавлен в корзину', false);
     }
-    showToast('Товар добавлен в корзину', false);
   })
 });
-document.querySelector('.floating-cart').addEventListener('click',()=>{
-  if(!ordersEnabled){
+
+document.querySelector('.floating-cart').addEventListener('click', ()=>{
+  if(window.ordersEnabled===false){
     showToast('Заказы временно не принимаются', true);
-    return;
+  } else {
+    showToast('Товар добавлен в корзину', false);
   }
-  showToast('Товар добавлен в корзину', false);
 });
 
 async function updateMenuFromSheet(){
@@ -351,16 +345,18 @@ async function updateMenuFromSheet(){
     const headers = rows[0].map(h=>h.trim());
     const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
 
-    // Проверяем глобальное включение заказов
-    const ordersRow = data.find(d => d.id.toLowerCase() === 'orders_enabled');
-    ordersEnabled = !ordersRow || ordersRow['Цена']?.toLowerCase() === 'yes';
-    document.getElementById('ordersDisabledText').style.display = ordersEnabled ? 'none' : 'block';
+    // Проверка глобального отключения заказов
+    const ordersRow = data.find(r=>r.id.toLowerCase()=='orders_enabled');
+    window.ordersEnabled = !ordersRow || ordersRow['Цена'].toLowerCase() === 'yes';
+    const ordersNote = document.getElementById('orders-note');
+    ordersNote.textContent = window.ordersEnabled ? '' : 'NB! Заказы временно не принимаются';
 
     data.forEach(item=>{
       const id = item['id'];
+      if(id.toLowerCase() === 'orders_enabled') return;
+
       const el = document.querySelector(`.card[data-id="${id}"]`);
       if(!el) return;
-
       const priceEl = el.querySelector('.price');
       const overlay = el.querySelector('.overlay-unavailable');
 
@@ -368,7 +364,8 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      // Поддержка цен с запятой
+      const basePrice = parseFloat(item['Цена']?.replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
 
@@ -383,21 +380,21 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Прячем корзину для недоступных или глобально отключённых заказов
-      const cartIcon = el.querySelector('.cart-icon');
-      if(!available || !ordersEnabled){
-        el.classList.add('unavailable');
+      // Статус товара
+      if(!available){
+        el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
-        if(cartIcon) cartIcon.style.display='none';
       } else {
-        el.classList.remove('unavailable');
+        el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
-        if(cartIcon) cartIcon.style.display='flex';
       }
+
+      // Иконка корзины
+      const cartIcon = el.querySelector('.cart-icon');
+      if(cartIcon) cartIcon.style.display = (available && window.ordersEnabled) ? 'flex' : 'none';
     });
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
-
 updateMenuFromSheet();
 </script>
 </body>
