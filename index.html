@@ -31,7 +31,7 @@ body{
 header.brand{
   display:flex;
   justify-content:center;
-  margin-bottom:50px; 
+  margin-bottom:50px; /* большой отступ от карточек */
 }
 header.brand h1{
   font-size:3rem;
@@ -49,7 +49,8 @@ header.brand h1 .jp{
   font-weight: 700;
   font-size: 1.1rem;
   text-align: center;
-  margin-top: 25px; 
+  margin-top: 25px; /* Центрируется в отступе между названием и карточками */
+  display: none;
 }
 
 .grid{
@@ -64,17 +65,13 @@ header.brand h1 .jp{
   border-radius:12px;
   overflow:hidden;
   border: 1px solid rgba(255,45,45,0.2);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease, transform 0.5s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease;
   display:flex;
   flex-direction:column;
   position: relative;
-  opacity: 0;
-  transform: translateY(20px);
+  opacity:0;
 }
-.card.visible{
-  opacity: 1;
-  transform: translateY(0);
-}
+.card.visible { opacity:1; }
 .card:hover{
   transform: translateY(-6px); 
   box-shadow: 0 18px 40px rgba(255,45,45,0.6);
@@ -162,9 +159,9 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-.cart-icon.hidden { display:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
+.cart-icon.hidden { display:none !important; }
 
 .toast {
   position: fixed;
@@ -213,10 +210,11 @@ header.brand h1 .jp{
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
   </header>
-  <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
+  <div class="note-orders-disabled" id="orders-disabled-note">NB! Заказы временно не принимаются</div>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
+      <!-- Примеры карточек -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -336,10 +334,11 @@ async function updateMenuFromSheet(){
 
     let ordersEnabled = true;
 
-    data.forEach((item,index)=>{
+    data.forEach(item=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
-        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
+        ordersEnabled = (item['Доступно']||'yes').toLowerCase() === 'yes';
+        const noteEl = document.getElementById('orders-disabled-note');
+        noteEl.style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
 
@@ -354,26 +353,20 @@ async function updateMenuFromSheet(){
       const available = (item['Доступно']||'').toLowerCase() === 'true';
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
+      el.classList.add('visible');
 
-      // Плавное появление карточки
-      setTimeout(()=> el.classList.add('visible'), index*100);
-
-      // Цена
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const basePrice = parseFloat(item['Цена']?.replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+
       let priceHTML = '';
-      if(discountPrice > 0 && discountPrice < basePrice){
-        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+      if(discountPrice>0 && discountPrice<basePrice){
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${basePrice.toFixed(2)} €</span> <span class="new-price">${discountPrice.toFixed(2)} €</span>`;
       } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        priceHTML = `${formattedBase} €`;
+        priceHTML = `${basePrice.toFixed(2)} €`;
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Доступность и скрытие корзин
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
@@ -381,30 +374,29 @@ async function updateMenuFromSheet(){
       } else {
         el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
-        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+        if(cartIcon) cartIcon.classList.toggle('hidden', !ordersEnabled);
       }
     });
 
-    // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
+        const msg = ordersEnabled ? 'Товар добавлен в корзину' : 'Заказы временно не принимаются';
+        showToast(msg, !ordersEnabled);
       }
     });
     document.querySelector('.floating-cart').onclick = ()=>{
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
+      const msg = ordersEnabled ? 'Товар добавлен в корзину' : 'Заказы временно не принимаются';
+      showToast(msg, !ordersEnabled);
     };
 
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
 
-function showToast(message,isRed=false){
+function showToast(message, isRed=false) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
-  toast.className = 'toast show ' + (isRed?'red':'white');
-  setTimeout(()=>{toast.classList.remove('show');},2500);
+  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+  setTimeout(()=>{ toast.classList.remove('show'); }, 2500);
 }
 
 updateMenuFromSheet();
