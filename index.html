@@ -30,9 +30,8 @@ body{
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom:50px; /* большой отступ от карточек */
+  justify-content:center;
+  margin-bottom:50px; 
 }
 header.brand h1{
   font-size:3rem;
@@ -46,12 +45,11 @@ header.brand h1 .jp{
   color:var(--accent);
 }
 .note-orders-disabled {
-  display: none;
   color: var(--accent);
   font-weight: 700;
   font-size: 1.1rem;
-  margin-top: 25px; /* отступ от названия заведения */
   text-align: center;
+  margin-top: 25px; 
 }
 
 .grid{
@@ -66,10 +64,16 @@ header.brand h1 .jp{
   border-radius:12px;
   overflow:hidden;
   border: 1px solid rgba(255,45,45,0.2);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease, transform 0.5s ease;
   display:flex;
   flex-direction:column;
   position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.card.visible{
+  opacity: 1;
+  transform: translateY(0);
 }
 .card:hover{
   transform: translateY(-6px); 
@@ -158,9 +162,9 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
+.cart-icon.hidden { display:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
-.cart-icon.hidden { display: none; }
 
 .toast {
   position: fixed;
@@ -208,12 +212,11 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
-    <div class="note-orders-disabled" id="orders-disabled-note">NB! Заказы временно не принимаются</div>
   </header>
+  <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Полный набор карточек -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -333,7 +336,7 @@ async function updateMenuFromSheet(){
 
     let ordersEnabled = true;
 
-    data.forEach(item=>{
+    data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
         ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
@@ -352,21 +355,25 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
+      // Плавное появление карточки
+      setTimeout(()=> el.classList.add('visible'), index*100);
+
+      // Цена
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
-
       let priceHTML = '';
       if(discountPrice > 0 && discountPrice < basePrice){
-        const formattedOld = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
-        const formattedNew = discountPrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
       } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
+      // Доступность и скрытие корзин
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
@@ -378,6 +385,7 @@ async function updateMenuFromSheet(){
       }
     });
 
+    // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
         if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
@@ -392,11 +400,11 @@ async function updateMenuFromSheet(){
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
 
-function showToast(message, isRed=false) {
+function showToast(message,isRed=false){
   const toast = document.getElementById('toast');
   toast.textContent = message;
-  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
-  setTimeout(()=>{ toast.classList.remove('show'); }, 2500);
+  toast.className = 'toast show ' + (isRed?'red':'white');
+  setTimeout(()=>{toast.classList.remove('show');},2500);
 }
 
 updateMenuFromSheet();
