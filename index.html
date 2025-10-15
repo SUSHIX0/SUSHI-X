@@ -26,23 +26,19 @@ body{
   padding:36px 20px;
   display:flex;
   justify-content:center;
-  flex-direction:column;
-  align-items:center;
 }
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
   flex-direction:column;
-  justify-content:center;
-  margin-bottom:10px;
   align-items:center;
-  gap:4px;
+  margin-bottom:30px;
 }
 header.brand h1{
   font-size:3rem;
   gap:8px;
   justify-content:center;
-  margin:0;
+  margin-bottom:20px;
 }
 header.brand h1 .jp{
   font-family:"Noto Sans JP"; 
@@ -50,12 +46,12 @@ header.brand h1 .jp{
   font-size:3.2rem; 
   color:var(--accent);
 }
-#orders-disabled-note {
-  font-size:1.1rem;
-  font-weight:700;
+.nb-orders-disabled {
   color: var(--accent);
+  font-weight:700;
+  font-size:1rem;
+  margin-bottom:20px;
   display:none;
-  margin-top:4px;
 }
 .grid{
   display:grid;
@@ -167,7 +163,7 @@ header.brand h1 .jp{
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.65);
-  color: var(--accent);
+  color: #fff;
   font-weight: 700;
   font-size: 1rem;
   padding: 44px 56px;
@@ -175,10 +171,11 @@ header.brand h1 .jp{
   z-index: 9999;
   display: none;
   text-align: center;
-  opacity: 0;
+  opacity:0;
   transition: opacity 0.5s ease;
 }
 .toast.show { display:block; opacity:1; }
+.toast.error { color: var(--accent); }
 .floating-cart {
   position: fixed;
   bottom: 20px;
@@ -205,12 +202,12 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
-    <div id="orders-disabled-note">NB! Заказы временно не принимаются</div>
+    <div class="nb-orders-disabled" id="ordersDisabledText">NB! Заказы временно не принимаются</div>
   </header>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Пример всех карточек -->
+      <!-- Все позиции -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -306,6 +303,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
+
     </section>
   </main>
 </div>
@@ -318,6 +316,32 @@ header.brand h1 .jp{
 
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
+let ordersEnabled = true;
+
+function showToast(message, isError=false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast' + (isError ? ' error' : '');
+  toast.classList.add('show');
+  setTimeout(()=>{ toast.classList.remove('show'); },5000);
+}
+
+document.querySelectorAll('.cart-icon').forEach(icon=>{
+  icon.addEventListener('click',()=>{
+    if(!ordersEnabled || icon.closest('.card').classList.contains('unavailable')){
+      showToast('Заказы временно не принимаются', true);
+      return;
+    }
+    showToast('Товар добавлен в корзину', false);
+  })
+});
+document.querySelector('.floating-cart').addEventListener('click',()=>{
+  if(!ordersEnabled){
+    showToast('Заказы временно не принимаются', true);
+    return;
+  }
+  showToast('Товар добавлен в корзину', false);
+});
 
 async function updateMenuFromSheet(){
   try{
@@ -327,13 +351,12 @@ async function updateMenuFromSheet(){
     const headers = rows[0].map(h=>h.trim());
     const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
 
-    let ordersEnabled = true;
+    // Проверяем глобальное включение заказов
+    const ordersRow = data.find(d => d.id.toLowerCase() === 'orders_enabled');
+    ordersEnabled = !ordersRow || ordersRow['Цена']?.toLowerCase() === 'yes';
+    document.getElementById('ordersDisabledText').style.display = ordersEnabled ? 'none' : 'block';
 
     data.forEach(item=>{
-      if(item.id.toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Цена'] || item['Цена_со_скидкой'] || '').toLowerCase() === 'yes';
-      }
-
       const id = item['id'];
       const el = document.querySelector(`.card[data-id="${id}"]`);
       if(!el) return;
@@ -345,8 +368,8 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      const basePrice = parseFloat((item['Цена']||'0').replace(',', '.')) || 0;
-      const discountPrice = parseFloat((item['Цена_со_скидкой']||'0').replace(',', '.')) || 0;
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
 
       let priceHTML = '';
@@ -360,50 +383,21 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      if(!available){
-        el.classList.add('unavailable'); 
+      // Прячем корзину для недоступных или глобально отключённых заказов
+      const cartIcon = el.querySelector('.cart-icon');
+      if(!available || !ordersEnabled){
+        el.classList.add('unavailable');
         if(overlay) overlay.textContent = 'Временно недоступно';
+        if(cartIcon) cartIcon.style.display='none';
       } else {
-        el.classList.remove('unavailable'); 
+        el.classList.remove('unavailable');
         if(overlay) overlay.textContent = '';
+        if(cartIcon) cartIcon.style.display='flex';
       }
     });
-
-    // Отключение всех заказов
-    const cartIcons = document.querySelectorAll('.cart-icon');
-    const ordersNote = document.getElementById('orders-disabled-note');
-    if(!ordersEnabled){
-      cartIcons.forEach(ic=>ic.style.display='none');
-      ordersNote.style.display='block';
-    } else {
-      cartIcons.forEach(ic=>ic.style.display='flex');
-      ordersNote.style.display='none';
-    }
-
-    // Плашка с плавным появлением и скрытием
-    const toast = document.getElementById('toast');
-    function showToastCustom(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>{toast.classList.remove('show');},5000);
-    }
-
-    document.querySelectorAll('.cart-icon').forEach(icon=>{
-      icon.addEventListener('click',()=>{
-        if(ordersEnabled) showToastCustom('Товар добавлен в корзину');
-      });
-    });
-
-    document.querySelector('.floating-cart').addEventListener('click',()=>{
-      if(ordersEnabled){
-        showToastCustom('Товар добавлен в корзину');
-      } else {
-        showToastCustom('Заказы временно не принимаются');
-      }
-    });
-
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
+
 updateMenuFromSheet();
 </script>
 </body>
