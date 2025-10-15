@@ -49,7 +49,7 @@ header.brand h1 .jp{
   font-weight: 700;
   font-size: 1.1rem;
   text-align: center;
-  margin-top: 25px; 
+  margin-top: 25px; /* отступ сверху от карточек */
 }
 
 .grid{
@@ -218,7 +218,7 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- Карточки товаров -->
+      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -340,7 +340,7 @@ async function updateMenuFromSheet(){
 
     data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||'TRUE').toUpperCase() === 'TRUE';
+        ordersEnabled = (item['Доступно']||'').toUpperCase() === 'TRUE';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
@@ -357,10 +357,8 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toUpperCase() === 'TRUE';
       el.style.display = hidden ? 'none' : '';
 
-      // Плавное появление карточки
       setTimeout(()=> el.classList.add('visible'), index*100);
 
-      // Цена
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
@@ -375,7 +373,6 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Доступность карточки
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
@@ -383,25 +380,20 @@ async function updateMenuFromSheet(){
         el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
       }
+
+      // Скрываем корзины если заказы отключены
+      if(cartIcon) cartIcon.style.display = (available && ordersEnabled) ? 'flex' : 'none';
     });
 
-    // Скрытие всех корзин если заказы отключены
-    if(!ordersEnabled){
-      document.querySelectorAll('.cart-icon').forEach(icon => {
-        icon.classList.add('hidden');
-      });
-    }
-
-    // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', TRUE);
-        else showToast('Товар добавлен в корзину', FALSE);
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
       }
     });
     document.querySelector('.floating-cart').onclick = ()=>{
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', TRUE);
-      else showToast('Товар добавлен в корзину', FALSE);
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      else showToast('Товар добавлен в корзину', false);
     };
 
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
