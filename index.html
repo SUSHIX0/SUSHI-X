@@ -26,14 +26,12 @@ body{
   padding:36px 20px;
   display:flex;
   justify-content:center;
-  flex-direction:column;
 }
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-bottom:50px;
+  justify-content:center;
+  margin-bottom:50px; /* большой отступ от карточек */
 }
 header.brand h1{
   font-size:3rem;
@@ -46,17 +44,21 @@ header.brand h1 .jp{
   font-size:3.2rem; 
   color:var(--accent);
 }
-.header-note {
-  margin-top:10px;
+.note-orders-disabled {
   color: var(--accent);
-  font-weight:700;
-  font-size:1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 8px;
 }
+
 .grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap:30px;
+  width:100%;
 }
+
 .card{
   background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));
   border-radius:12px;
@@ -154,30 +156,30 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
+.card.unavailable .cart-icon { display:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
+
 .toast {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.65);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
   padding: 44px 56px;
   border-radius: 12px;
-  z-index: 9999;
-  display: none;
-  text-align: center;
+  font-weight:700;
+  font-size:1rem;
+  text-align:center;
   opacity:0;
   transition: opacity 0.5s ease;
+  z-index:9999;
+  pointer-events:none;
 }
-.toast.show {
-  display:block;
-  opacity:1;
-}
-.toast.red { color: var(--accent); }
+.toast.show { opacity:1; }
+.toast.red { color: #ff2d2d; }
+.toast.white { color: #fff; }
+
 .floating-cart {
   position: fixed;
   bottom: 20px;
@@ -204,12 +206,12 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
-    <div class="header-note" id="orders-note"></div>
   </header>
+  <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Карточки всех позиций -->
+      <!-- Все карточки товаров -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -311,32 +313,6 @@ header.brand h1 .jp{
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
-function showToast(text, red=false){
-  const toast = document.getElementById('toast');
-  toast.textContent = text;
-  toast.classList.toggle('red', red);
-  toast.classList.add('show');
-  setTimeout(()=>{ toast.classList.remove('show'); },5000);
-}
-
-document.querySelectorAll('.cart-icon').forEach(icon=>{
-  icon.addEventListener('click', ()=>{
-    if(window.ordersEnabled===false){
-      showToast('Заказы временно не принимаются', true);
-    } else {
-      showToast('Товар добавлен в корзину', false);
-    }
-  })
-});
-
-document.querySelector('.floating-cart').addEventListener('click', ()=>{
-  if(window.ordersEnabled===false){
-    showToast('Заказы временно не принимаются', true);
-  } else {
-    showToast('Товар добавлен в корзину', false);
-  }
-});
-
 async function updateMenuFromSheet(){
   try{
     const res = await fetch(sheetUrl);
@@ -345,27 +321,31 @@ async function updateMenuFromSheet(){
     const headers = rows[0].map(h=>h.trim());
     const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
 
-    // Проверка глобального отключения заказов
-    const ordersRow = data.find(r=>r.id.toLowerCase()=='orders_enabled');
-    window.ordersEnabled = !ordersRow || ordersRow['Цена'].toLowerCase() === 'yes';
-    const ordersNote = document.getElementById('orders-note');
-    ordersNote.textContent = window.ordersEnabled ? '' : 'NB! Заказы временно не принимаются';
+    let ordersEnabled = true;
 
     data.forEach(item=>{
-      const id = item['id'];
-      if(id.toLowerCase() === 'orders_enabled') return;
+      // Проверяем наличие строки orders_enabled
+      if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
+        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
+        const noteEl = document.getElementById('orders-disabled-note');
+        if(!ordersEnabled) noteEl.style.display = 'block';
+        else noteEl.style.display = 'none';
+        return;
+      }
 
+      const id = item['id'];
       const el = document.querySelector(`.card[data-id="${id}"]`);
       if(!el) return;
+
       const priceEl = el.querySelector('.price');
       const overlay = el.querySelector('.overlay-unavailable');
+      const cartIcon = el.querySelector('.cart-icon');
 
       const available = (item['Доступно']||'').toLowerCase() === 'true';
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      // Поддержка цен с запятой
-      const basePrice = parseFloat(item['Цена']?.replace(',', '.')) || 0;
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
 
@@ -380,21 +360,40 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Статус товара
+      // Временно не доступно из таблицы
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
+        if(cartIcon) cartIcon.style.display='none';
       } else {
         el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
+        if(cartIcon) cartIcon.style.display= ordersEnabled ? 'flex':'none';
       }
-
-      // Иконка корзины
-      const cartIcon = el.querySelector('.cart-icon');
-      if(cartIcon) cartIcon.style.display = (available && window.ordersEnabled) ? 'flex' : 'none';
     });
+
+    // Обработчики корзины
+    document.querySelectorAll('.cart-icon').forEach(icon=>{
+      icon.onclick = ()=>{
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
+    });
+    document.querySelector('.floating-cart').onclick = ()=>{
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      else showToast('Товар добавлен в корзину', false);
+    };
+
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
+
+function showToast(message, isRed=false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+  setTimeout(()=>{ toast.classList.remove('show'); }, 2500);
+}
+
 updateMenuFromSheet();
 </script>
 </body>
