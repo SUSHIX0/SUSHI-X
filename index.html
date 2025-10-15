@@ -30,7 +30,8 @@ body{
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
-  justify-content:center;
+  flex-direction: column;
+  align-items: center;
   margin-bottom:50px; /* большой отступ от карточек */
 }
 header.brand h1{
@@ -45,11 +46,12 @@ header.brand h1 .jp{
   color:var(--accent);
 }
 .note-orders-disabled {
+  display: none;
   color: var(--accent);
   font-weight: 700;
   font-size: 1.1rem;
+  margin-top: 25px; /* отступ от названия заведения */
   text-align: center;
-  margin-top: 8px;
 }
 
 .grid{
@@ -156,9 +158,9 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-.card.unavailable .cart-icon { display:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
+.cart-icon.hidden { display: none; }
 
 .toast {
   position: fixed;
@@ -206,12 +208,12 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+    <div class="note-orders-disabled" id="orders-disabled-note">NB! Заказы временно не принимаются</div>
   </header>
-  <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Все карточки товаров -->
+      <!-- Полный набор карточек -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -223,6 +225,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="снежный_краб">
         <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -234,6 +237,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="калифорния">
         <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -245,6 +249,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="аляска">
         <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -256,6 +261,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="маки_с_огурцом">
         <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -267,6 +273,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="маки_с_омлетом">
         <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -278,6 +285,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="нигири_с_креветкой">
         <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -289,6 +297,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
+
       <article class="card" data-id="нигири_с_угрём">
         <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -300,6 +309,7 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
+
     </section>
   </main>
 </div>
@@ -324,12 +334,9 @@ async function updateMenuFromSheet(){
     let ordersEnabled = true;
 
     data.forEach(item=>{
-      // Проверяем наличие строки orders_enabled
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
         ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
-        const noteEl = document.getElementById('orders-disabled-note');
-        if(!ordersEnabled) noteEl.style.display = 'block';
-        else noteEl.style.display = 'none';
+        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
 
@@ -360,19 +367,17 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Временно не доступно из таблицы
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
-        if(cartIcon) cartIcon.style.display='none';
+        if(cartIcon) cartIcon.classList.add('hidden');
       } else {
         el.classList.remove('unavailable'); 
         if(overlay) overlay.textContent = '';
-        if(cartIcon) cartIcon.style.display= ordersEnabled ? 'flex':'none';
+        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
       }
     });
 
-    // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
         if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
