@@ -49,7 +49,7 @@ header.brand h1 .jp{
   font-weight: 700;
   font-size: 1.1rem;
   text-align: center;
-  margin-top: 25px; /* отступ сверху от карточек */
+  margin-top: 25px; 
 }
 
 .grid{
@@ -64,7 +64,7 @@ header.brand h1 .jp{
   border-radius:12px;
   overflow:hidden;
   border: 1px solid rgba(255,45,45,0.2);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease, transform 0.5s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease;
   display:flex;
   flex-direction:column;
   position: relative;
@@ -160,9 +160,10 @@ header.brand h1 .jp{
   justify-content:center;
   cursor:pointer;
   z-index:5;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.4s ease;
+  opacity:1;
 }
-.cart-icon.hidden { display:none; }
+.cart-icon.hidden { opacity:0; pointer-events:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
@@ -217,8 +218,7 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-
-      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
+      <!-- Пример карточки, повторить для всех продуктов -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -340,7 +340,7 @@ async function updateMenuFromSheet(){
 
     data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||'').toUpperCase() === 'TRUE';
+        ordersEnabled = (item['Доступно']||'TRUE').toUpperCase() === 'TRUE';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
@@ -353,13 +353,13 @@ async function updateMenuFromSheet(){
       const overlay = el.querySelector('.overlay-unavailable');
       const cartIcon = el.querySelector('.cart-icon');
 
-      const available = (item['Доступно']||'').toUpperCase() === 'TRUE';
-      const hidden = (item['Скрыто']||'').toUpperCase() === 'TRUE';
+      const available = (item['Доступно']||'FALSE').toUpperCase() === 'TRUE';
+      const hidden = (item['Скрыто']||'FALSE').toUpperCase() === 'TRUE';
       el.style.display = hidden ? 'none' : '';
 
       setTimeout(()=> el.classList.add('visible'), index*100);
 
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const basePrice = parseFloat(item['Цена']?.replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
       let priceHTML = '';
@@ -381,8 +381,13 @@ async function updateMenuFromSheet(){
         if(overlay) overlay.textContent = '';
       }
 
-      // Скрываем корзины если заказы отключены
-      if(cartIcon) cartIcon.style.display = (available && ordersEnabled) ? 'flex' : 'none';
+      if(cartIcon){
+        if(available && ordersEnabled){
+          cartIcon.classList.remove('hidden');
+        } else {
+          cartIcon.classList.add('hidden');
+        }
+      }
     });
 
     document.querySelectorAll('.cart-icon').forEach(icon=>{
