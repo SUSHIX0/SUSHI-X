@@ -395,13 +395,13 @@ async function updateMenuFromSheet(){
     // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', TRUE);
+        else showToast('Товар добавлен в корзину', FALSE);
       }
     });
     document.querySelector('.floating-cart').onclick = ()=>{
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', TRUE);
+      else showToast('Товар добавлен в корзину', FALSE);
     };
 
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
