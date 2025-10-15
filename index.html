@@ -194,122 +194,38 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- Карточки всех позиций -->
-      <article class="card" data-id="филадельфия">
-        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
-          <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="снежный_краб">
-        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
-          <p class="ingredients">Снежный краб · Philadelphia · Огурец</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="калифорния">
-        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
-          <p class="ingredients">Снежный краб · Philadelphia · Огурец · Масаго</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="аляска">
-        <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
-          <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="маки_с_огурцом">
-        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
-          <p class="ingredients">Огурец</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="маки_с_омлетом">
-        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
-          <p class="ingredients">Японский омлет</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="нигири_с_креветкой">
-        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
-          <p class="ingredients">Креветка</p>
-          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="нигири_с_угрём">
-        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
-          <p class="ingredients">Угорь</p>
-          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
+      <!-- карточки -->
+      <!-- ... -->
     </section>
   </main>
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
+<div class="toast" id="toast-orders">Заказы временно не принимаются</div>
+
 <div class="floating-cart">
   <img src="Foto/cart.png" alt="Корзина">
   <span>Корзина</span>
 </div>
 
 <script>
-function showToast() {
-  const toast = document.getElementById('toast');
+function showToast(messageId){
+  const toast = document.getElementById(messageId);
   toast.style.display='block';
   setTimeout(()=>{toast.style.display='none';},2500);
 }
-document.querySelectorAll('.cart-icon').forEach(icon=>{icon.addEventListener('click',showToast)});
-document.querySelector('.floating-cart').addEventListener('click',()=>{showToast()});
 
+// При клике на иконку корзины в карточке
+document.querySelectorAll('.cart-icon').forEach(icon=>{
+  icon.addEventListener('click',()=>{ showToast('toast'); });
+});
+
+// При клике на плавающую кнопку корзины
+document.querySelector('.floating-cart').addEventListener('click',()=>{
+  showToast('toast-orders');
+});
+
+// Загрузка меню из Google Sheets
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
 async function updateMenuFromSheet(){
@@ -333,18 +249,17 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      // Поддержка цен с запятой
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
 
       let priceHTML = '';
       if(discountPrice > 0 && discountPrice < basePrice){
-        const formattedOld = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
-        const formattedNew = discountPrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
         priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
       } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
