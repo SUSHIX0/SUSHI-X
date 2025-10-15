@@ -26,23 +26,35 @@ body{
   padding:36px 20px;
   display:flex;
   justify-content:center;
+  flex-direction:column;
+  align-items:center;
 }
 .wrap{width:100%; max-width:var(--maxw);}
 header.brand{
   display:flex;
+  flex-direction:column;
   justify-content:center;
-  margin-bottom:30px;
+  margin-bottom:10px;
+  align-items:center;
+  gap:4px;
 }
 header.brand h1{
   font-size:3rem;
   gap:8px;
   justify-content:center;
+  margin:0;
 }
 header.brand h1 .jp{
   font-family:"Noto Sans JP"; 
   font-weight:700; 
   font-size:3.2rem; 
   color:var(--accent);
+}
+#orders-disabled-note {
+  font-size:1.1rem;
+  font-weight:700;
+  color: var(--accent);
+  display:none;
 }
 .grid{
   display:grid;
@@ -146,7 +158,6 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-.card.unavailable .cart-icon { display:none; }
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 .toast {
@@ -155,7 +166,7 @@ header.brand h1 .jp{
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.65);
-  color: #fff;
+  color: var(--accent);
   font-weight: 700;
   font-size: 1rem;
   padding: 44px 56px;
@@ -190,42 +201,35 @@ header.brand h1 .jp{
 <div class="wrap">
   <header class="brand">
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+    <div id="orders-disabled-note">NB! Заказы временно не принимаются</div>
   </header>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- карточки -->
-      <!-- ... -->
+      <!-- Пример карточки -->
+      <article class="card" data-id="филадельфия">
+        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
+          <p class="ingredients">Красная рыба · Philadelphia · Огурец · Авокадо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+      <!-- Добавь остальные карточки по аналогии -->
     </section>
   </main>
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
-<div class="toast" id="toast-orders">Заказы временно не принимаются</div>
-
 <div class="floating-cart">
   <img src="Foto/cart.png" alt="Корзина">
   <span>Корзина</span>
 </div>
 
 <script>
-function showToast(messageId){
-  const toast = document.getElementById(messageId);
-  toast.style.display='block';
-  setTimeout(()=>{toast.style.display='none';},2500);
-}
-
-// При клике на иконку корзины в карточке
-document.querySelectorAll('.cart-icon').forEach(icon=>{
-  icon.addEventListener('click',()=>{ showToast('toast'); });
-});
-
-// При клике на плавающую кнопку корзины
-document.querySelector('.floating-cart').addEventListener('click',()=>{
-  showToast('toast-orders');
-});
-
-// Загрузка меню из Google Sheets
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
 async function updateMenuFromSheet(){
@@ -236,30 +240,35 @@ async function updateMenuFromSheet(){
     const headers = rows[0].map(h=>h.trim());
     const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
 
+    let ordersEnabled = true;
+
     data.forEach(item=>{
+      if(item.id.toLowerCase() === 'orders_enabled'){
+        ordersEnabled = (item['Цена'] || item['Цена_со_скидкой'] || '').toLowerCase() === 'yes';
+      }
+
       const id = item['id'];
       const el = document.querySelector(`.card[data-id="${id}"]`);
       if(!el) return;
 
       const priceEl = el.querySelector('.price');
       const overlay = el.querySelector('.overlay-unavailable');
-      const note = el.querySelector('.note');
 
       const available = (item['Доступно']||'').toLowerCase() === 'true';
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
-      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const basePrice = parseFloat((item['Цена']||'0').replace(',', '.')) || 0;
+      const discountPrice = parseFloat((item['Цена_со_скидкой']||'0').replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
 
       let priceHTML = '';
       if(discountPrice > 0 && discountPrice < basePrice){
-        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
-        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+        const formattedOld = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
       } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
+        const formattedBase = basePrice.toLocaleString('ru-RU', {minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
@@ -272,6 +281,43 @@ async function updateMenuFromSheet(){
         if(overlay) overlay.textContent = '';
       }
     });
+
+    // Отключение всех заказов
+    const cartIcons = document.querySelectorAll('.cart-icon');
+    const ordersNote = document.getElementById('orders-disabled-note');
+    if(!ordersEnabled){
+      cartIcons.forEach(ic=>ic.style.display='none');
+      ordersNote.style.display='block';
+    } else {
+      cartIcons.forEach(ic=>ic.style.display='flex');
+      ordersNote.style.display='none';
+    }
+
+    // Переопределяем функцию показа тоста
+    const toast = document.getElementById('toast');
+    function showToastCustom(msg){
+      toast.textContent = msg;
+      toast.style.color = var(--accent);
+      toast.style.display='block';
+      setTimeout(()=>{toast.style.display='none';},5000);
+    }
+
+    document.querySelectorAll('.cart-icon').forEach(icon=>{
+      icon.addEventListener('click',()=>{
+        if(ordersEnabled){
+          showToastCustom('Товар добавлен в корзину');
+        }
+      });
+    });
+
+    document.querySelector('.floating-cart').addEventListener('click',()=>{
+      if(ordersEnabled){
+        showToastCustom('Товар добавлен в корзину');
+      } else {
+        showToastCustom('Заказы временно не принимаются');
+      }
+    });
+
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
 updateMenuFromSheet();
