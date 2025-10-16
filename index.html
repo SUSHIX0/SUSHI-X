@@ -166,6 +166,33 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
+/* 💫 Золотая плашка "Скидка" с мягким свечением */
+.gold-sale {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: linear-gradient(45deg, #b8860b, #ffd700, #fff3b0, #b8860b);
+  background-size: 300% 300%;
+  color: #222;
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 50px;
+  text-shadow: 0 0 6px rgba(255,255,180,0.8);
+  box-shadow: 0 0 12px rgba(255,230,130,0.8), inset 0 0 6px rgba(255,255,255,0.4);
+  animation: gold-shine 4s ease-in-out infinite, gold-pulse 2.5s ease-in-out infinite alternate;
+}
+@keyframes gold-shine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes gold-pulse {
+  0% { filter: brightness(1); box-shadow: 0 0 10px rgba(255,230,130,0.7); }
+  50% { filter: brightness(1.3); box-shadow: 0 0 20px rgba(255,255,180,1); }
+  100% { filter: brightness(1); box-shadow: 0 0 10px rgba(255,230,130,0.7); }
+}
+
 .toast {
   position: fixed;
   top: 50%;
@@ -217,6 +244,7 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
+
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -338,7 +366,7 @@ async function updateMenuFromSheet(){
 
     data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
+        ordersEnabled = (item['Доступно']||'').toLowerCase() === 'true';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
@@ -355,37 +383,44 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      // Плавное появление карточки
       setTimeout(()=> el.classList.add('visible'), index*100);
 
-      // Цена
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
       let priceHTML = '';
+
+      const saleTag = el.querySelector('.gold-sale');
+      if(saleTag) saleTag.remove();
+
       if(discountPrice > 0 && discountPrice < basePrice){
         const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+
+        const sale = document.createElement('div');
+        sale.className = 'gold-sale';
+        sale.textContent = 'Скидка';
+        el.querySelector('.photo').appendChild(sale);
       } else {
         const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
       }
+
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      // Доступность и скрытие корзин
       if(!available){
         el.classList.add('unavailable'); 
-        if(overlay) overlay.textContent = 'Временно недоступно';
-        if(cartIcon) cartIcon.classList.add('hidden');
+        overlay.textContent = 'Временно недоступно';
+        cartIcon.classList.add('hidden');
       } else {
         el.classList.remove('unavailable'); 
-        if(overlay) overlay.textContent = '';
-        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+        overlay.textContent = '';
+        if(ordersEnabled) cartIcon.classList.remove('hidden');
+        else cartIcon.classList.add('hidden');
       }
     });
 
-    // Обработчики корзины
     document.querySelectorAll('.cart-icon').forEach(icon=>{
       icon.onclick = ()=>{
         if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
@@ -408,6 +443,7 @@ function showToast(message,isRed=false){
 }
 
 updateMenuFromSheet();
+setInterval(updateMenuFromSheet, 8000); // 🔁 автообновление каждые 8 секунд
 </script>
 </body>
-</html>   
+</html>
