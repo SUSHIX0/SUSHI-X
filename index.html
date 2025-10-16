@@ -128,6 +128,7 @@ header.brand h1 .jp{
   position: relative;
   display: inline-block;
 }
+.card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
 .label-jp .scroll-text {
   display: inline-block;
   animation: scroll-marquee 4s linear infinite alternate;
@@ -141,21 +142,26 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ 
-  color: var(--accent); 
-  font-weight:700; 
-  font-size:1rem; 
-  display:block;
-  animation: blink 1.2s infinite alternate;
+.new-price{ font-weight:800; color: var(--accent); font-size:1.05rem; display:block;}
+.discount-badge {
+  background-color: rgba(255,43,43,0.12);
+  color: var(--accent);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  display: inline-block;
+  animation: badge-blink 1.5s ease-in-out infinite;
+  font-size: 0.9rem;
+  margin-right: 6px;
 }
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
+@keyframes badge-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
 }
 .card.unavailable .price,
-.card.unavailable .discount,
-.card.unavailable .old-price { color: #aaa; }
+.card.unavailable .discount-badge,
+.card.unavailable .old-price,
+.card.unavailable .new-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
 .cart-icon{
   position:absolute;
@@ -228,7 +234,6 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- Филадельфия -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -241,7 +246,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Снежный краб -->
       <article class="card" data-id="снежный_краб">
         <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -254,7 +258,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Калифорния -->
       <article class="card" data-id="калифорния">
         <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -267,7 +270,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Аляска -->
       <article class="card" data-id="аляска">
         <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -280,7 +282,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Маки с огурцом -->
       <article class="card" data-id="маки_с_огурцом">
         <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -293,7 +294,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Маки с омлетом -->
       <article class="card" data-id="маки_с_омлетом">
         <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -306,7 +306,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Нигири с креветкой -->
       <article class="card" data-id="нигири_с_креветкой">
         <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -319,7 +318,6 @@ header.brand h1 .jp{
         </div>
       </article>
 
-      <!-- Нигири с угрём -->
       <article class="card" data-id="нигири_с_угрём">
         <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -357,7 +355,7 @@ async function updateMenuFromSheet(){
 
     data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||'yes').toLowerCase() === 'yes';
+        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
@@ -379,12 +377,12 @@ async function updateMenuFromSheet(){
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
-
       let priceHTML = '';
+
       if(discountPrice > 0 && discountPrice < basePrice){
         const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+        priceHTML = `<span class="discount-badge">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
       } else {
         const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
