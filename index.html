@@ -166,6 +166,31 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
+/* Новый бейдж "Скидка" */
+.discount-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: auto;
+  height: 36px;
+  background: rgba(0,0,0,0.6);
+  color: #ff2d2d;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+}
+.card.has-discount .discount-badge {
+  opacity: 1;
+}
+
 .toast {
   position: fixed;
   top: 50%;
@@ -206,33 +231,6 @@ header.brand h1 .jp{
 }
 .floating-cart img { width: 30px; height: 30px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
-
-/* 💫 Золотая плашка "Скидка" */
-.gold-sale {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  background: linear-gradient(45deg, #b8860b, #ffd700, #fff3b0, #b8860b);
-  background-size: 300% 300%;
-  color: #222;
-  font-weight: 800;
-  font-size: 0.9rem;
-  padding: 6px 10px;
-  border-radius: 50px;
-  text-shadow: 0 0 6px rgba(255,255,180,0.8);
-  box-shadow: 0 0 12px rgba(255,230,130,0.8), inset 0 0 6px rgba(255,255,255,0.4);
-  animation: gold-shine 4s ease-in-out infinite, gold-pulse 2.5s ease-in-out infinite alternate;
-}
-@keyframes gold-shine {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-@keyframes gold-pulse {
-  0% { filter: brightness(1); box-shadow: 0 0 10px rgba(255,230,130,0.7); }
-  50% { filter: brightness(1.3); box-shadow: 0 0 20px rgba(255,255,180,1); }
-  100% { filter: brightness(1); box-shadow: 0 0 10px rgba(255,230,130,0.7); }
-}
 </style>
 </head>
 <body>
@@ -244,8 +242,7 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-
-      <!-- Здесь все 8 карточек с фото, японскими надписями и уникальными data-id -->
+      <!-- ВСЕ КАРТОЧКИ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -367,7 +364,7 @@ async function updateMenuFromSheet(){
 
     data.forEach((item,index)=>{
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||'yes').toLowerCase() === 'yes';
+        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         return;
       }
@@ -384,30 +381,32 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      // Плавное появление карточки
       setTimeout(()=> el.classList.add('visible'), index*100);
 
-      // Цена и плашка "Скидка"
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
-      if(priceEl){
-        if(discountPrice>0 && discountPrice<basePrice){
-          const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-          const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-          priceEl.innerHTML = `<span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
-          if(!el.querySelector('.gold-sale')){
-            const goldBadge = document.createElement('div');
-            goldBadge.className = 'gold-sale';
-            goldBadge.textContent = 'Скидка';
-            el.querySelector('.photo').appendChild(goldBadge);
-          }
-        } else {
-          const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-          priceEl.innerHTML = `${formattedBase} €`;
-        }
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+      let priceHTML = '';
+      if(discountPrice > 0 && discountPrice < basePrice){
+        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+        el.classList.add('has-discount');
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `${formattedBase} €`;
+        el.classList.remove('has-discount');
+      }
+      if(priceEl) priceEl.innerHTML = priceHTML;
+
+      let discountBadge = el.querySelector('.discount-badge');
+      if(!discountBadge){
+        discountBadge = document.createElement('div');
+        discountBadge.className = 'discount-badge';
+        discountBadge.textContent = 'Скидка';
+        el.querySelector('.photo').appendChild(discountBadge);
       }
 
-      // Доступность
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
