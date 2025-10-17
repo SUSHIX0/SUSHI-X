@@ -142,7 +142,7 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; }
+.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; position:relative; z-index:2; padding:0 4px; border-radius:4px; background: rgba(0,0,0,0.4);}
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -166,12 +166,11 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
-/* Новый бейдж "Скидка" */
+/* Бейдж скидки с подложкой и мягким миганием */
 .discount-badge {
   position: absolute;
   top: 6px;
   left: 6px;
-  width: auto;
   height: 36px;
   background: rgba(0,0,0,0.6);
   color: #ff2d2d;
@@ -189,6 +188,18 @@ header.brand h1 .jp{
 }
 .card.has-discount .discount-badge {
   opacity: 1;
+  animation: blinkBadge 2.5s infinite ease-in-out;
+}
+@keyframes blinkBadge {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+.discount {
+  animation: blinkDiscount 2.5s infinite ease-in-out;
+}
+@keyframes blinkDiscount {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .toast {
@@ -242,7 +253,8 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- ВСЕ КАРТОЧКИ -->
+      
+      <!-- Карточки всех позиций -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
