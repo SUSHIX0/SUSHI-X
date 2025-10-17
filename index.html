@@ -98,12 +98,14 @@ header.brand h1 .jp{
   align-items:center;
   font-weight:700;
   font-size:1.2rem;
-  border-radius:12px 12px 0 0;
   pointer-events:none;
   opacity:0;
   transition: opacity 0.2s ease;
 }
-.card.unavailable .overlay-unavailable{ opacity:1; }
+.card.unavailable .overlay-unavailable{
+  opacity:1; 
+  border-radius:0;
+}
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
@@ -142,7 +144,7 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:0; background:none; animation: discountPulse 2.5s infinite ease-in-out; }
+.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:0; background:none; opacity:0.75;}
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -172,7 +174,7 @@ header.brand h1 .jp{
   top: 6px;
   left: 6px;
   height: 36px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.75);
   color: #ff2d2d;
   font-weight: 700;
   font-size: 0.85rem;
@@ -182,7 +184,7 @@ header.brand h1 .jp{
   justify-content: center;
   padding: 0 12px;
   pointer-events: none;
-  opacity: 0.65;
+  opacity: 0;
   z-index: 5;
 }
 .card.has-discount .discount-badge {
@@ -190,12 +192,8 @@ header.brand h1 .jp{
   animation: badgePulse 2.5s infinite ease-in-out;
 }
 @keyframes badgePulse {
-  0%,100% { opacity:0.65; transform: scale(1); }
+  0%,100% { opacity:0.75; transform: scale(1); }
   50% { opacity:1; transform: scale(1.12); }
-}
-@keyframes discountPulse {
-  0%,100% { opacity:0.75; }
-  50% { opacity:1; }
 }
 
 .toast {
@@ -249,7 +247,8 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-      <!-- ВСЕ КАРТОЧКИ -->
+
+      <!-- Карточки -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -407,11 +406,15 @@ async function updateMenuFromSheet(){
       if(priceEl) priceEl.innerHTML = priceHTML;
 
       let discountBadge = el.querySelector('.discount-badge');
-      if(!discountBadge){
-        discountBadge = document.createElement('div');
-        discountBadge.className = 'discount-badge';
-        discountBadge.textContent = 'Скидка';
-        el.querySelector('.photo').appendChild(discountBadge);
+      if(discountPrice > 0 && discountPrice < basePrice){
+        if(!discountBadge){
+          discountBadge = document.createElement('div');
+          discountBadge.className = 'discount-badge';
+          discountBadge.textContent = 'Скидка';
+          el.querySelector('.photo').appendChild(discountBadge);
+        }
+      } else if(discountBadge){
+        discountBadge.remove();
       }
 
       if(!available){
