@@ -47,7 +47,7 @@ header.brand h1 .jp{
 .note-orders-disabled {
   color: var(--accent);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   text-align: center;
   margin-top: 25px; 
 }
@@ -64,7 +64,7 @@ header.brand h1 .jp{
   border-radius:12px;
   overflow:hidden;
   border: 1px solid rgba(255,45,45,0.2);
-  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease, transform 0.5s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease;
   display:flex;
   flex-direction:column;
   position: relative;
@@ -88,7 +88,6 @@ header.brand h1 .jp{
   position: relative;
   border-radius:12px 12px 0 0; 
 }
-
 .overlay-unavailable{
   position:absolute;
   top:0; left:0; right:0; bottom:0;
@@ -142,7 +141,7 @@ header.brand h1 .jp{
 }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
-.price{font-weight:800; color:#ff2d2d; font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
 .discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; }
 .card.unavailable .price,
@@ -202,10 +201,10 @@ header.brand h1 .jp{
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(0,0,0,0.65);
-  padding: 44px 56px;
+  padding: 20px 36px;
   border-radius: 12px;
   font-weight:700;
-  font-size:1rem;
+  font-size:1.3rem;
   text-align:center;
   opacity:0;
   transition: opacity 0.5s ease;
@@ -248,7 +247,7 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- ВСЕ КАРТОЧКИ (с примерами, все позиции можно продолжить аналогично) -->
+      <!-- ВСЕ КАРТОЧКИ ИЗ СТАРОГО КОДА -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -406,7 +405,7 @@ async function updateMenuFromSheet(){
       if(priceEl) priceEl.innerHTML = priceHTML;
 
       let discountBadge = el.querySelector('.discount-badge');
-      if(!discountBadge && el.classList.contains('has-discount')){
+      if(!discountBadge && discountPrice>0 && discountPrice < basePrice){
         discountBadge = document.createElement('div');
         discountBadge.className = 'discount-badge';
         discountBadge.textContent = 'Скидка';
