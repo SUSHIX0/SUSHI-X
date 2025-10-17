@@ -142,7 +142,7 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:2px 6px; border-radius:6px; background: rgba(255,43,43,0.12); animation: discountPulse 2.5s infinite ease-in-out;}
+.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:0; background:none; animation: discountPulse 2.5s infinite ease-in-out; }
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -166,7 +166,7 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
-/* Новый бейдж "Скидка" с синхронной анимацией */
+/* Новый бейдж "Скидка" */
 .discount-badge {
   position: absolute;
   top: 6px;
@@ -182,7 +182,7 @@ header.brand h1 .jp{
   justify-content: center;
   padding: 0 12px;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.65;
   z-index: 5;
 }
 .card.has-discount .discount-badge {
@@ -190,12 +190,11 @@ header.brand h1 .jp{
   animation: badgePulse 2.5s infinite ease-in-out;
 }
 @keyframes badgePulse {
-  0%,100% { opacity:0.5; transform: scale(1); }
-  50% { opacity:1; transform: scale(1.08); }
+  0%,100% { opacity:0.65; transform: scale(1); }
+  50% { opacity:1; transform: scale(1.12); }
 }
-
 @keyframes discountPulse {
-  0%,100% { opacity:0.65; }
+  0%,100% { opacity:0.75; }
   50% { opacity:1; }
 }
 
@@ -239,7 +238,6 @@ header.brand h1 .jp{
 }
 .floating-cart img { width: 30px; height: 30px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
-
 </style>
 </head>
 <body>
