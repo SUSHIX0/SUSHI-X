@@ -98,13 +98,12 @@ header.brand h1 .jp{
   align-items:center;
   font-weight:700;
   font-size:1.2rem;
+  border-radius:12px 12px 0 0;
   pointer-events:none;
   opacity:0;
   transition: opacity 0.2s ease;
 }
-.card.unavailable .overlay-unavailable{ 
-  opacity:1;
-}
+.card.unavailable .overlay-unavailable{ opacity:1; }
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
@@ -143,7 +142,7 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; background: none; } 
+.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:0; background:none; animation: discountPulse 2.5s infinite ease-in-out; }
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -167,6 +166,7 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
+/* Новый бейдж "Скидка" */
 .discount-badge {
   position: absolute;
   top: 6px;
@@ -182,17 +182,20 @@ header.brand h1 .jp{
   justify-content: center;
   padding: 0 12px;
   pointer-events: none;
+  opacity: 0.65;
   z-index: 5;
-  opacity: 0.75; 
-  transform: scale(1);
-  animation: badge-pulse 1.8s infinite ease-in-out;
 }
 .card.has-discount .discount-badge {
   opacity: 1;
+  animation: badgePulse 2.5s infinite ease-in-out;
 }
-@keyframes badge-pulse {
-  0%,100% { transform: scale(1); opacity: 0.75; }
-  50% { transform: scale(1.12); opacity: 1; }
+@keyframes badgePulse {
+  0%,100% { opacity:0.65; transform: scale(1); }
+  50% { opacity:1; transform: scale(1.12); }
+}
+@keyframes discountPulse {
+  0%,100% { opacity:0.75; }
+  50% { opacity:1; }
 }
 
 .toast {
@@ -246,7 +249,6 @@ header.brand h1 .jp{
 
   <main>
     <section class="grid" aria-label="Меню роллов">
-
       <!-- ВСЕ КАРТОЧКИ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
@@ -382,61 +384,69 @@ async function updateMenuFromSheet(){
       const overlay = el.querySelector('.overlay-unavailable');
       const cartIcon = el.querySelector('.cart-icon');
 
-      const available = (item['Доступно']||'yes').toLowerCase() === 'yes';
-      if(!available){
-        el.classList.add('unavailable');
-        overlay.textContent = 'Временно недоступно';
-      } else el.classList.remove('unavailable');
+      const available = (item['Доступно']||'').toLowerCase() === 'true';
+      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
+      el.style.display = hidden ? 'none' : '';
 
-      const oldPrice = item['Цена'] ? parseFloat(item['Цена']) : null;
-      const discountPrice = item['Цена_со_скидкой'] ? parseFloat(item['Цена_со_скидкой']) : null;
-      const discount = item['Скидка'] ? parseFloat(item['Скидка']) : null;
+      setTimeout(()=> el.classList.add('visible'), index*100);
 
-      priceEl.innerHTML = '';
-      if(discount && discountPrice){
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+      let priceHTML = '';
+      if(discountPrice > 0 && discountPrice < basePrice){
+        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
         el.classList.add('has-discount');
-        const badge = document.createElement('div');
-        badge.className = 'discount-badge';
-        badge.textContent = 'Скидка';
-        el.querySelector('.photo').appendChild(badge);
-
-        const span = document.createElement('span');
-        span.className = 'discount';
-        span.textContent = `${discount}%`;
-        priceEl.appendChild(span);
-
-        if(oldPrice) {
-          const oldP = document.createElement('span');
-          oldP.className = 'old-price';
-          oldP.textContent = `${oldPrice} ₽`;
-          priceEl.appendChild(oldP);
-        }
-        const newPrice = document.createElement('span');
-        newPrice.className='new-price';
-        newPrice.textContent = `${discountPrice} ₽`;
-        priceEl.appendChild(newPrice);
-      } else if(oldPrice){
-        priceEl.textContent = `${oldPrice} ₽`;
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
+        priceHTML = `${formattedBase} €`;
         el.classList.remove('has-discount');
-        const badge = el.querySelector('.discount-badge');
-        if(badge) badge.remove();
+      }
+      if(priceEl) priceEl.innerHTML = priceHTML;
+
+      let discountBadge = el.querySelector('.discount-badge');
+      if(!discountBadge){
+        discountBadge = document.createElement('div');
+        discountBadge.className = 'discount-badge';
+        discountBadge.textContent = 'Скидка';
+        el.querySelector('.photo').appendChild(discountBadge);
       }
 
+      if(!available){
+        el.classList.add('unavailable'); 
+        if(overlay) overlay.textContent = 'Временно недоступно';
+        if(cartIcon) cartIcon.classList.add('hidden');
+      } else {
+        el.classList.remove('unavailable'); 
+        if(overlay) overlay.textContent = '';
+        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+      }
     });
-  }catch(e){console.error(e);}
+
+    document.querySelectorAll('.cart-icon').forEach(icon=>{
+      icon.onclick = ()=>{
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
+    });
+    document.querySelector('.floating-cart').onclick = ()=>{
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      else showToast('Товар добавлен в корзину', false);
+    };
+
+  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
+}
+
+function showToast(message,isRed=false){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show ' + (isRed?'red':'white');
+  setTimeout(()=>{toast.classList.remove('show');},2500);
 }
 
 updateMenuFromSheet();
-
-// Плавное появление карточек при скролле
-const cards = document.querySelectorAll('.card');
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting) entry.target.classList.add('visible');
-  });
-},{threshold:0.2});
-cards.forEach(c=>observer.observe(c));
-
 </script>
 </body>
 </html>
