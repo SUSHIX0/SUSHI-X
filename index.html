@@ -87,6 +87,7 @@ header.brand h1 .jp{
   background-position:center; 
   border-bottom: 1px solid rgba(255,255,255,0.02);
   position: relative;
+  border-radius:12px 12px 0 0;
 }
 .overlay-unavailable{
   position:absolute;
@@ -101,11 +102,10 @@ header.brand h1 .jp{
   pointer-events:none;
   opacity:0;
   transition: opacity 0.2s ease;
+  border-radius:12px 12px 0 0;
 }
-.card.unavailable .overlay-unavailable{
-  opacity:1; 
-  border-radius:0;
-}
+.card.unavailable .overlay-unavailable{ opacity:1; }
+
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
@@ -144,7 +144,7 @@ header.brand h1 .jp{
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: var(--accent); font-weight:700; font-size:1rem; display:block; padding:0; background:none; opacity:0.75;}
+.discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; opacity:0.75; }
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -174,7 +174,7 @@ header.brand h1 .jp{
   top: 6px;
   left: 6px;
   height: 36px;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.6);
   color: #ff2d2d;
   font-weight: 700;
   font-size: 0.85rem;
@@ -184,7 +184,7 @@ header.brand h1 .jp{
   justify-content: center;
   padding: 0 12px;
   pointer-events: none;
-  opacity: 0;
+  opacity: 0.75;
   z-index: 5;
 }
 .card.has-discount .discount-badge {
@@ -248,7 +248,6 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- Карточки -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -406,16 +405,14 @@ async function updateMenuFromSheet(){
       if(priceEl) priceEl.innerHTML = priceHTML;
 
       let discountBadge = el.querySelector('.discount-badge');
-      if(discountPrice > 0 && discountPrice < basePrice){
-        if(!discountBadge){
-          discountBadge = document.createElement('div');
-          discountBadge.className = 'discount-badge';
-          discountBadge.textContent = 'Скидка';
-          el.querySelector('.photo').appendChild(discountBadge);
-        }
-      } else if(discountBadge){
-        discountBadge.remove();
+      if(!discountBadge && discountPercent>0){
+        discountBadge = document.createElement('div');
+        discountBadge.className = 'discount-badge';
+        discountBadge.textContent = 'Скидка';
+        el.querySelector('.photo').appendChild(discountBadge);
       }
+      if(discountPercent>0) el.classList.add('has-discount'); 
+      else el.classList.remove('has-discount');
 
       if(!available){
         el.classList.add('unavailable'); 
@@ -429,15 +426,9 @@ async function updateMenuFromSheet(){
     });
 
     document.querySelectorAll('.cart-icon').forEach(icon=>{
-      icon.onclick = ()=>{
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
+      icon.onclick = ()=>{ if(!ordersEnabled) showToast('Заказы временно не принимаются', true); else showToast('Товар добавлен в корзину', false); }
     });
-    document.querySelector('.floating-cart').onclick = ()=>{
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
-    };
+    document.querySelector('.floating-cart').onclick = ()=>{ if(!ordersEnabled) showToast('Заказы временно не принимаются', true); else showToast('Товар добавлен в корзину', false); };
 
   }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
 }
