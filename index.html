@@ -148,8 +148,6 @@ header.brand h1 .jp{
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
-
-/* Адаптивная иконка корзины */
 .cart-icon{
   position:absolute;
   top:6px;
@@ -165,28 +163,9 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-.cart-icon img{
-  width:28px;
-  height:28px;
-  object-fit:contain;
-}
 .cart-icon.hidden { display:none; }
-.cart-icon:hover { transform: scale(1.2); }
-
-/* Телефонная версия */
-@media (max-width: 767px) {
-  .cart-icon{
-    width:46px;
-    height:46px;
-    top:6px;
-    right:6px;
-    background: rgba(0,0,0,0.6);
-  }
-  .cart-icon img{
-    width:34px;
-    height:34px;
-  }
-}
+.cart-icon img{width:26px;height:26px;object-fit:contain;}
+.cart-icon:hover{transform: scale(1.2);}
 
 /* Новый бейдж "Скидка" */
 .discount-badge {
@@ -256,6 +235,26 @@ header.brand h1 .jp{
 }
 .floating-cart img { width: 30px; height: 30px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
+
+/* Адаптив для телефонов */
+@media (max-width: 767px) {
+  .cart-icon{
+    width:46px;
+    height:46px;
+    top:4px;
+    right:4px;
+    background: rgba(0,0,0,0.6);
+  }
+  .cart-icon img{
+    width:34px;
+    height:34px;
+  }
+
+  .card .title { font-size: 1.2rem; }
+  .card .price { font-size: 1.2rem; }
+  .card .discount { font-size: 1.2rem; }
+  .card .old-price { font-size: 1.15rem; }
+}
 </style>
 </head>
 <body>
