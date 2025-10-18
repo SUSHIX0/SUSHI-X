@@ -170,9 +170,9 @@ header.brand h1 .jp{
 /* Новый бейдж "Скидка" */
 .discount-badge {
   position: absolute;
-  top: 6px;
-  left: 6px;
-  height: 36px;
+  top:6px;
+  left:6px;
+  height:36px;
   background: rgba(0,0,0,0.65);
   color: #ff2d2d;
   font-weight: 700;
@@ -250,20 +250,32 @@ header.brand h1 .jp{
     height:32px;
   }
 
-  .card .title { font-size: 1.18rem; }
+  .card .title { font-size: 1.18rem; margin-bottom:2px; }
+  
+  /* Нижняя часть карточки на одной линии и ближе к краю */
+  .card .bottom {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:auto;
+    padding-bottom:4px;
+  }
+  .card .price { font-size:1.18rem; margin:0; line-height:1; }
+  .card .discount { font-size:1.18rem; margin:0; line-height:1; }
+  .card .old-price { font-size:1.14rem; margin:0; line-height:1; }
+  .card .note { font-size:1.02rem; margin:0; line-height:1; }
 
-  .card .bottom { align-items: flex-end; gap: 4px; margin-bottom:4px; }
-  .card .price { font-size:1.16rem; margin-bottom:0; }
-  .card .discount { font-size:1.16rem; margin-bottom:0; }
-  .card .old-price { font-size:1.12rem; margin-bottom:0; }
-  .card .note { font-size:1rem; }
-
-  /* Плашка "Скидка" еще больше */
+  /* Плашка "Скидка" больше */
   .discount-badge {
-    font-size:1.1rem;
+    font-size:1.2rem;
     padding:0 18px;
     height:46px;
   }
+}
+
+/* Адаптив для планшетов/ПК */
+@media (min-width: 768px) {
+  .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
 }
 </style>
 </head>
