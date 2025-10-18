@@ -264,8 +264,6 @@ header.brand h1 .jp{
 }
 
 
-}
-
 /* Адаптив для планшетов/ПК */
 @media (min-width: 768px) {
   .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
@@ -480,6 +478,57 @@ function showToast(message,isRed=false){
 }
 
 updateMenuFromSheet();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const duration = 6; // секунд, одинаковая длительность для всех
+
+  document.querySelectorAll('.label-jp').forEach(label => {
+    const textEl = label.querySelector('.scroll-text');
+    if (!textEl) return;
+
+    textEl.style.animation = 'none';
+
+    const textWidth = textEl.scrollWidth;
+    const labelWidth = label.clientWidth;
+
+    // ширина последнего символа
+    const lastChar = textEl.textContent.slice(-1);
+    const span = document.createElement('span');
+    span.style.visibility = 'hidden';
+    span.style.position = 'absolute';
+    span.style.font = window.getComputedStyle(textEl).font;
+    span.textContent = lastChar;
+    document.body.appendChild(span);
+    const lastCharWidth = span.getBoundingClientRect().width;
+    document.body.removeChild(span);
+
+    let distance;
+
+    if (textWidth > labelWidth) {
+      // длинный текст — полный сдвиг влево
+      distance = textWidth - labelWidth + lastCharWidth;
+    } else {
+      // короткий текст — маленький сдвиг влево (чтобы синхронно)
+      distance = Math.min(labelWidth - textWidth, 10); // максимум 10px
+    }
+
+    const keyframes = `
+      0% { transform: translateX(0); }
+      50% { transform: translateX(-${distance}px); }
+      100% { transform: translateX(0); }
+    `;
+
+    const animName = `scroll-${Math.random().toString(36).slice(2,6)}`;
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@keyframes ${animName} { ${keyframes} }`;
+    document.head.appendChild(styleEl);
+
+    // фиксированная длительность и одинаковый старт для синхронности
+    textEl.style.animation = `${animName} ${duration}s ease-in-out infinite`;
+    textEl.style.animationDelay = '0s';
+  });
+});
+
 </script>
 </body>
 </html>
