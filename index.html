@@ -251,25 +251,34 @@ header.brand h1 .jp{
   }
 
   .card .title { font-size: 1.18rem; margin-bottom:2px; }
-  
-  /* Нижняя часть карточки на одной линии и ближе к краю */
+
+  /* Нижняя часть карточки на одной линии и ближе к нижнему краю */
   .card .bottom {
     display:flex;
     justify-content:space-between;
     align-items:flex-end;
     margin-top:auto;
-    padding-bottom:4px;
+    padding-bottom:10px; /* ближе к низу на 5-10px */
   }
-  .card .price { font-size:1.18rem; margin:0; line-height:1; }
-  .card .discount { font-size:1.18rem; margin:0; line-height:1; }
-  .card .old-price { font-size:1.14rem; margin:0; line-height:1; }
-  .card .note { font-size:1.02rem; margin:0; line-height:1; }
+  .card .price,
+  .card .discount,
+  .card .old-price,
+  .card .note {
+    display:inline-block;
+    vertical-align: bottom;
+    margin:0;
+    line-height:1;
+  }
 
-  /* Плашка "Скидка" больше */
+  /* Размер шрифта и плашка скидки */
+  .card .price { font-size:1.18rem; }
+  .card .discount { font-size:1.18rem; }
+  .card .old-price { font-size:1.14rem; }
+  .card .note { font-size:1.02rem; }
   .discount-badge {
-    font-size:1.1rem;
-    padding:0 16px;
-    height:42px;
+    font-size:1.15rem;
+    padding:0 18px;
+    height:44px;
   }
 }
 
@@ -289,7 +298,7 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
+      <!-- ВСЕ КАРТОЧКИ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
