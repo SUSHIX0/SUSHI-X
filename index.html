@@ -149,14 +149,14 @@ header.brand h1 .jp{
 .card.unavailable .old-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
 
-/* Увеличенная иконка корзины с отступом */
+/* Адаптивная иконка корзины */
 .cart-icon{
   position:absolute;
-  top:8px;
-  right:8px;
-  width:48px;
-  height:48px;
-  background: rgba(0,0,0,0.7);
+  top:6px;
+  right:6px;
+  width:39px;
+  height:39px;
+  background: rgba(0,0,0,0.6);
   border-radius:50%;
   display:flex;
   align-items:center;
@@ -165,9 +165,28 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
-.cart-icon img{width:32px;height:32px;object-fit:contain;}
+.cart-icon img{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+}
 .cart-icon.hidden { display:none; }
-.cart-icon:hover{transform: scale(1.15); background: rgba(0,0,0,0.8);}
+.cart-icon:hover { transform: scale(1.2); }
+
+/* Телефонная версия */
+@media (max-width: 767px) {
+  .cart-icon{
+    width:46px;
+    height:46px;
+    top:6px;
+    right:6px;
+    background: rgba(0,0,0,0.6);
+  }
+  .cart-icon img{
+    width:34px;
+    height:34px;
+  }
+}
 
 /* Новый бейдж "Скидка" */
 .discount-badge {
@@ -345,8 +364,6 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
-
-      <!-- сюда можно добавить остальные карточки -->
 
     </section>
   </main>
