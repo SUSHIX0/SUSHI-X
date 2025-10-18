@@ -148,13 +148,15 @@ header.brand h1 .jp{
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
 .note{color:var(--muted); font-size:0.9rem;}
+
+/* Увеличенная иконка корзины с отступом */
 .cart-icon{
   position:absolute;
-  top:6px;
-  right:6px;
-  width:36px;
-  height:36px;
-  background: rgba(0,0,0,0.6);
+  top:8px;
+  right:8px;
+  width:48px;
+  height:48px;
+  background: rgba(0,0,0,0.7);
   border-radius:50%;
   display:flex;
   align-items:center;
@@ -163,9 +165,9 @@ header.brand h1 .jp{
   z-index:5;
   transition: transform 0.2s ease, background 0.2s ease;
 }
+.cart-icon img{width:32px;height:32px;object-fit:contain;}
 .cart-icon.hidden { display:none; }
-.cart-icon img{width:26px;height:26px;object-fit:contain;}
-.cart-icon:hover{transform: scale(1.2);}
+.cart-icon:hover{transform: scale(1.15); background: rgba(0,0,0,0.8);}
 
 /* Новый бейдж "Скидка" */
 .discount-badge {
@@ -247,7 +249,7 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- ВСЕ КАРТОЧКИ ИЗ СТАРОГО КОДА -->
+      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -343,6 +345,8 @@ header.brand h1 .jp{
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
+
+      <!-- сюда можно добавить остальные карточки -->
 
     </section>
   </main>
