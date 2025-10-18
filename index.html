@@ -236,14 +236,6 @@ header.brand h1 .jp{
 .floating-cart img { width: 30px; height: 30px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
 
-/* Для планшетов/ПК уменьшенный отступ иконки на 2px */
-@media (min-width: 768px) {
-  .cart-icon{
-    top:4px;
-    right:4px;
-  }
-}
-
 /* Адаптив для телефонов */
 @media (max-width: 767px) {
   .cart-icon{
@@ -258,16 +250,19 @@ header.brand h1 .jp{
     height:32px;
   }
 
-  /* Еще чуть больше увеличение для цены, старой цены и скидки */
-  .card .price { font-size:1.18rem; }
-  .card .discount { font-size:1.18rem; }
-  .card .old-price { font-size:1.12rem; }
+  .card .title { font-size: 1.18rem; }
 
-  /* Еще больше плашка "Скидка" на телефонах */
+  .card .bottom { align-items: flex-end; gap: 4px; margin-bottom:4px; }
+  .card .price { font-size:1.16rem; margin-bottom:0; }
+  .card .discount { font-size:1.16rem; margin-bottom:0; }
+  .card .old-price { font-size:1.12rem; margin-bottom:0; }
+  .card .note { font-size:1rem; }
+
+  /* Плашка "Скидка" еще больше */
   .discount-badge {
-    font-size:1.05rem;
-    padding:0 16px;
-    height:42px;
+    font-size:1.15rem;
+    padding:0 18px;
+    height:46px;
   }
 }
 </style>
@@ -390,7 +385,6 @@ header.brand h1 .jp{
 </div>
 
 <script>
-// Скрипт работы с Google Sheets и корзиной оставляем без изменений
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
 async function updateMenuFromSheet(){
@@ -460,12 +454,12 @@ async function updateMenuFromSheet(){
     });
 
     document.querySelectorAll('.cart-icon').forEach(icon=>{
-      icon.onclick = ()=>{
+      icon.onclick = ()=>{ 
         if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
         else showToast('Товар добавлен в корзину', false);
       }
     });
-    document.querySelector('.floating-cart').onclick = ()=>{
+    document.querySelector('.floating-cart').onclick = ()=>{ 
       if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
       else showToast('Товар добавлен в корзину', false);
     };
