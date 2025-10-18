@@ -479,7 +479,7 @@ function showToast(message,isRed=false){
 updateMenuFromSheet();
 
 document.addEventListener('DOMContentLoaded', () => {
-  const duration = 6; // секунд, одинаковая длительность для всех
+  const duration = 6;
 
   document.querySelectorAll('.label-jp').forEach(label => {
     const textEl = label.querySelector('.scroll-text');
@@ -490,7 +490,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const textWidth = textEl.scrollWidth;
     const labelWidth = label.clientWidth;
 
-    // ширина последнего символа
     const lastChar = textEl.textContent.slice(-1);
     const span = document.createElement('span');
     span.style.visibility = 'hidden';
@@ -501,28 +500,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const lastCharWidth = span.getBoundingClientRect().width;
     document.body.removeChild(span);
 
-    let distance;
+    let keyframes;
 
     if (textWidth > labelWidth) {
       // длинный текст — полный сдвиг влево
-      distance = textWidth - labelWidth + lastCharWidth;
+      const distance = textWidth - labelWidth + lastCharWidth;
+      keyframes = `
+        0% { transform: translateX(0); }
+        50% { transform: translateX(-${distance}px); }
+        100% { transform: translateX(0); }
+      `;
     } else {
-      // короткий текст — маленький сдвиг влево (чтобы синхронно)
-      distance = Math.min(labelWidth - textWidth, 10); // максимум 10px
+      // короткий текст — небольшой симметричный "качок"
+      const distance = Math.min(3, (labelWidth - textWidth)/2); // максимум 3px
+      keyframes = `
+        0% { transform: translateX(0); }
+        50% { transform: translateX(-${distance}px); }
+        100% { transform: translateX(0); }
+      `;
     }
-
-    const keyframes = `
-      0% { transform: translateX(0); }
-      50% { transform: translateX(-${distance}px); }
-      100% { transform: translateX(0); }
-    `;
 
     const animName = `scroll-${Math.random().toString(36).slice(2,6)}`;
     const styleEl = document.createElement('style');
     styleEl.textContent = `@keyframes ${animName} { ${keyframes} }`;
     document.head.appendChild(styleEl);
 
-    // фиксированная длительность и одинаковый старт для синхронности
     textEl.style.animation = `${animName} ${duration}s ease-in-out infinite`;
     textEl.style.animationDelay = '0s';
   });
