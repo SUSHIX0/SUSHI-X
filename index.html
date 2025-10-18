@@ -238,27 +238,18 @@ header.brand h1 .jp{
 
 /* Адаптив для телефонов */
 @media (max-width: 767px) {
-  .cart-icon{
-    width:46px;
-    height:46px;
-    top:4px;
-    right:4px;
-    background: rgba(0,0,0,0.6);
-  }
-  .cart-icon img{
-    width:32px;
-    height:32px;
+  .card .body {
+    padding-bottom: 6px; /* было 16px, уменьшаем, чтобы нижняя граница ближе */
   }
 
-  .card .title { font-size: 1.18rem; margin-bottom:2px; }
-  
   .card .bottom {
     display:flex;
     justify-content:space-between;
     align-items:flex-end;
     margin-top:auto;
-    padding-bottom:0px;
+    padding-bottom:0; /* текст ближе к низу */
   }
+
   .card .price { font-size:1.18rem; margin:0; line-height:1; }
   .card .discount { font-size:1.18rem; margin:0; line-height:1; }
   .card .old-price { font-size:1.14rem; margin:0; line-height:1; }
@@ -270,6 +261,7 @@ header.brand h1 .jp{
     padding:0 16px;
     height:42px;
   }
+}
 
   /* Нижняя граница карточки ближе к цене/кол-ву/скидке */
   .card::after {
