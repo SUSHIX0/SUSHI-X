@@ -106,7 +106,7 @@ header.brand h1 .jp{
 .card.unavailable .overlay-unavailable{ opacity:1; }
 
 .body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1;}
-.title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
+.title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center; transition: transform 0.2s;}
 .title .name{
   display:flex;
   gap:6px;
@@ -140,14 +140,14 @@ header.brand h1 .jp{
   100% { transform: translateX(0); }
 }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
-.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
-.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-.old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; }
+.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto; transition: transform 0.2s;}
+.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap; transition: transform 0.2s;}
+.old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; transition: transform 0.2s; }
+.discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; transition: transform 0.2s;}
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
-.note{color:var(--muted); font-size:0.9rem;}
+.note{color:var(--muted); font-size:0.9rem; transition: transform 0.2s;}
 .cart-icon{
   position:absolute;
   top:6px;
@@ -167,7 +167,6 @@ header.brand h1 .jp{
 .cart-icon img{width:26px;height:26px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
-/* Новый бейдж "Скидка" */
 .discount-badge {
   position: absolute;
   top: 6px;
@@ -185,6 +184,7 @@ header.brand h1 .jp{
   pointer-events: none;
   opacity: 0.75;
   z-index: 5;
+  transition: all 0.2s;
 }
 .card.has-discount .discount-badge {
   opacity: 1;
@@ -217,8 +217,8 @@ header.brand h1 .jp{
 
 .floating-cart {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  top: 6px;
+  right: 6px;
   background: rgba(255,43,43,0.45);
   color: #fff;
   padding: 14px 20px;
@@ -236,24 +236,27 @@ header.brand h1 .jp{
 .floating-cart img { width: 30px; height: 30px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
 
-/* Адаптив для телефонов */
 @media (max-width: 767px) {
   .cart-icon{
     width:46px;
     height:46px;
     top:4px;
     right:4px;
-    background: rgba(0,0,0,0.6);
   }
   .cart-icon img{
-    width:34px;
-    height:34px;
+    width:32px;
+    height:32px;
   }
-
-  .card .title { font-size: 1.2rem; }
-  .card .price { font-size: 1.2rem; }
-  .card .discount { font-size: 1.2rem; }
-  .card .old-price { font-size: 1.15rem; }
+  .price, .discount, .old-price, .note{
+    transform: translateY(3px);
+    font-size:1.08rem;
+  }
+  .title{transform: translateY(-3px);}
+  .discount-badge {
+    font-size:0.95rem;
+    padding:0 14px;
+    height:38px;
+  }
 }
 </style>
 </head>
@@ -267,7 +270,7 @@ header.brand h1 .jp{
   <main>
     <section class="grid" aria-label="Меню роллов">
 
-      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
+      <!-- ВСЕ КАРТОЧКИ -->
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
