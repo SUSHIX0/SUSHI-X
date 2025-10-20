@@ -795,25 +795,52 @@ async function updateMenuFromSheet(){
     // Раздел специальных предложений
     updateSpecialOffersSection();
 
-    // Анимация появления карточек и секций
-    const sections = document.querySelectorAll('.menu-section');
-    sections.forEach((section, secIndex)=>{
-      const cards = section.querySelectorAll('.card');
-      // Плавное появление карточек
-      cards.forEach((card, i)=>{
-        setTimeout(()=> card.classList.add('visible'), (i + secIndex*3)*80); // быстрее
-      });
-      // Плавное появление заголовка секции
-      const title = section.querySelector('.section-title');
-      if(title){
-        setTimeout(()=> title.classList.add('visible'), cards.length*80 + secIndex*100);
-      }
-      // Появление самой секции (для opacity)
-      setTimeout(()=> section.classList.add('show'), cards.length*80 + secIndex*150);
-    });
+    // ===== Новый блок анимации с задержкой =====
+    setTimeout(()=>{
+      const sections = document.querySelectorAll('.menu-section');
+      sections.forEach((section, secIndex)=>{
+        const cards = section.querySelectorAll('.card');
 
-    // Главный бар
-    mainBar.classList.add('show');
+        cards.forEach((card, i)=>{
+          card.style.opacity = 0;
+          card.style.transform = 'translateY(20px) scale(0.95)';
+          let delay = i * 60 + secIndex * 120;
+
+          // Если карточка в "Предложения", другой эффект
+          if(section.id === 'specialOffers'){
+            card.style.transform = 'scale(0.8) rotate(-5deg)';
+            delay = i * 80 + secIndex * 150;
+            setTimeout(()=>{
+              card.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+              card.style.opacity = 1;
+              card.style.transform = 'scale(1) rotate(0deg)';
+            }, delay);
+          } else {
+            setTimeout(()=>{
+              card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              card.style.opacity = 1;
+              card.style.transform = 'translateY(0) scale(1)';
+            }, delay);
+          }
+        });
+
+        const title = section.querySelector('.section-title');
+        if(title){
+          title.style.opacity = 0;
+          title.style.transform = 'translateY(20px)';
+          setTimeout(()=>{
+            title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            title.style.opacity = 1;
+            title.style.transform = 'translateY(0)';
+          }, cards.length * 60 + secIndex * 130);
+        }
+
+        setTimeout(()=> section.classList.add('show'), cards.length * 60 + secIndex * 150);
+      });
+
+      mainBar.classList.add('show');
+    }, 300); // небольшая задержка перед запуском всей анимации
+    // ===== Конец нового блока =====
 
   }catch(e){ console.error('Ошибка загрузки меню', e); }
 }
@@ -839,6 +866,7 @@ function updateSpecialOffersSection(){
 }
 
 updateMenuFromSheet();
+
 </script>
 </body>
 </html>
