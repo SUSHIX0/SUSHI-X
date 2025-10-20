@@ -6,6 +6,7 @@
 <title>SUSHI メ — Меню</title>
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0f0f10;
@@ -50,13 +51,6 @@ header.brand h1 .jp{
   font-size: 1.3rem;
   text-align: center;
   margin-top: 25px; 
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap:30px;
-  width:100%;
 }
 
 .card{
@@ -360,6 +354,40 @@ body {
   }
 }
 
+.menu-section {
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-family: 'Jost', sans-serif; /* или Raleway */
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.menu-section .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* карточка минимально 280px, максимально растягивается */
+  gap: 30px;
+  justify-content: center; /* центрируем карточки в ряду */
+  justify-items: center; /* центрируем карточки внутри ячеек */
+  width: 100%;
+}
+
+.card {
+  width: 100%; /* занимает всю ширину своей ячейки */
+  max-width: 750px; /* карточка не больше 400px */
+}
+
+.menu-bottom-space {
+  height: 70px; /* регулируй под нужное пространство */
+  width: 100%;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -397,9 +425,10 @@ body {
 
 
   <main>
-    <section class="grid" aria-label="Меню роллов">
-
-      <!-- ВСЕ КАРТОЧКИ ТОВАРОВ -->
+  <!-- Раздел: Предложения -->
+  <section class="menu-section">
+    <h2 class="section-title">Предложения</h2>
+    <div class="grid">
       <article class="card" data-id="филадельфия">
         <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -423,7 +452,13 @@ body {
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+    </div>
+  </section>
 
+  <!-- Раздел: Урамаки -->
+  <section class="menu-section">
+    <h2 class="section-title">Урамаки</h2>
+    <div class="grid">
       <article class="card" data-id="калифорния">
         <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -447,7 +482,13 @@ body {
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+    </div>
+  </section>
 
+  <!-- Раздел: Футомаки -->
+  <section class="menu-section">
+    <h2 class="section-title">Футомаки</h2>
+    <div class="grid">
       <article class="card" data-id="маки_с_огурцом">
         <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -495,9 +536,10 @@ body {
           <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
         </div>
       </article>
-
-    </section>
-  </main>
+    </div>
+  </section>
+  <div class="menu-bottom-space"></div>
+</main>
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
