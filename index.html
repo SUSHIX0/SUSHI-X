@@ -268,6 +268,21 @@ header.brand h1 .jp{
   .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
 }
 
+
+html, body {
+  background-color: #0f0f10;
+  overscroll-behavior: none; /* отключает пружинку на iOS/Android */
+  height: 100%;
+}
+
+body {
+  background-attachment: fixed; /* чтобы градиент не двигался */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
 :root {
   --accent: #ff2d2d;
 }
