@@ -388,6 +388,39 @@ body {
 
 
 
+
+
+/* Исходное состояние всех элементов */
+.card,
+.menu-filters,
+.menu-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+/* Состояние "видимые" */
+.card.visible,
+.menu-filters.show,
+.menu-content.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Названия секций */
+.section-title {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.section-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
 </style>
 </head>
 <body>
@@ -425,6 +458,12 @@ body {
 
 
   <main>
+
+<section class="menu-section" id="specialOffers">
+  <h2 class="section-title">Предложения</h2>
+  <div class="grid"></div>
+</section>
+
   <!-- Раздел: Урамаки -->
   <section class="menu-section">
     <h2 class="section-title">Урамаки</h2>
@@ -642,6 +681,40 @@ body {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
+function showToast(message,isRed=false){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show ' + (isRed?'red':'white');
+  setTimeout(()=>{toast.classList.remove('show');},2500);
+}
+
+// Плавающий бар
+const mainBar = document.getElementById('menuFilters');
+const floatingBar = document.getElementById('menuFiltersFloating');
+
+function shouldShowFloatingBar() {
+  if (window.innerWidth > 767) return true;
+  const sections = document.querySelectorAll('.menu-section');
+  const firstSection = sections[0]?.querySelector('.grid');
+  if(!firstSection) return false;
+  const cards = Array.from(firstSection.children);
+  if(cards.length < 2) return false;
+  const rect1 = cards[0].getBoundingClientRect();
+  const rect2 = cards[1].getBoundingClientRect();
+  return rect1.top === rect2.top;
+}
+
+window.addEventListener('scroll', () => {
+  const mainTop = mainBar.getBoundingClientRect().top;
+  if (!shouldShowFloatingBar() || mainTop > 0) floatingBar.classList.remove('show');
+  else floatingBar.classList.add('show');
+});
+
+window.addEventListener('resize', () => {
+  if (!shouldShowFloatingBar()) floatingBar.classList.remove('show');
+});
+
+// Основная функция обновления меню
 async function updateMenuFromSheet(){
   try{
     const res = await fetch(sheetUrl);
@@ -652,16 +725,16 @@ async function updateMenuFromSheet(){
 
     let ordersEnabled = true;
 
-    data.forEach((item,index)=>{
+    for(let index=0; index<data.length; index++){
+      const item = data[index];
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
         ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
-        return;
+        continue;
       }
 
-      const id = item['id'];
-      const el = document.querySelector(`.card[data-id="${id}"]`);
-      if(!el) return;
+      const el = document.querySelector(`.card[data-id="${item['id']}"]`);
+      if(!el) continue;
 
       const priceEl = el.querySelector('.price');
       const overlay = el.querySelector('.overlay-unavailable');
@@ -671,17 +744,23 @@ async function updateMenuFromSheet(){
       const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
       el.style.display = hidden ? 'none' : '';
 
-      setTimeout(()=> el.classList.add('visible'), index*100);
-
+      // Цена и скидка
       const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
       const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
       const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
       let priceHTML = '';
-      if(discountPrice > 0 && discountPrice < basePrice){
+
+      if(discountPrice>0 && discountPrice<basePrice){
         const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
         el.classList.add('has-discount');
+        if(!el.querySelector('.discount-badge')){
+          const badge = document.createElement('div');
+          badge.className = 'discount-badge';
+          badge.textContent = 'Скидка';
+          el.querySelector('.photo').appendChild(badge);
+        }
       } else {
         const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
         priceHTML = `${formattedBase} €`;
@@ -689,14 +768,7 @@ async function updateMenuFromSheet(){
       }
       if(priceEl) priceEl.innerHTML = priceHTML;
 
-      let discountBadge = el.querySelector('.discount-badge');
-      if(!discountBadge && discountPrice>0 && discountPrice < basePrice){
-        discountBadge = document.createElement('div');
-        discountBadge.className = 'discount-badge';
-        discountBadge.textContent = 'Скидка';
-        el.querySelector('.photo').appendChild(discountBadge);
-      }
-
+      // Доступность
       if(!available){
         el.classList.add('unavailable'); 
         if(overlay) overlay.textContent = 'Временно недоступно';
@@ -706,121 +778,67 @@ async function updateMenuFromSheet(){
         if(overlay) overlay.textContent = '';
         if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
       }
-    });
+    }
 
+    // Корзина
     document.querySelectorAll('.cart-icon').forEach(icon=>{
-      icon.onclick = ()=>{ 
+      icon.onclick = ()=>{
         if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
         else showToast('Товар добавлен в корзину', false);
       }
     });
-    document.querySelector('.floating-cart').onclick = ()=>{ 
+    document.querySelector('.floating-cart').onclick = ()=>{
       if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
       else showToast('Товар добавлен в корзину', false);
     };
 
-  }catch(e){ console.error('Ошибка загрузки меню из Google Sheets', e); }
+    // Раздел специальных предложений
+    updateSpecialOffersSection();
+
+    // Анимация появления карточек и секций
+    const sections = document.querySelectorAll('.menu-section');
+    sections.forEach((section, secIndex)=>{
+      const cards = section.querySelectorAll('.card');
+      // Плавное появление карточек
+      cards.forEach((card, i)=>{
+        setTimeout(()=> card.classList.add('visible'), (i + secIndex*3)*80); // быстрее
+      });
+      // Плавное появление заголовка секции
+      const title = section.querySelector('.section-title');
+      if(title){
+        setTimeout(()=> title.classList.add('visible'), cards.length*80 + secIndex*100);
+      }
+      // Появление самой секции (для opacity)
+      setTimeout(()=> section.classList.add('show'), cards.length*80 + secIndex*150);
+    });
+
+    // Главный бар
+    mainBar.classList.add('show');
+
+  }catch(e){ console.error('Ошибка загрузки меню', e); }
 }
 
-function showToast(message,isRed=false){
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = 'toast show ' + (isRed?'red':'white');
-  setTimeout(()=>{toast.classList.remove('show');},2500);
+// Раздел специальных предложений
+function updateSpecialOffersSection(){
+  const specialGrid = document.querySelector('#specialOffers .grid');
+  const specialSection = document.getElementById('specialOffers');
+  const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
+  if(!specialGrid || !specialSection) return;
+  specialGrid.innerHTML = '';
+  const discountedCards = document.querySelectorAll('.card.has-discount');
+
+  if(discountedCards.length > 0){
+    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
+    specialSection.style.display = 'block';
+    buttons.forEach(btn => { if(btn.textContent.trim()==='Предложения') btn.style.display='inline-block'; });
+  } else {
+    specialSection.style.display = 'none';
+    buttons.forEach(btn => { if(btn.textContent.trim()==='Предложения') btn.style.display='none'; });
+  }
 }
 
 updateMenuFromSheet();
-
-document.addEventListener('DOMContentLoaded', () => {
-  const duration = 6;
-
-  document.querySelectorAll('.label-jp').forEach(label => {
-    const textEl = label.querySelector('.scroll-text');
-    if (!textEl) return;
-
-    textEl.style.animation = 'none';
-
-    const textWidth = textEl.scrollWidth;
-    const labelWidth = label.clientWidth;
-
-    const lastChar = textEl.textContent.slice(-1);
-    const span = document.createElement('span');
-    span.style.visibility = 'hidden';
-    span.style.position = 'absolute';
-    span.style.font = window.getComputedStyle(textEl).font;
-    span.textContent = lastChar;
-    document.body.appendChild(span);
-    const lastCharWidth = span.getBoundingClientRect().width;
-    document.body.removeChild(span);
-
-    let keyframes;
-
-    if (textWidth > labelWidth) {
-      // длинный текст — полный сдвиг влево
-      const distance = textWidth - labelWidth + lastCharWidth;
-      keyframes = `
-        0% { transform: translateX(0); }
-        50% { transform: translateX(-${distance}px); }
-        100% { transform: translateX(0); }
-      `;
-    } else {
-      // короткий текст — небольшой симметричный "качок"
-      const distance = Math.min(3, (labelWidth - textWidth)/2); // максимум 3px
-      keyframes = `
-        0% { transform: translateX(0); }
-        50% { transform: translateX(-${distance}px); }
-        100% { transform: translateX(0); }
-      `;
-    }
-
-    const animName = `scroll-${Math.random().toString(36).slice(2,6)}`;
-    const styleEl = document.createElement('style');
-    styleEl.textContent = `@keyframes ${animName} { ${keyframes} }`;
-    document.head.appendChild(styleEl);
-
-    textEl.style.animation = `${animName} ${duration}s ease-in-out infinite`;
-    textEl.style.animationDelay = '0s';
-  });
-});
-
-const mainBar = document.getElementById('menuFilters');
-const floatingBar = document.getElementById('menuFiltersFloating');
-const grid = document.querySelector('.grid'); // контейнер карточек
-
-function shouldShowFloatingBar() {
-  if (window.innerWidth > 767) return true; // планшет/ПК — всегда показываем
-
-  const cards = Array.from(grid?.children || []);
-  if (cards.length < 2) return false;
-
-  // Проверяем положение первых двух карточек
-  const first = cards[0].getBoundingClientRect();
-  const second = cards[1].getBoundingClientRect();
-
-  // Если top совпадает → карточки в два ряда → бар показываем
-  return first.top === second.top;
-}
-
-window.addEventListener('scroll', () => {
-  if (!shouldShowFloatingBar()) {
-    floatingBar.classList.remove('show');
-    return;
-  }
-
-  const mainBarTop = mainBar.getBoundingClientRect().top;
-  if (mainBarTop <= 0) {
-    floatingBar.classList.add('show');
-  } else {
-    floatingBar.classList.remove('show');
-  }
-});
-
-window.addEventListener('resize', () => {
-  if (!shouldShowFloatingBar()) {
-    floatingBar.classList.remove('show');
-  }
-});
-
 </script>
 </body>
 </html>
