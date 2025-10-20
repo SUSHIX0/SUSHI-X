@@ -267,6 +267,64 @@ header.brand h1 .jp{
 @media (min-width: 768px) {
   .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
 }
+
+:root {
+  --accent: #ff2d2d;
+}
+
+/* Основной и плавающий бар */
+.menu-filters,
+.menu-filters-floating {
+  display: flex;
+  flex-wrap: wrap;       /* перенос на новую строку при необходимости */
+  gap: 10px;
+  justify-content: center;
+  z-index: 999;
+}
+
+.menu-filters {
+  margin-bottom: 30px;
+}
+
+/* Кнопки */
+.menu-filters button,
+.menu-filters-floating button {
+  background: rgba(255,45,45,0.15);
+  border: none;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menu-filters button:hover,
+.menu-filters-floating button:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Плавающий бар (изначально скрыт) */
+.menu-filters-floating {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  background: rgba(15,15,16,0.95);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease; /* быстрое появление */
+}
+
+.menu-filters-floating.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 </style>
 </head>
 <body>
@@ -275,6 +333,19 @@ header.brand h1 .jp{
     <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
   </header>
   <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
+
+<!-- Основной бар (всегда виден) -->
+<div class="menu-filters" id="menuFilters">
+  <button>Предложения</button>
+  <button>Урамаки</button>
+  <button>Футомаки</button>
+  <button>Маки</button>
+  <button>Темпура</button>
+  <button>Запеченные</button>
+  <button>Нигири</button>
+  <button>Наборы</button>
+  <button>Дополнительно</button>
+</div>
 
   <main>
     <section class="grid" aria-label="Меню роллов">
@@ -529,6 +600,31 @@ document.addEventListener('DOMContentLoaded', () => {
     textEl.style.animationDelay = '0s';
   });
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+  const mainBar = document.getElementById('menuFilters');
+
+  const floatingBar = document.createElement('div');
+  floatingBar.id = 'menuFiltersFloating';
+  floatingBar.className = 'menu-filters-floating';
+
+  // клонируем все кнопки как узлы
+  mainBar.querySelectorAll('button').forEach(btn => {
+    floatingBar.appendChild(btn.cloneNode(true));
+  });
+
+  document.body.appendChild(floatingBar);
+
+  window.addEventListener('scroll', () => {
+    const mainBarBottom = mainBar.getBoundingClientRect().bottom;
+    if (mainBarBottom <= 0) {
+      floatingBar.classList.add('show');
+    } else {
+      floatingBar.classList.remove('show');
+    }
+  });
+});
+
 
 </script>
 </body>
