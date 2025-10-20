@@ -701,6 +701,8 @@ function showToast(message,isRed=false){
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
+const sections = document.querySelectorAll('.menu-section');
+const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
 
 function shouldShowFloatingBar() {
   if (window.innerWidth > 767) return true;
@@ -717,10 +719,46 @@ window.addEventListener('scroll', () => {
   const mainTop = mainBar.getBoundingClientRect().top;
   if (!shouldShowFloatingBar() || mainTop > 0) floatingBar.classList.remove('show');
   else floatingBar.classList.add('show');
+
+  updateActiveFilter();
 });
 
 window.addEventListener('resize', () => {
   if (!shouldShowFloatingBar()) floatingBar.classList.remove('show');
+  updateActiveFilter();
+});
+
+// ===== Активный фильтр =====
+function updateActiveFilter() {
+  const scrollPos = window.scrollY + mainBar.offsetHeight + 10;
+  let currentSection = sections[0];
+
+  sections.forEach(sec => {
+    if (sec.offsetTop <= scrollPos) {
+      currentSection = sec;
+    }
+  });
+
+  const sectionName = currentSection.querySelector('.section-title')?.textContent.trim().toLowerCase();
+  buttons.forEach(btn => {
+    if (btn.textContent.trim().toLowerCase() === sectionName) btn.classList.add('active-filter');
+    else btn.classList.remove('active-filter');
+  });
+}
+
+// ===== Плавный скролл по кнопке =====
+buttons.forEach(btn => {
+  btn.addEventListener('click', e => {
+    const text = e.target.textContent.trim().toLowerCase();
+    const targetSection = Array.from(sections).find(sec => {
+      const title = sec.querySelector('.section-title');
+      return title && title.textContent.trim().toLowerCase() === text;
+    });
+    if (targetSection) {
+      const offsetTop = targetSection.offsetTop - mainBar.offsetHeight;
+      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+    }
+  });
 });
 
 // ===== Обновление меню из Google Sheets =====
@@ -857,53 +895,12 @@ function animateCards(){
   mainBar.classList.add('show');
 }
 
-// ===== IntersectionObserver для активного фильтра =====
-const observerOptions = {
-  root: null,
-  rootMargin: '0px 0px -50% 0px',
-  threshold: 0
-};
-const sections = document.querySelectorAll('.menu-section');
-const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
-
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
-    const title = entry.target.querySelector('.section-title');
-    if(title){
-      const sectionName = title.textContent.trim().toLowerCase();
-      if(entry.isIntersecting){
-        buttons.forEach(btn=>{
-          if(btn.textContent.trim().toLowerCase() === sectionName) btn.classList.add('active-filter');
-          else btn.classList.remove('active-filter');
-        });
-      }
-    }
-  });
-}, observerOptions);
-
-sections.forEach(sec=>observer.observe(sec));
-
-// ===== Плавный скролл по кнопке =====
-buttons.forEach(btn=>{
-  btn.addEventListener('click', e=>{
-    const text = e.target.textContent.trim().toLowerCase();
-    const targetSection = Array.from(sections).find(sec=>{
-      const title = sec.querySelector('.section-title');
-      return title && title.textContent.trim().toLowerCase()===text;
-    });
-    if(targetSection){
-      window.scrollTo({
-        top: targetSection.offsetTop - 60,
-        behavior: 'smooth'
-      });
-    }
-  });
-});
-
 // ===== Инициализация =====
 updateMenuFromSheet();
+updateActiveFilter();
 
 </script>
+
 
 </body>
 </html>
