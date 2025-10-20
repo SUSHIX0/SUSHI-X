@@ -268,12 +268,14 @@ header.brand h1 .jp{
   .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
 }
 
-:root { --accent:#ff2d2d; }
+:root {
+  --accent: #ff2d2d;
+}
 
-/* Общие стили кнопок всех баров */
+/* Общие стили кнопок */
 .menu-filters button,
 .menu-filters-floating button {
-  background: rgba(255,45,45,0.15);
+  background: rgba(255, 45, 45, 0.15);
   border: none;
   color: #fff;
   padding: 10px 16px;
@@ -281,6 +283,7 @@ header.brand h1 .jp{
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .menu-filters button:hover,
@@ -308,31 +311,36 @@ header.brand h1 .jp{
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  background: rgba(15,15,16,0.95);
+  background: rgba(15, 15, 16, 0.95);
   padding: 10px 0;
   transform: translateY(-100%);
   opacity: 0;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease;
   z-index: 999;
 }
 
-/* Показать плавающий бар */
 .menu-filters-floating.show {
   transform: translateY(0);
   opacity: 1;
 }
 
-/* Мобильная адаптация: основной бар в два ряда */
+/* Мобильная версия: просто перенос кнопок, без фиксированного количества рядов */
 @media (max-width: 767px) {
-  .menu-filters { margin-bottom: 80px; }
-  .menu-filters button { font-size: 0.9rem; padding: 8px 12px; }
+  .menu-filters button,
+  .menu-filters-floating button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
 }
 
-/* Планшет/ПК */
+/* Планшет и ПК */
 @media (min-width: 768px) {
-  .menu-filters button { font-size: 1rem; padding: 10px 16px; }
+  .menu-filters button,
+  .menu-filters-floating button {
+    font-size: 1rem;
+    padding: 10px 16px;
+  }
 }
-
 
 </style>
 </head>
@@ -356,7 +364,7 @@ header.brand h1 .jp{
   <button>Дополнительно</button>
 </div>
 
-<!-- Плавающий бар для ПК/планшет/мобильных -->
+<!-- Плавающий бар -->
 <div class="menu-filters-floating" id="menuFiltersFloating">
   <button>Предложения</button>
   <button>Урамаки</button>
@@ -368,6 +376,7 @@ header.brand h1 .jp{
   <button>Наборы</button>
   <button>Дополнительно</button>
 </div>
+
 
   <main>
     <section class="grid" aria-label="Меню роллов">
@@ -625,11 +634,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
+const grid = document.querySelector('.grid'); // контейнер карточек
+
+function shouldShowFloatingBar() {
+  // Планшет/ПК — всегда показываем
+  if (window.innerWidth > 767) return true;
+
+  const cards = Array.from(grid?.children || []);
+  if (cards.length < 2) return false;
+
+  // Сравниваем вертикальные координаты двух первых карточек
+  const first = cards[0].getBoundingClientRect();
+  const second = cards[1].getBoundingClientRect();
+
+  // Если top совпадает — карточки стоят в одном ряду → бар показываем
+  // Если нет — карточки в один столбец → бар отключаем
+  return first.top === second.top;
+}
 
 window.addEventListener('scroll', () => {
-  const mainBarTop = mainBar.getBoundingClientRect().top;
+  // Проверяем, нужно ли показывать бар
+  if (!shouldShowFloatingBar()) {
+    floatingBar.classList.remove('show');
+    return;
+  }
 
-  // Показываем плавающий бар, если основной бар прокручен за верх
+  const mainBarTop = mainBar.getBoundingClientRect().top;
   if (mainBarTop <= 0) {
     floatingBar.classList.add('show');
   } else {
@@ -637,7 +667,11 @@ window.addEventListener('scroll', () => {
   }
 });
 
-
+window.addEventListener('resize', () => {
+  if (!shouldShowFloatingBar()) {
+    floatingBar.classList.remove('show');
+  }
+});
 
 </script>
 </body>
