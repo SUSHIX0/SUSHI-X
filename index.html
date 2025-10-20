@@ -691,25 +691,23 @@ body {
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
 // ===== Toast =====
-function showToast(message,isRed=false){
+function showToast(message, isRed = false) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
-  toast.className = 'toast show ' + (isRed?'red':'white');
-  setTimeout(()=>{toast.classList.remove('show');},2500);
+  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+  setTimeout(() => { toast.classList.remove('show'); }, 2500);
 }
 
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
-const sections = document.querySelectorAll('.menu-section');
-const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
 
 function shouldShowFloatingBar() {
   if (window.innerWidth > 767) return true;
   const firstSection = document.querySelector('.menu-section .grid');
-  if(!firstSection) return false;
+  if (!firstSection) return false;
   const cards = Array.from(firstSection.children);
-  if(cards.length < 2) return false;
+  if (cards.length < 2) return false;
   const rect1 = cards[0].getBoundingClientRect();
   const rect2 = cards[1].getBoundingClientRect();
   return rect1.top === rect2.top;
@@ -725,16 +723,154 @@ window.addEventListener('scroll', () => {
 
 window.addEventListener('resize', () => {
   if (!shouldShowFloatingBar()) floatingBar.classList.remove('show');
-  updateActiveFilter();
 });
 
+// ===== Обновление меню из Google Sheets =====
+async function updateMenuFromSheet() {
+  try {
+    const res = await fetch(sheetUrl);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r => r.split(','));
+    const headers = rows[0].map(h => h.trim());
+    const data = rows.slice(1).map(r => Object.fromEntries(r.map((v, i) => [headers[i], v.trim()])));
+    let ordersEnabled = true;
+
+    for (let item of data) {
+      if (item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
+        ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
+        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
+        continue;
+      }
+
+      const el = document.querySelector(`.card[data-id="${item['id']}"]`);
+      if (!el) continue;
+
+      const priceEl = el.querySelector('.price');
+      const overlay = el.querySelector('.overlay-unavailable');
+      const cartIcon = el.querySelector('.cart-icon');
+
+      const available = (item['Доступно'] || '').toLowerCase() === 'true';
+      const hidden = (item['Скрыто'] || '').toLowerCase() === 'true';
+      el.style.display = hidden ? 'none' : '';
+
+      // Цена и скидка
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+      let priceHTML = '';
+
+      if (discountPrice > 0 && discountPrice < basePrice) {
+        const formattedOld = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const formattedNew = discountPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+        el.classList.add('has-discount');
+        if (!el.querySelector('.discount-badge')) {
+          const badge = document.createElement('div');
+          badge.className = 'discount-badge';
+          badge.textContent = 'Скидка';
+          el.querySelector('.photo').appendChild(badge);
+        }
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        priceHTML = `${formattedBase} €`;
+        el.classList.remove('has-discount');
+      }
+      if (priceEl) priceEl.innerHTML = priceHTML;
+
+      // Доступность
+      if (!available) {
+        el.classList.add('unavailable');
+        if (overlay) overlay.textContent = 'Временно недоступно';
+        if (cartIcon) cartIcon.classList.add('hidden');
+      } else {
+        el.classList.remove('unavailable');
+        if (overlay) overlay.textContent = '';
+        if (cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+      }
+    }
+
+    // Корзина
+    document.querySelectorAll('.cart-icon').forEach(icon => {
+      icon.onclick = () => {
+        if (!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
+    });
+    document.querySelector('.floating-cart').onclick = () => {
+      if (!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      else showToast('Товар добавлен в корзину', false);
+    };
+
+    // Специальные предложения
+    updateSpecialOffersSection();
+
+    // Анимация карточек
+    animateCards();
+
+  } catch (e) { console.error('Ошибка загрузки меню', e); }
+}
+
+// ===== Специальные предложения =====
+function updateSpecialOffersSection() {
+  const specialGrid = document.querySelector('#specialOffers .grid');
+  const specialSection = document.getElementById('specialOffers');
+  const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
+  if (!specialGrid || !specialSection) return;
+  specialGrid.innerHTML = '';
+  const discountedCards = document.querySelectorAll('.card.has-discount');
+
+  if (discountedCards.length > 0) {
+    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
+    specialSection.style.display = 'block';
+    buttons.forEach(btn => { if (btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display = 'inline-block'; });
+  } else {
+    specialSection.style.display = 'none';
+    buttons.forEach(btn => { if (btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display = 'none'; });
+  }
+}
+
+// ===== Анимация карточек =====
+function animateCards() {
+  const sections = document.querySelectorAll('.menu-section');
+  sections.forEach((section, secIndex) => {
+    const cards = section.querySelectorAll('.card');
+    cards.forEach((card, i) => {
+      card.style.opacity = 0;
+      card.style.transform = 'translateY(20px) scale(0.95)';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        card.style.opacity = 1;
+        card.style.transform = 'translateY(0) scale(1)';
+      }, i * 60 + secIndex * 120);
+    });
+    const title = section.querySelector('.section-title');
+    if (title) {
+      title.style.opacity = 0;
+      title.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        title.style.opacity = 1;
+        title.style.transform = 'translateY(0)';
+      }, cards.length * 60 + secIndex * 130);
+    }
+    setTimeout(() => section.classList.add('show'), cards.length * 60 + secIndex * 150);
+  });
+  mainBar.classList.add('show');
+}
+
 // ===== Активный фильтр =====
+const sections = document.querySelectorAll('.menu-section');
+const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
 function updateActiveFilter() {
-  const scrollPos = window.scrollY + mainBar.offsetHeight + 10;
+  const scrollTop = window.scrollY + 100; // небольшой отступ сверху
   let currentSection = sections[0];
 
   sections.forEach(sec => {
-    if (sec.offsetTop <= scrollPos) {
+    const top = sec.offsetTop;
+    const bottom = top + sec.offsetHeight;
+    if (scrollTop >= top && scrollTop < bottom) {
       currentSection = sec;
     }
   });
@@ -755,152 +891,19 @@ buttons.forEach(btn => {
       return title && title.textContent.trim().toLowerCase() === text;
     });
     if (targetSection) {
-      const offsetTop = targetSection.offsetTop - mainBar.offsetHeight;
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      window.scrollTo({
+        top: targetSection.offsetTop - 80, // отступ сверху
+        behavior: 'smooth'
+      });
     }
   });
 });
-
-// ===== Обновление меню из Google Sheets =====
-async function updateMenuFromSheet(){
-  try{
-    const res = await fetch(sheetUrl);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(r=>r.split(','));
-    const headers = rows[0].map(h=>h.trim());
-    const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
-    let ordersEnabled = true;
-
-    for(let item of data){
-      if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
-        ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
-        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
-        continue;
-      }
-
-      const el = document.querySelector(`.card[data-id="${item['id']}"]`);
-      if(!el) continue;
-
-      const priceEl = el.querySelector('.price');
-      const overlay = el.querySelector('.overlay-unavailable');
-      const cartIcon = el.querySelector('.cart-icon');
-
-      const available = (item['Доступно']||'').toLowerCase() === 'true';
-      const hidden = (item['Скрыто']||'').toLowerCase() === 'true';
-      el.style.display = hidden ? 'none' : '';
-
-      // Цена и скидка
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
-      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
-      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
-      let priceHTML = '';
-
-      if(discountPrice>0 && discountPrice<basePrice){
-        const formattedOld = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        const formattedNew = discountPrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
-        el.classList.add('has-discount');
-        if(!el.querySelector('.discount-badge')){
-          const badge = document.createElement('div');
-          badge.className = 'discount-badge';
-          badge.textContent = 'Скидка';
-          el.querySelector('.photo').appendChild(badge);
-        }
-      } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2});
-        priceHTML = `${formattedBase} €`;
-        el.classList.remove('has-discount');
-      }
-      if(priceEl) priceEl.innerHTML = priceHTML;
-
-      // Доступность
-      if(!available){
-        el.classList.add('unavailable'); 
-        if(overlay) overlay.textContent = 'Временно недоступно';
-        if(cartIcon) cartIcon.classList.add('hidden');
-      } else {
-        el.classList.remove('unavailable'); 
-        if(overlay) overlay.textContent = '';
-        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
-      }
-    }
-
-    // Корзина
-    document.querySelectorAll('.cart-icon').forEach(icon=>{
-      icon.onclick = ()=>{
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
-    });
-    document.querySelector('.floating-cart').onclick = ()=>{
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
-    };
-
-    // Специальные предложения
-    updateSpecialOffersSection();
-
-    // Анимация карточек
-    animateCards();
-
-  }catch(e){ console.error('Ошибка загрузки меню', e); }
-}
-
-// ===== Специальные предложения =====
-function updateSpecialOffersSection(){
-  const specialGrid = document.querySelector('#specialOffers .grid');
-  const specialSection = document.getElementById('specialOffers');
-  const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
-
-  if(!specialGrid || !specialSection) return;
-  specialGrid.innerHTML = '';
-  const discountedCards = document.querySelectorAll('.card.has-discount');
-
-  if(discountedCards.length > 0){
-    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
-    specialSection.style.display = 'block';
-    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase()==='предложения') btn.style.display='inline-block'; });
-  } else {
-    specialSection.style.display = 'none';
-    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase()==='предложения') btn.style.display='none'; });
-  }
-}
-
-// ===== Анимация карточек =====
-function animateCards(){
-  const sections = document.querySelectorAll('.menu-section');
-  sections.forEach((section, secIndex)=>{
-    const cards = section.querySelectorAll('.card');
-    cards.forEach((card, i)=>{
-      card.style.opacity = 0;
-      card.style.transform = 'translateY(20px) scale(0.95)';
-      setTimeout(()=>{
-        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        card.style.opacity = 1;
-        card.style.transform = 'translateY(0) scale(1)';
-      }, i*60 + secIndex*120);
-    });
-    const title = section.querySelector('.section-title');
-    if(title){
-      title.style.opacity = 0;
-      title.style.transform = 'translateY(20px)';
-      setTimeout(()=>{
-        title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        title.style.opacity = 1;
-        title.style.transform = 'translateY(0)';
-      }, cards.length*60 + secIndex*130);
-    }
-    setTimeout(()=> section.classList.add('show'), cards.length*60 + secIndex*150);
-  });
-  mainBar.classList.add('show');
-}
 
 // ===== Инициализация =====
 updateMenuFromSheet();
 updateActiveFilter();
 
 </script>
-
 
 </body>
 </html>
