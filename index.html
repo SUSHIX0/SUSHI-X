@@ -419,6 +419,14 @@ body {
   transform: translateY(0);
 }
 
+/* Активная кнопка фильтра */
+.menu-filters button.active-filter,
+.menu-filters-floating button.active-filter {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(255,45,45,0.3);
+}
 
 
 </style>
@@ -437,7 +445,7 @@ body {
   <button>Футомаки</button>
   <button>Маки</button>
   <button>Темпура</button>
-  <button>Запеченные</button>
+  <button>Запечённые</button>
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
@@ -450,7 +458,7 @@ body {
   <button>Футомаки</button>
   <button>Маки</button>
   <button>Темпура</button>
-  <button>Запеченные</button>
+  <button>Запечённые</button>
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
@@ -518,36 +526,6 @@ body {
     </div>
   </section>
 
-  <!-- Раздел: Маки -->
-  <section class="menu-section">
-    <h2 class="section-title">Маки</h2>
-    <div class="grid">
-      <article class="card" data-id="маки_с_огурцом">
-        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
-          <p class="ingredients">Огурец</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="маки_с_омлетом">
-        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
-          <p class="ingredients">Японский омлет</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-    </div>
-  </section>
-
   <!-- Раздел: Футомаки -->
   <section class="menu-section">
     <h2 class="section-title">Футомаки</h2>
@@ -572,6 +550,36 @@ body {
         <div class="body">
           <h3 class="title"><span class="name">Футомаки с креветкой</span><span class="label-jp"><span class="scroll-text">エビ太巻き</span></span></h3>
           <p class="ingredients">Огурец · Сыр Philadelphia · Креветка</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Маки -->
+  <section class="menu-section">
+    <h2 class="section-title">Маки</h2>
+    <div class="grid">
+      <article class="card" data-id="маки_с_огурцом">
+        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
+          <p class="ingredients">Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="маки_с_омлетом">
+        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
+          <p class="ingredients">Японский омлет</p>
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
@@ -608,36 +616,6 @@ body {
     </div>
   </section>
 
-  <!-- Раздел: Нигири -->
-  <section class="menu-section">
-    <h2 class="section-title">Нигири</h2>
-    <div class="grid">
-      <article class="card" data-id="нигири_с_креветкой">
-        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
-          <p class="ingredients">Креветка</p>
-          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
-      <article class="card" data-id="нигири_с_угрём">
-        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
-          <p class="ingredients">Угорь</p>
-          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-    </div>
-  </section>
-
   <!-- Раздел: Запечённые -->
   <section class="menu-section">
     <h2 class="section-title">Запечённые</h2>
@@ -668,6 +646,37 @@ body {
     </div>
   </section>
 
+  <!-- Раздел: Нигири -->
+  <section class="menu-section">
+    <h2 class="section-title">Нигири</h2>
+    <div class="grid">
+      <article class="card" data-id="нигири_с_креветкой">
+        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
+          <p class="ingredients">Креветка</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="нигири_с_угрём">
+        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
+          <p class="ingredients">Угорь</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+
   <div class="menu-bottom-space"></div>
 </main>
 </div>
@@ -681,6 +690,7 @@ body {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
+// ===== Toast =====
 function showToast(message,isRed=false){
   const toast = document.getElementById('toast');
   toast.textContent = message;
@@ -688,14 +698,13 @@ function showToast(message,isRed=false){
   setTimeout(()=>{toast.classList.remove('show');},2500);
 }
 
-// Плавающий бар
+// ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
 
 function shouldShowFloatingBar() {
   if (window.innerWidth > 767) return true;
-  const sections = document.querySelectorAll('.menu-section');
-  const firstSection = sections[0]?.querySelector('.grid');
+  const firstSection = document.querySelector('.menu-section .grid');
   if(!firstSection) return false;
   const cards = Array.from(firstSection.children);
   if(cards.length < 2) return false;
@@ -714,7 +723,7 @@ window.addEventListener('resize', () => {
   if (!shouldShowFloatingBar()) floatingBar.classList.remove('show');
 });
 
-// Основная функция обновления меню
+// ===== Обновление меню из Google Sheets =====
 async function updateMenuFromSheet(){
   try{
     const res = await fetch(sheetUrl);
@@ -722,11 +731,9 @@ async function updateMenuFromSheet(){
     const rows = text.trim().split('\n').map(r=>r.split(','));
     const headers = rows[0].map(h=>h.trim());
     const data = rows.slice(1).map(r=>Object.fromEntries(r.map((v,i)=>[headers[i],v.trim()])));
-
     let ordersEnabled = true;
 
-    for(let index=0; index<data.length; index++){
-      const item = data[index];
+    for(let item of data){
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled'){
         ordersEnabled = (item['Доступно']||item['Цена']||item['Цена_со_скидкой']||item['Скидка']||item['Скрыто']||'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
@@ -792,60 +799,16 @@ async function updateMenuFromSheet(){
       else showToast('Товар добавлен в корзину', false);
     };
 
-    // Раздел специальных предложений
+    // Специальные предложения
     updateSpecialOffersSection();
 
-    // ===== Новый блок анимации с задержкой =====
-    setTimeout(()=>{
-      const sections = document.querySelectorAll('.menu-section');
-      sections.forEach((section, secIndex)=>{
-        const cards = section.querySelectorAll('.card');
-
-        cards.forEach((card, i)=>{
-          card.style.opacity = 0;
-          card.style.transform = 'translateY(20px) scale(0.95)';
-          let delay = i * 60 + secIndex * 120;
-
-          // Если карточка в "Предложения", другой эффект
-          if(section.id === 'specialOffers'){
-            card.style.transform = 'scale(0.8) rotate(-5deg)';
-            delay = i * 80 + secIndex * 150;
-            setTimeout(()=>{
-              card.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-              card.style.opacity = 1;
-              card.style.transform = 'scale(1) rotate(0deg)';
-            }, delay);
-          } else {
-            setTimeout(()=>{
-              card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-              card.style.opacity = 1;
-              card.style.transform = 'translateY(0) scale(1)';
-            }, delay);
-          }
-        });
-
-        const title = section.querySelector('.section-title');
-        if(title){
-          title.style.opacity = 0;
-          title.style.transform = 'translateY(20px)';
-          setTimeout(()=>{
-            title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            title.style.opacity = 1;
-            title.style.transform = 'translateY(0)';
-          }, cards.length * 60 + secIndex * 130);
-        }
-
-        setTimeout(()=> section.classList.add('show'), cards.length * 60 + secIndex * 150);
-      });
-
-      mainBar.classList.add('show');
-    }, 300); // небольшая задержка перед запуском всей анимации
-    // ===== Конец нового блока =====
+    // Анимация карточек
+    animateCards();
 
   }catch(e){ console.error('Ошибка загрузки меню', e); }
 }
 
-// Раздел специальных предложений
+// ===== Специальные предложения =====
 function updateSpecialOffersSection(){
   const specialGrid = document.querySelector('#specialOffers .grid');
   const specialSection = document.getElementById('specialOffers');
@@ -858,15 +821,89 @@ function updateSpecialOffersSection(){
   if(discountedCards.length > 0){
     discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
     specialSection.style.display = 'block';
-    buttons.forEach(btn => { if(btn.textContent.trim()==='Предложения') btn.style.display='inline-block'; });
+    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase()==='предложения') btn.style.display='inline-block'; });
   } else {
     specialSection.style.display = 'none';
-    buttons.forEach(btn => { if(btn.textContent.trim()==='Предложения') btn.style.display='none'; });
+    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase()==='предложения') btn.style.display='none'; });
   }
 }
 
+// ===== Анимация карточек =====
+function animateCards(){
+  const sections = document.querySelectorAll('.menu-section');
+  sections.forEach((section, secIndex)=>{
+    const cards = section.querySelectorAll('.card');
+    cards.forEach((card, i)=>{
+      card.style.opacity = 0;
+      card.style.transform = 'translateY(20px) scale(0.95)';
+      setTimeout(()=>{
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        card.style.opacity = 1;
+        card.style.transform = 'translateY(0) scale(1)';
+      }, i*60 + secIndex*120);
+    });
+    const title = section.querySelector('.section-title');
+    if(title){
+      title.style.opacity = 0;
+      title.style.transform = 'translateY(20px)';
+      setTimeout(()=>{
+        title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        title.style.opacity = 1;
+        title.style.transform = 'translateY(0)';
+      }, cards.length*60 + secIndex*130);
+    }
+    setTimeout(()=> section.classList.add('show'), cards.length*60 + secIndex*150);
+  });
+  mainBar.classList.add('show');
+}
+
+// ===== IntersectionObserver для активного фильтра =====
+const observerOptions = {
+  root: null,
+  rootMargin: '0px 0px -50% 0px',
+  threshold: 0
+};
+const sections = document.querySelectorAll('.menu-section');
+const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const title = entry.target.querySelector('.section-title');
+    if(title){
+      const sectionName = title.textContent.trim().toLowerCase();
+      if(entry.isIntersecting){
+        buttons.forEach(btn=>{
+          if(btn.textContent.trim().toLowerCase() === sectionName) btn.classList.add('active-filter');
+          else btn.classList.remove('active-filter');
+        });
+      }
+    }
+  });
+}, observerOptions);
+
+sections.forEach(sec=>observer.observe(sec));
+
+// ===== Плавный скролл по кнопке =====
+buttons.forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    const text = e.target.textContent.trim().toLowerCase();
+    const targetSection = Array.from(sections).find(sec=>{
+      const title = sec.querySelector('.section-title');
+      return title && title.textContent.trim().toLowerCase()===text;
+    });
+    if(targetSection){
+      window.scrollTo({
+        top: targetSection.offsetTop - 60,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+// ===== Инициализация =====
 updateMenuFromSheet();
 
 </script>
+
 </body>
 </html>
