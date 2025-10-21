@@ -703,9 +703,6 @@ function showToast(message, isRed = false) {
   setTimeout(() => { toast.classList.remove('show'); }, 2500);
 }
 
-// ===== Глобальный флаг доступности заказов =====
-window.ordersEnabled = true;
-
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
@@ -742,10 +739,12 @@ async function updateMenuFromSheet() {
     const headers = rows[0].map(h => h.trim());
     const data = rows.slice(1).map(r => Object.fromEntries(r.map((v, i) => [headers[i], v.trim()])));
 
+    let ordersEnabled = true;
+
     for (let item of data) {
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
-        window.ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
-        document.getElementById('orders-disabled-note').style.display = window.ordersEnabled ? 'none' : 'block';
+        ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
+        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         continue;
       }
 
@@ -792,23 +791,23 @@ async function updateMenuFromSheet() {
       } else {
         el.classList.remove('unavailable');
         if(overlay) overlay.textContent = '';
-        if(cartIcon) window.ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
       }
     }
 
-    // ===== Корзина для оригинальных карточек =====
-    document.querySelectorAll('.card .cart-icon').forEach(icon => {
+    // Корзина
+    document.querySelectorAll('.cart-icon').forEach(icon => {
       icon.onclick = () => {
-        if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
         else showToast('Товар добавлен в корзину', false);
       }
     });
     document.querySelector('.floating-cart').onclick = () => {
-      if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
       else showToast('Товар добавлен в корзину', false);
     };
 
-    // ===== Специальные предложения =====
+    // Специальные предложения
     updateSpecialOffersSection();
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
@@ -825,21 +824,9 @@ function updateSpecialOffersSection() {
   const discountedCards = document.querySelectorAll('.card.has-discount');
 
   if (discountedCards.length > 0) {
-    discountedCards.forEach(card => {
-      const clone = card.cloneNode(true);
-      specialGrid.appendChild(clone);
-
-      // ===== навешиваем клик на корзину клона =====
-      const cartIcon = clone.querySelector('.cart-icon');
-      if (cartIcon) {
-        cartIcon.onclick = () => {
-          if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
-          else showToast('Товар добавлен в корзину', false);
-        };
-      }
-    });
-
+    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
     specialSection.style.display = 'block';
+    specialSection.classList.add('special-offers-section');
     buttons.forEach(btn => { 
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
@@ -885,15 +872,30 @@ const sections = document.querySelectorAll('.menu-section');
 const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
 
 function updateActiveFilter() {
-  const scrollTop = window.scrollY + 100;
-  let currentSection = sections[0];
+  const scrollTop = window.scrollY + 120; // небольшой отступ сверху
+  let currentSection = null;
 
-  sections.forEach(sec => {
-    const top = sec.offsetTop;
-    const bottom = top + sec.offsetHeight;
-    if (scrollTop >= top && scrollTop < bottom) currentSection = sec;
-  });
+  const specialSection = document.querySelector('.special-offers-section');
+  if (specialSection) {
+    const sectionTop = specialSection.offsetTop;
+    const sectionBottom = sectionTop + specialSection.offsetHeight;
+    if (scrollTop >= sectionTop && scrollTop < sectionTop + specialSection.offsetHeight / 2) {
+      currentSection = specialSection;
+    }
+  }
 
+  if (!currentSection) {
+    sections.forEach(sec => {
+      if (sec.classList.contains('special-offers-section')) return;
+      const top = sec.offsetTop;
+      const bottom = top + sec.offsetHeight;
+      if (scrollTop >= top && scrollTop < bottom) {
+        currentSection = sec;
+      }
+    });
+  }
+
+  if (!currentSection) return;
   const sectionName = currentSection.querySelector('.section-title')?.textContent.trim().toLowerCase();
   buttons.forEach(btn => {
     if (btn.textContent.trim().toLowerCase() === sectionName) btn.classList.add('active-filter');
@@ -920,10 +922,10 @@ buttons.forEach(btn => {
 
 // ===== Инициализация =====
 (async () => {
-  await updateMenuFromSheet();
-  updateActiveFilter();
+  await updateMenuFromSheet();   // ждем загрузку меню
+  updateActiveFilter();          // обновляем активный фильтр
   setTimeout(() => {
-    animateCards();
+    animateCards();              // запускаем анимацию
   }, 250);
 })();
 
