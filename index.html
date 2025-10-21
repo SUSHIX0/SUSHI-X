@@ -824,12 +824,27 @@ function updateSpecialOffersSection() {
   const discountedCards = document.querySelectorAll('.card.has-discount');
 
   if (discountedCards.length > 0) {
-    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
+    discountedCards.forEach(card => {
+      const clone = card.cloneNode(true);
+      specialGrid.appendChild(clone);
+    });
+
     specialSection.style.display = 'block';
     specialSection.classList.add('special-offers-section');
+
     buttons.forEach(btn => { 
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
+
+    // Навешиваем корзину на клонированные карточки
+    const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
+    specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
+      icon.onclick = () => {
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
+    });
+
   } else {
     specialSection.style.display = 'none';
     buttons.forEach(btn => { 
