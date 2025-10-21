@@ -747,7 +747,7 @@ async function updateMenuFromSheet() {
     let ordersEnabled = true;
 
     for (let item of data) {
-      if (item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
+      if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
         ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
         continue;
@@ -786,37 +786,34 @@ async function updateMenuFromSheet() {
         priceHTML = `${formattedBase} €`;
         el.classList.remove('has-discount');
       }
-      if (priceEl) priceEl.innerHTML = priceHTML;
+      if(priceEl) priceEl.innerHTML = priceHTML;
 
       // Доступность
       if (!available) {
         el.classList.add('unavailable');
-        if (overlay) overlay.textContent = 'Временно недоступно';
-        if (cartIcon) cartIcon.classList.add('hidden');
+        if(overlay) overlay.textContent = 'Временно недоступно';
+        if(cartIcon) cartIcon.classList.add('hidden');
       } else {
         el.classList.remove('unavailable');
-        if (overlay) overlay.textContent = '';
-        if (cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+        if(overlay) overlay.textContent = '';
+        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
       }
     }
 
     // Корзина
     document.querySelectorAll('.cart-icon').forEach(icon => {
       icon.onclick = () => {
-        if (!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
         else showToast('Товар добавлен в корзину', false);
       }
     });
     document.querySelector('.floating-cart').onclick = () => {
-      if (!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
       else showToast('Товар добавлен в корзину', false);
     };
 
     // Специальные предложения
     updateSpecialOffersSection();
-
-    // Анимация карточек
-    animateCards();
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
 }
@@ -834,10 +831,10 @@ function updateSpecialOffersSection() {
   if (discountedCards.length > 0) {
     discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
     specialSection.style.display = 'block';
-    buttons.forEach(btn => { if (btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display = 'inline-block'; });
+    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; });
   } else {
     specialSection.style.display = 'none';
-    buttons.forEach(btn => { if (btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display = 'none'; });
+    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='none'; });
   }
 }
 
@@ -911,8 +908,13 @@ buttons.forEach(btn => {
 });
 
 // ===== Инициализация =====
-updateMenuFromSheet();
-updateActiveFilter();
+(async () => {
+  await updateMenuFromSheet();   // ждем загрузку меню
+  updateActiveFilter();          // обновляем активный фильтр
+  setTimeout(() => {
+    animateCards();              // запускаем анимацию через 0.25с
+  }, 250);
+})();
 
 </script>
 
