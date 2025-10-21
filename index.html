@@ -368,27 +368,21 @@ body {
 }
 
 .menu-section .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* карточка минимально 280px, максимально растягивается */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* центрируем карточки */
   gap: 30px;
-  justify-content: center; /* центрируем карточки в ряду */
-  justify-items: center; /* центрируем карточки внутри ячеек */
-  width: 100%;
 }
 
-.card {
-  width: 100%; /* занимает всю ширину своей ячейки */
-  max-width: 750px; /* карточка не больше 400px */
+.menu-section .grid > .card {
+  max-width: 600px; /* сохраняем */
+  flex: 1 1 320px;  /* карточка растет до доступного места, но не меньше 320px */
 }
 
 .menu-bottom-space {
   height: 70px; /* регулируй под нужное пространство */
   width: 100%;
 }
-
-
-
-
 
 /* Исходное состояние всех элементов */
 .card,
