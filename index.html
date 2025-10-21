@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SUSHI メ — Меню</title>
+<title>SUSHI メ</title>
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap" rel="stylesheet">
@@ -703,6 +703,9 @@ function showToast(message, isRed = false) {
   setTimeout(() => { toast.classList.remove('show'); }, 2500);
 }
 
+// ===== Глобальный флаг доступности заказов =====
+window.ordersEnabled = true;
+
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
@@ -738,12 +741,11 @@ async function updateMenuFromSheet() {
     const rows = text.trim().split('\n').map(r => r.split(','));
     const headers = rows[0].map(h => h.trim());
     const data = rows.slice(1).map(r => Object.fromEntries(r.map((v, i) => [headers[i], v.trim()])));
-    let ordersEnabled = true;
 
     for (let item of data) {
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
-        ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
-        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
+        window.ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
+        document.getElementById('orders-disabled-note').style.display = window.ordersEnabled ? 'none' : 'block';
         continue;
       }
 
@@ -790,23 +792,23 @@ async function updateMenuFromSheet() {
       } else {
         el.classList.remove('unavailable');
         if(overlay) overlay.textContent = '';
-        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+        if(cartIcon) window.ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
       }
     }
 
-    // Корзина
-    document.querySelectorAll('.cart-icon').forEach(icon => {
+    // ===== Корзина для оригинальных карточек =====
+    document.querySelectorAll('.card .cart-icon').forEach(icon => {
       icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
         else showToast('Товар добавлен в корзину', false);
       }
     });
     document.querySelector('.floating-cart').onclick = () => {
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+      if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
       else showToast('Товар добавлен в корзину', false);
     };
 
-    // Специальные предложения
+    // ===== Специальные предложения =====
     updateSpecialOffersSection();
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
@@ -823,12 +825,29 @@ function updateSpecialOffersSection() {
   const discountedCards = document.querySelectorAll('.card.has-discount');
 
   if (discountedCards.length > 0) {
-    discountedCards.forEach(card => specialGrid.appendChild(card.cloneNode(true)));
+    discountedCards.forEach(card => {
+      const clone = card.cloneNode(true);
+      specialGrid.appendChild(clone);
+
+      // ===== навешиваем клик на корзину клона =====
+      const cartIcon = clone.querySelector('.cart-icon');
+      if (cartIcon) {
+        cartIcon.onclick = () => {
+          if(!window.ordersEnabled) showToast('Заказы временно не принимаются', true);
+          else showToast('Товар добавлен в корзину', false);
+        };
+      }
+    });
+
     specialSection.style.display = 'block';
-    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; });
+    buttons.forEach(btn => { 
+      if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
+    });
   } else {
     specialSection.style.display = 'none';
-    buttons.forEach(btn => { if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='none'; });
+    buttons.forEach(btn => { 
+      if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='none'; 
+    });
   }
 }
 
@@ -866,15 +885,13 @@ const sections = document.querySelectorAll('.menu-section');
 const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
 
 function updateActiveFilter() {
-  const scrollTop = window.scrollY + 100; // небольшой отступ сверху
+  const scrollTop = window.scrollY + 100;
   let currentSection = sections[0];
 
   sections.forEach(sec => {
     const top = sec.offsetTop;
     const bottom = top + sec.offsetHeight;
-    if (scrollTop >= top && scrollTop < bottom) {
-      currentSection = sec;
-    }
+    if (scrollTop >= top && scrollTop < bottom) currentSection = sec;
   });
 
   const sectionName = currentSection.querySelector('.section-title')?.textContent.trim().toLowerCase();
@@ -894,7 +911,7 @@ buttons.forEach(btn => {
     });
     if (targetSection) {
       window.scrollTo({
-        top: targetSection.offsetTop - 80, // отступ сверху
+        top: targetSection.offsetTop - 80,
         behavior: 'smooth'
       });
     }
@@ -903,10 +920,10 @@ buttons.forEach(btn => {
 
 // ===== Инициализация =====
 (async () => {
-  await updateMenuFromSheet();   // ждем загрузку меню
-  updateActiveFilter();          // обновляем активный фильтр
+  await updateMenuFromSheet();
+  updateActiveFilter();
   setTimeout(() => {
-    animateCards();              // запускаем анимацию через 0.25с
+    animateCards();
   }, 250);
 })();
 
