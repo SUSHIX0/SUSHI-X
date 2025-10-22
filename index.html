@@ -723,16 +723,17 @@ body {
         <div class="photo" style="background-image:url('Foto/Shushi-19.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
-<div class="roll-select-wrapper">
-  <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
-  <ul class="select-dropdown">
-    <li>Рыбная шапочка</li>
-    <li>Спайси шапочка</li>
-    <li>Шапочка с крабом</li>
-    <li>Шапочка с креветкой</li>
-  </ul>
-</div>
-
+    <!-- Шапочки -->
+    <div class="roll-select-wrapper">
+      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
+      <ul class="select-dropdown">
+        <li data-id="cheese-top">Сырная шапочка</li>
+        <li data-id="fish-top">Рыбная шапочка</li>
+        <li data-id="spicy-top">Спайси шапочка</li>
+        <li data-id="crab-top">Шапочка с крабом</li>
+        <li data-id="shrimp-top">Шапочка с креветкой</li>
+      </ul>
+    </div>
 
 
 
@@ -1178,9 +1179,6 @@ rollSelectWrappers.forEach(wrapper => {
     }
   });
 });
-
-
-
 
 
 
