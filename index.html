@@ -555,74 +555,142 @@ body {
 .cart-list {
   list-style: none;
   padding: 0;
-  margin: 10px 0;
+  margin: 0;
 }
+
 .cart-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 4px;
-}
-.cart-item button.remove-item {
-  background: none;
-  border: none;
-  color: red;
-  font-size: 16px;
-  cursor: pointer;
-}
-.cart-total {
-  font-weight: bold;
-  margin-top: 12px;
-  text-align: right;
-}
-
-
-.item-price {
-  display: flex;
-  flex-direction: column; /* или row, если в одну линию */
-  align-items: flex-end;
-}
-
-.item-price .old-price {
-  text-decoration: line-through;
-  font-size: 0.9em;
-  color: #888;
-}
-
-.item-price .new-price {
-  font-weight: bold;
-}
-
-
-.cart-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr; /* Название шире, количество и цена одинаковые */
   gap: 10px;
-  align-items: center;
-  margin: 8px 0;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 4px;
 }
 
-.cart-item span.name {
-  grid-column: 1;
+.cart-name {
+  flex: 2;
   text-align: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
-.cart-item span.qty {
-  grid-column: 2;
+.cart-qty {
+  flex: 1;
   text-align: center;
 }
 
-.cart-item span.price {
-  grid-column: 3;
+.cart-price {
+  flex: 1;
   text-align: right;
 }
+
+.remove-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+  font-size: 16px;
+}
+
+.cart-single-price {
+  flex: 1;
+  text-align: right;
+}
+
+.cart-header, .cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.cart-name {
+  flex: 2; /* шире, чтобы помещалось название */
+}
+
+.cart-single-price, .cart-qty, .cart-price {
+  flex: 1;
+  text-align: center;
+}
+
+.cart-item button.remove-item {
+  flex: 0;
+  margin-left: 5px;
+}
+
+.cart-table {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cart-container {
+  width: 100%;
+  overflow-x: auto; /* чтобы не ломалось на маленьких экранах */
+}
+
+.cart-header, .cart-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto; /* последняя колонка — крестик */
+  align-items: center;
+  padding: 8px;
+  box-sizing: border-box; /* важно! */
+}
+
+.cart-name {
+  text-align: left;
+}
+
+.cart-single-price,
+.cart-qty,
+.cart-price {
+  text-align: center;
+}
+
+.cart-remove {
+  text-align: center;
+  cursor: pointer;
+  width: 40px; /* фиксированная ширина крестика */
+}
+
+
+.cart-remove {
+  flex: 0 0 40px; /* фиксированная ширина крестика */
+  text-align: center;
+  cursor: pointer;
+}
+
+
+.cart-item button.remove-item {
+  flex: 0;
+  margin-left: 5px;
+}
+
+.cart-header, .cart-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.cart-name { 
+  flex: 2 0 40%; /* 2 части, минимальная ширина 40% */
+  text-align: left;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-single-price, .cart-qty, .cart-price { 
+  flex: 1 0 20%; /* 1 часть, минимальная ширина 20% */
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-window {
+    width: 400px;   /* увеличиваем ширину окна */
+    height: 500px;  /* увеличиваем высоту окна */
+    max-width: 90vw; /* чтобы на маленьких экранах не вылезало */
+    max-height: 90vh;
+    overflow: auto;  /* если элементов много — появится прокрутка */
+}
+
 
 
 
@@ -1013,23 +1081,42 @@ function updateCartModal() {
   if (cart.length === 0) {
     html += '<p>Корзина пуста</p>';
   } else {
-    html += '<ul class="cart-list">';
+    // контейнер для всей таблицы
+    html += `<div class="cart-table">
+      <div class="cart-header">
+        <span class="cart-name">Название</span>
+        <span class="cart-single-price">Цена</span>
+        <span class="cart-qty">Кол-во</span>
+        <span class="cart-price">Итог</span>
+        <span></span>
+      </div>
+      <div class="cart-items">
+    `;
+
     cart.forEach((item, i) => {
       html += `
-        <li class="cart-item">
-          <span>${item.name} x${item.qty}</span>
-          <span>${(item.price * item.qty).toFixed(2)} €</span>
+        <div class="cart-item">
+          <span class="cart-name">${item.name}</span>
+          <span class="cart-single-price">${item.price.toFixed(2)} €</span>
+          <span class="cart-qty">${item.qty}</span>
+          <span class="cart-price">${(item.price * item.qty).toFixed(2)} €</span>
           <button class="remove-item" data-index="${i}">✕</button>
-        </li>
+        </div>
       `;
     });
-    html += '</ul>';
+
+    html += `</div></div>`; // закрываем cart-items и cart-table
+
     const total = cart.reduce((sum, it) => sum + it.price * it.qty, 0);
     html += `<div class="cart-total">Итого: ${total.toFixed(2)} €</div>`;
   }
+
   html += `<button class="close-cart">Закрыть</button>`;
   modalContent.innerHTML = html;
 }
+
+
+
 
 
 
