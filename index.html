@@ -507,6 +507,128 @@ body {
 
 
 
+
+
+.cart-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.cart-modal.show {
+  display: flex;
+}
+.cart-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+.cart-content {
+  position: relative;
+  background: #fff;
+  color: #111;
+  padding: 24px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.close-cart {
+  margin-top: 20px;
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.close-cart:hover {
+  background: #000;
+}
+
+
+
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+.cart-item button.remove-item {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  cursor: pointer;
+}
+.cart-total {
+  font-weight: bold;
+  margin-top: 12px;
+  text-align: right;
+}
+
+
+.item-price {
+  display: flex;
+  flex-direction: column; /* или row, если в одну линию */
+  align-items: flex-end;
+}
+
+.item-price .old-price {
+  text-decoration: line-through;
+  font-size: 0.9em;
+  color: #888;
+}
+
+.item-price .new-price {
+  font-weight: bold;
+}
+
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* Название шире, количество и цена одинаковые */
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.cart-item span.name {
+  grid-column: 1;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cart-item span.qty {
+  grid-column: 2;
+  text-align: center;
+}
+
+.cart-item span.price {
+  grid-column: 3;
+  text-align: right;
+}
+
+
+
+
+
+
 </style>
 
 
@@ -876,6 +998,60 @@ body {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
+
+
+
+
+// ===== Корзина =====
+let cart = []; // массив товаров: {name, price, qty}
+
+function updateCartModal() {
+  const modalContent = document.querySelector('#cartModal .cart-content');
+  if (!modalContent) return;
+
+  let html = '<h2>Ваша корзина</h2>';
+  if (cart.length === 0) {
+    html += '<p>Корзина пуста</p>';
+  } else {
+    html += '<ul class="cart-list">';
+    cart.forEach((item, i) => {
+      html += `
+        <li class="cart-item">
+          <span>${item.name} x${item.qty}</span>
+          <span>${(item.price * item.qty).toFixed(2)} €</span>
+          <button class="remove-item" data-index="${i}">✕</button>
+        </li>
+      `;
+    });
+    html += '</ul>';
+    const total = cart.reduce((sum, it) => sum + it.price * it.qty, 0);
+    html += `<div class="cart-total">Итого: ${total.toFixed(2)} €</div>`;
+  }
+  html += `<button class="close-cart">Закрыть</button>`;
+  modalContent.innerHTML = html;
+}
+
+
+
+
+function addToCart(item) {
+  const existing = cart.find(i => i.name === item.name);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...item, qty: 1 });
+  }
+  showToast('Товар добавлен в корзину');
+  updateCartModal();
+}
+
+
+
+
+
+
+
+
 // ===== Toast =====
 function showToast(message, isRed = false) {
   const toast = document.getElementById('toast');
@@ -977,16 +1153,33 @@ async function updateMenuFromSheet() {
     }
 
     // Корзина
-    document.querySelectorAll('.cart-icon').forEach(icon => {
-      icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
-    });
-    document.querySelector('.floating-cart').onclick = () => {
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
-    };
+document.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.onclick = () => {
+    if(!ordersEnabled) {
+      showToast('Заказы временно не принимаются', true);
+      return;
+    }
+
+    const card = icon.closest('.card');
+    const name = card.querySelector('.name')?.textContent.trim() || 'Без названия';
+    const priceText = card.querySelector('.new-price')?.textContent || card.querySelector('.price')?.textContent;
+    const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+    addToCart({ name, price });
+  };
+});
+
+
+document.querySelector('.floating-cart').onclick = () => {
+  if(!ordersEnabled) {
+    showToast('Заказы временно не принимаются', true);
+    return;
+  }
+
+  const modal = document.getElementById('cartModal');
+  if (modal) modal.classList.add('show');
+};
+
 
     // Специальные предложения
     updateSpecialOffersSection();
@@ -1017,13 +1210,22 @@ function updateSpecialOffersSection() {
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
 
-    // Навешиваем корзину на клонированные карточки
+    // ===== Навешиваем корзину на клонированные карточки =====
     const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
     specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
       icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
+        if(!ordersEnabled) {
+          showToast('Заказы временно не принимаются', true);
+          return;
+        }
+
+        const card = icon.closest('.card');
+        const name = card.querySelector('.name')?.textContent.trim() || 'Без названия';
+        const priceText = card.querySelector('.new-price')?.textContent || card.querySelector('.price')?.textContent;
+        const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+        addToCart({ name, price });
+      };
     });
 
   } else {
@@ -1033,6 +1235,7 @@ function updateSpecialOffersSection() {
     });
   }
 }
+
 
 // ===== Анимация карточек =====
 function animateCards() {
@@ -1182,6 +1385,40 @@ rollSelectWrappers.forEach(wrapper => {
 
 
 
+
+document.addEventListener('click', e => {
+  const modal = document.getElementById('cartModal');
+  if (!modal) return;
+
+  // закрыть корзину
+  if (e.target.classList.contains('close-cart') || e.target.classList.contains('cart-backdrop')) {
+    modal.classList.remove('show');
+  }
+
+  // удалить товар
+  if (e.target.classList.contains('remove-item')) {
+    const i = parseInt(e.target.dataset.index);
+    if (!isNaN(i)) {
+      cart.splice(i, 1); // полностью удаляем позицию
+      updateCartModal();
+    }
+  }
+});
+
+
+
+
+
+
 </script>
+
+<div id="cartModal" class="cart-modal">
+  <div class="cart-backdrop"></div>
+  <div class="cart-content"></div>
+</div>
+
+
+
+
 </body>
 </html>
