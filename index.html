@@ -507,196 +507,6 @@ body {
 
 
 
-
-
-.cart-modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-.cart-modal.show {
-  display: flex;
-}
-.cart-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-}
-.cart-content {
-  position: relative;
-  background: #fff;
-  color: #111;
-  padding: 24px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  z-index: 2;
-}
-.close-cart {
-  margin-top: 20px;
-  background: #222;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.close-cart:hover {
-  background: #000;
-}
-
-
-
-
-.cart-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #ddd;
-  gap: 10px;
-}
-
-.cart-name {
-  flex: 2;
-  text-align: left;
-}
-
-.cart-qty {
-  flex: 1;
-  text-align: center;
-}
-
-.cart-price {
-  flex: 1;
-  text-align: right;
-}
-
-.remove-item {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: red;
-  font-size: 16px;
-}
-
-.cart-single-price {
-  flex: 1;
-  text-align: right;
-}
-
-.cart-header, .cart-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-}
-
-.cart-name {
-  flex: 2; /* шире, чтобы помещалось название */
-}
-
-.cart-single-price, .cart-qty, .cart-price {
-  flex: 1;
-  text-align: center;
-}
-
-.cart-item button.remove-item {
-  flex: 0;
-  margin-left: 5px;
-}
-
-.cart-table {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.cart-container {
-  width: 100%;
-  overflow-x: auto; /* чтобы не ломалось на маленьких экранах */
-}
-
-.cart-header, .cart-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr auto; /* последняя колонка — крестик */
-  align-items: center;
-  padding: 8px;
-  box-sizing: border-box; /* важно! */
-}
-
-.cart-name {
-  text-align: left;
-}
-
-.cart-single-price,
-.cart-qty,
-.cart-price {
-  text-align: center;
-}
-
-.cart-remove {
-  text-align: center;
-  cursor: pointer;
-  width: 40px; /* фиксированная ширина крестика */
-}
-
-
-.cart-remove {
-  flex: 0 0 40px; /* фиксированная ширина крестика */
-  text-align: center;
-  cursor: pointer;
-}
-
-
-.cart-item button.remove-item {
-  flex: 0;
-  margin-left: 5px;
-}
-
-.cart-header, .cart-item {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.cart-name { 
-  flex: 2 0 40%; /* 2 части, минимальная ширина 40% */
-  text-align: left;
-  margin: 0;
-  padding: 0;
-}
-
-.cart-single-price, .cart-qty, .cart-price { 
-  flex: 1 0 20%; /* 1 часть, минимальная ширина 20% */
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
-
-.cart-window {
-    width: 400px;   /* увеличиваем ширину окна */
-    height: 500px;  /* увеличиваем высоту окна */
-    max-width: 90vw; /* чтобы на маленьких экранах не вылезало */
-    max-height: 90vh;
-    overflow: auto;  /* если элементов много — появится прокрутка */
-}
-
-
-
-
-
-
-
 </style>
 
 
@@ -760,18 +570,6 @@ body {
   <h2 class="section-title">Предложения</h2>
   <div class="grid"></div>
 </section>
-
-
-
-<div class="cart-view" style="display:none; padding:20px; background:#111; color:#fff; min-height:80vh;">
-  <h2>Корзина</h2>
-  <div id="cart-items"></div>
-  <button id="back-to-menu" style="margin-top:20px; padding:10px 20px;">Вернуться в меню</button>
-</div>
-
-
-
-
 
   <!-- Раздел: Урамаки -->
   <section class="menu-section">
@@ -1078,79 +876,6 @@ body {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
-
-
-
-
-// ===== Корзина =====
-let cart = []; // массив товаров: {name, price, qty}
-
-function updateCartModal() {
-  const modalContent = document.querySelector('#cartModal .cart-content');
-  if (!modalContent) return;
-
-  let html = '<h2>Ваша корзина</h2>';
-  if (cart.length === 0) {
-    html += '<p>Корзина пуста</p>';
-  } else {
-    // контейнер для всей таблицы
-    html += `<div class="cart-table">
-      <div class="cart-header">
-        <span class="cart-name">Название</span>
-        <span class="cart-single-price">Цена</span>
-        <span class="cart-qty">Кол-во</span>
-        <span class="cart-price">Итог</span>
-        <span></span>
-      </div>
-      <div class="cart-items">
-    `;
-
-    cart.forEach((item, i) => {
-      html += `
-        <div class="cart-item">
-          <span class="cart-name">${item.name}</span>
-          <span class="cart-single-price">${item.price.toFixed(2)} €</span>
-          <span class="cart-qty">${item.qty}</span>
-          <span class="cart-price">${(item.price * item.qty).toFixed(2)} €</span>
-          <button class="remove-item" data-index="${i}">✕</button>
-        </div>
-      `;
-    });
-
-    html += `</div></div>`; // закрываем cart-items и cart-table
-
-    const total = cart.reduce((sum, it) => sum + it.price * it.qty, 0);
-    html += `<div class="cart-total">Итого: ${total.toFixed(2)} €</div>`;
-  }
-
-  html += `<button class="close-cart">Закрыть</button>`;
-  modalContent.innerHTML = html;
-}
-
-
-
-
-
-
-
-function addToCart(item) {
-  const existing = cart.find(i => i.name === item.name);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ ...item, qty: 1 });
-  }
-  showToast('Товар добавлен в корзину');
-  updateCartModal();
-}
-
-
-
-
-
-
-
-
 // ===== Toast =====
 function showToast(message, isRed = false) {
   const toast = document.getElementById('toast');
@@ -1252,31 +977,15 @@ async function updateMenuFromSheet() {
     }
 
     // Корзина
-document.querySelectorAll('.cart-icon').forEach(icon => {
-  icon.onclick = () => {
-    if(!ordersEnabled) {
-      showToast('Заказы временно не принимаются', true);
-      return;
-    }
-
-    const card = icon.closest('.card');
-    const name = card.querySelector('.name')?.textContent.trim() || 'Без названия';
-    const priceText = card.querySelector('.new-price')?.textContent || card.querySelector('.price')?.textContent;
-    const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-
-    addToCart({ name, price });
-  };
-});
-
-
-document.querySelector('.floating-cart').onclick = () => {
-  if(!ordersEnabled) {
-    showToast('Заказы временно не принимаются', true);
-    return;
-  }
-
-  const modal = document.getElementById('cartModal');
-  if (modal) modal.classList.add('show');
+    document.querySelectorAll('.cart-icon').forEach(icon => {
+      icon.onclick = () => {
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
+    });
+    document.querySelector('.floating-cart').onclick = () => {
+  if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+  // иначе ничего не делаем, чтобы надпись не появлялась
 };
 
 
@@ -1309,22 +1018,13 @@ function updateSpecialOffersSection() {
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
 
-    // ===== Навешиваем корзину на клонированные карточки =====
+    // Навешиваем корзину на клонированные карточки
     const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
     specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
       icon.onclick = () => {
-        if(!ordersEnabled) {
-          showToast('Заказы временно не принимаются', true);
-          return;
-        }
-
-        const card = icon.closest('.card');
-        const name = card.querySelector('.name')?.textContent.trim() || 'Без названия';
-        const priceText = card.querySelector('.new-price')?.textContent || card.querySelector('.price')?.textContent;
-        const price = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-
-        addToCart({ name, price });
-      };
+        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+        else showToast('Товар добавлен в корзину', false);
+      }
     });
 
   } else {
@@ -1334,7 +1034,6 @@ function updateSpecialOffersSection() {
     });
   }
 }
-
 
 // ===== Анимация карточек =====
 function animateCards() {
@@ -1482,28 +1181,6 @@ rollSelectWrappers.forEach(wrapper => {
   });
 });
 
-
-
-<<<<<<< Updated upstream
-
-document.addEventListener('click', e => {
-  const modal = document.getElementById('cartModal');
-  if (!modal) return;
-
-  // закрыть корзину
-  if (e.target.classList.contains('close-cart') || e.target.classList.contains('cart-backdrop')) {
-    modal.classList.remove('show');
-  }
-
-  // удалить товар
-  if (e.target.classList.contains('remove-item')) {
-    const i = parseInt(e.target.dataset.index);
-    if (!isNaN(i)) {
-      cart.splice(i, 1); // полностью удаляем позицию
-      updateCartModal();
-    }
-  }
-=======
 const floatingCartBtn = document.querySelector('.floating-cart');
 const menuWrap = document.querySelector('.wrap');
 const cartView = document.querySelector('.cart-view');
@@ -1518,44 +1195,9 @@ floatingCartBtn.addEventListener('click', () => {
 backBtn.addEventListener('click', () => {
   cartView.style.display = 'none';
   menuWrap.style.display = 'flex';
->>>>>>> Stashed changes
 });
 
 
-
-<<<<<<< Updated upstream
-=======
-function renderCart() {
-  const cartItemsContainer = document.getElementById('cart-items');
-  cartItemsContainer.innerHTML = ''; // очистка
-  // допустим, у тебя массив корзины:
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-  if(cart.length === 0){
-    cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
-    return;
-  }
-
-  cart.forEach(item => {
-    const div = document.createElement('div');
-    div.textContent = `${item.name} — ${item.quantity} шт`;
-    cartItemsContainer.appendChild(div);
-  });
-}
-
->>>>>>> Stashed changes
-
-
-
 </script>
-
-<div id="cartModal" class="cart-modal">
-  <div class="cart-backdrop"></div>
-  <div class="cart-content"></div>
-</div>
-
-
-
-
 </body>
 </html>
