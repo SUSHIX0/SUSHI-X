@@ -984,9 +984,10 @@ async function updateMenuFromSheet() {
       }
     });
     document.querySelector('.floating-cart').onclick = () => {
-      if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-      else showToast('Товар добавлен в корзину', false);
-    };
+  if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+  // иначе ничего не делаем, чтобы надпись не появлялась
+};
+
 
     // Специальные предложения
     updateSpecialOffersSection();
