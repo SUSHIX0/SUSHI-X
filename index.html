@@ -761,6 +761,18 @@ body {
   <div class="grid"></div>
 </section>
 
+
+
+<div class="cart-view" style="display:none; padding:20px; background:#111; color:#fff; min-height:80vh;">
+  <h2>Корзина</h2>
+  <div id="cart-items"></div>
+  <button id="back-to-menu" style="margin-top:20px; padding:10px 20px;">Вернуться в меню</button>
+</div>
+
+
+
+
+
   <!-- Раздел: Урамаки -->
   <section class="menu-section">
     <h2 class="section-title">Урамаки</h2>
@@ -1472,6 +1484,7 @@ rollSelectWrappers.forEach(wrapper => {
 
 
 
+<<<<<<< Updated upstream
 
 document.addEventListener('click', e => {
   const modal = document.getElementById('cartModal');
@@ -1490,10 +1503,47 @@ document.addEventListener('click', e => {
       updateCartModal();
     }
   }
+=======
+const floatingCartBtn = document.querySelector('.floating-cart');
+const menuWrap = document.querySelector('.wrap');
+const cartView = document.querySelector('.cart-view');
+const backBtn = document.getElementById('back-to-menu');
+
+floatingCartBtn.addEventListener('click', () => {
+  menuWrap.style.display = 'none';
+  cartView.style.display = 'block';
+  renderCart(); // функция, которая покажет товары в корзине
+});
+
+backBtn.addEventListener('click', () => {
+  cartView.style.display = 'none';
+  menuWrap.style.display = 'flex';
+>>>>>>> Stashed changes
 });
 
 
 
+<<<<<<< Updated upstream
+=======
+function renderCart() {
+  const cartItemsContainer = document.getElementById('cart-items');
+  cartItemsContainer.innerHTML = ''; // очистка
+  // допустим, у тебя массив корзины:
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  if(cart.length === 0){
+    cartItemsContainer.innerHTML = '<p>Корзина пуста</p>';
+    return;
+  }
+
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.textContent = `${item.name} — ${item.quantity} шт`;
+    cartItemsContainer.appendChild(div);
+  });
+}
+
+>>>>>>> Stashed changes
 
 
 
