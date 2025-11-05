@@ -1122,6 +1122,11 @@ buttons.forEach(btn => {
       const title = sec.querySelector('.section-title');
       return title && title.textContent.trim().toLowerCase() === text;
     });
+
+    // Снимаем фокус с кнопки, чтобы на телефонах не оставалась подсветка
+    e.target.blur();
+
+
     if (targetSection) {
       window.scrollTo({
         top: targetSection.offsetTop - 80,
