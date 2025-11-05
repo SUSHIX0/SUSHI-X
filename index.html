@@ -52,7 +52,6 @@ header.brand h1 .jp{
   text-align: center;
   margin-top: 25px; 
 }
-
 .card{
   background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));
   border-radius:12px;
@@ -1122,11 +1121,6 @@ buttons.forEach(btn => {
       const title = sec.querySelector('.section-title');
       return title && title.textContent.trim().toLowerCase() === text;
     });
-
-    // Снимаем фокус с кнопки, чтобы на телефонах не оставалась подсветка
-    e.target.blur();
-
-
     if (targetSection) {
       window.scrollTo({
         top: targetSection.offsetTop - 80,
