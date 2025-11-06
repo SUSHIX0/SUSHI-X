@@ -603,6 +603,35 @@ body {
 
 
 
+
+.cart-header, .cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 14px;
+}
+
+.cart-header {
+  font-weight: bold;
+  border-bottom: 2px solid rgba(255,255,255,0.2);
+}
+
+.cart-col-name, .cart-item-name {
+  flex: 2;
+  text-align: left;
+}
+
+.cart-col-unit, .cart-item-unit,
+.cart-col-qty, .cart-item-qty,
+.cart-col-total, .cart-item-total {
+  flex: 1;
+  text-align: right;
+}
+
+
+
+
 </style>
 
 
@@ -1373,52 +1402,69 @@ function addToCart(card) {
     return;
   }
 
-  const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
-  const priceEl = card.querySelector('.price');
+const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
+const priceEl = card.querySelector('.price');
 
-  // Получаем цену за шт
-  let unitPrice = 0;
-  const discountPriceEl = priceEl.querySelector('.new-price');
-  if (discountPriceEl) {
-    unitPrice = parseFloat(discountPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-  } else {
-    unitPrice = parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-  }
+// если есть скидка — берём новую цену
+const newPriceEl = priceEl.querySelector('.new-price');
+let unitPrice = 0;
+
+if (newPriceEl) {
+  unitPrice = parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+} else {
+  // обычная цена
+  const priceText = priceEl.textContent.trim();
+  unitPrice = parseFloat(priceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+}
+
 
   showToast("Товар добавлен в корзину");
 
   const cartTab = document.querySelector('.cart-content .tab-content[data-tab="all"]');
-  if (!cartTab) return;
 
-  // Проверяем, есть ли такой товар уже в корзине
-  let existingItem = Array.from(cartTab.querySelectorAll('.cart-item')).find(item => item.dataset.name === name);
+  // ===== Добавляем шапку, если её нет =====
+  if (cartTab && !cartTab.querySelector('.cart-header')) {
+    const header = document.createElement('div');
+    header.className = 'cart-header';
+    header.innerHTML = `
+      <span class="cart-col-name">Название</span>
+      <span class="cart-col-unit">Цена за шт</span>
+      <span class="cart-col-qty">Кол-во</span>
+      <span class="cart-col-total">Цена</span>
+    `;
+    cartTab.appendChild(header);
+  }
+
+  // ===== Проверяем, есть ли уже такой товар =====
+  let existingItem = Array.from(cartTab.querySelectorAll('.cart-item'))
+    .find(i => i.querySelector('.cart-item-name').textContent === name);
+
   if (existingItem) {
-    let qtyEl = existingItem.querySelector('.cart-item-qty');
-    let qty = parseInt(qtyEl.textContent) + 1;
+    // увеличиваем количество
+    const qtyEl = existingItem.querySelector('.cart-item-qty');
+    let qty = parseInt(qtyEl.textContent) || 1;
+    qty++;
     qtyEl.textContent = qty;
 
-    existingItem.querySelector('.cart-item-total').textContent = (unitPrice * qty).toFixed(2) + ' €';
+    // обновляем общую цену
+    const totalEl = existingItem.querySelector('.cart-item-total');
+    totalEl.textContent = (unitPrice * qty).toFixed(2) + ' €';
   } else {
+    // добавляем новый элемент
     const item = document.createElement('div');
     item.className = 'cart-item';
-    item.style.display = 'flex';
-    item.style.justifyContent = 'space-between';
-    item.style.padding = '8px 0';
-    item.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
-    item.dataset.name = name;
-
     item.innerHTML = `
       <span class="cart-item-name">${name}</span>
       <span class="cart-item-unit">${unitPrice.toFixed(2)} €</span>
-      <span class="cart-item-qty">${1}</span>
+      <span class="cart-item-qty">1</span>
       <span class="cart-item-total">${unitPrice.toFixed(2)} €</span>
     `;
-
     cartTab.appendChild(item);
   }
 
   updateCartTotal();
 }
+
 
 
 
