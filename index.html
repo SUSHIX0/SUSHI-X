@@ -975,12 +975,6 @@ body {
     <h3>Корзина</h3>
     <button class="close-cart" id="closeCart">×</button>
   </div>
-  <div class="cart-tabs">
-    <button class="tab-btn active" data-tab="all">Все</button>
-    <button class="tab-btn" data-tab="роллы">Роллы</button>
-    <button class="tab-btn" data-tab="сеты">Сеты</button>
-    <button class="tab-btn" data-tab="дополнительно">Дополнительно</button>
-  </div>
   <div class="cart-content">
     <div class="tab-content active" data-tab="all"></div>
     <div class="tab-content" data-tab="роллы"></div>
@@ -1100,12 +1094,13 @@ async function updateMenuFromSheet() {
     }
 
     // Корзина
-    document.querySelectorAll('.cart-icon').forEach(icon => {
-      icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
-    });
+document.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const card = icon.closest('.card');
+    addToCart(card);
+  });
+});
+
     document.querySelector('.floating-cart').onclick = () => {
   if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
   // иначе ничего не делаем, чтобы надпись не появлялась
@@ -1356,19 +1351,7 @@ tabBtns.forEach(btn => {
   });
 });
 
-// Добавление товаров
-function addToCart(item) {
-  const {name, category, price} = item;
-  const contentEl = cartFullscreen.querySelector(`.tab-content[data-tab="${category}"]`);
-  const allEl = cartFullscreen.querySelector(`.tab-content[data-tab="all"]`);
 
-  const itemHTML = document.createElement('div');
-  itemHTML.textContent = `${name} - ${price} €`;
-  contentEl.appendChild(itemHTML);
-  allEl.appendChild(itemHTML.cloneNode(true));
-
-  updateTotal();
-}
 
 function updateTotal() {
   let total = 0;
@@ -1378,6 +1361,48 @@ function updateTotal() {
   });
   cartFullscreen.querySelector('.total').textContent = `Итого: ${total.toFixed(2)} €`;
 }
+
+
+
+
+
+// Основная функция добавления в корзину
+function addToCart(card) {
+  if (!card) return;
+
+  const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
+  if (!ordersEnabled) {
+    showToast('Заказы временно не принимаются', true);
+    return;
+  }
+
+  const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
+  const priceEl = card.querySelector('.price');
+  const price = priceEl?.textContent.trim() || '0 €';
+
+  showToast(`"${name}" добавлен в корзину`);
+
+  // Создаем элемент для корзины
+  const cartTab = document.querySelector('.cart-content .tab-content[data-tab="all"]');
+  if (!cartTab) return;
+
+  const item = document.createElement('div');
+  item.className = 'cart-item';
+  item.style.display = 'flex';
+  item.style.justifyContent = 'space-between';
+  item.style.padding = '8px 0';
+  item.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+
+  item.innerHTML = `
+    <span class="cart-item-name">${name}</span>
+    <span class="cart-item-price">${price}</span>
+  `;
+
+  cartTab.appendChild(item);
+
+  updateCartTotal();
+}
+
 
 
 
