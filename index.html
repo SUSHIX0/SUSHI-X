@@ -1,3 +1,1306 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SUSHI メ</title>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f10;
+  --muted:#b9b9b9;
+  --accent:#ff2d2d;
+  --maxw:1600px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255,45,45,0.04), transparent 6%),
+    radial-gradient(800px 400px at 90% 90%, rgba(255,255,255,0.02), transparent 8%),
+    linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
+  color:#eaeaea;
+  -webkit-font-smoothing:antialiased;
+  padding:36px 20px;
+  display:flex;
+  justify-content:center;
+}
+.wrap{width:100%; max-width:var(--maxw);}
+header.brand{
+  display:flex;
+  justify-content:center;
+  margin-bottom:50px; 
+}
+header.brand h1{
+  font-size:3rem;
+  gap:8px;
+  justify-content:center;
+}
+header.brand h1 .jp{
+  font-family:"Noto Sans JP"; 
+  font-weight:700; 
+  font-size:3.2rem; 
+  color:var(--accent);
+}
+.note-orders-disabled {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.3rem;
+  text-align: center;
+  margin-top: 25px; 
+}
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));
+  border-radius:12px;
+  overflow:hidden;
+  border: 1px solid rgba(255,45,45,0.2);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 0.5s ease;
+  display:flex;
+  flex-direction:column;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.card.visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+.card:hover{
+  transform: translateY(-6px); 
+  box-shadow: 0 18px 40px rgba(255,45,45,0.6);
+  border-color: var(--accent);
+}
+.photo{
+  width:100%; 
+  height:250px; 
+  background-size:cover; 
+  background-position:center; 
+  position: relative;
+  border-radius:12px 12px 0 0; 
+}
+.overlay-unavailable{
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.7);
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:700;
+  font-size:1.2rem;
+  pointer-events:none;
+  opacity:0;
+  transition: opacity 0.2s ease;
+  border-radius:12px 12px 0 0;
+}
+.card.unavailable .overlay-unavailable{ opacity:1; }
+
+.body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1; position:relative;}
+.title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
+.title .name{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.label-jp {
+  font-family: "Noto Sans JP";
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: rgba(255,43,43,0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  max-width: 70px;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: inline-block;
+}
+.card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
+.label-jp .scroll-text {
+  display: inline-block;
+  animation: scroll-marquee 4s linear infinite alternate;
+}
+@keyframes scroll-marquee {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
+.bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
+.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
+.discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; }
+.card.unavailable .price,
+.card.unavailable .discount,
+.card.unavailable .old-price { color: #aaa; }
+.note{color:var(--muted); font-size:0.9rem;}
+.cart-icon{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:39px;
+  height:39px;
+  background: rgba(0,0,0,0.6);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.cart-icon.hidden { display:none; }
+.cart-icon img{width:26px;height:26px;object-fit:contain;}
+.cart-icon:hover{transform: scale(1.2);}
+
+/* Новый бейдж "Скидка" */
+.discount-badge {
+  position: absolute;
+  top:6px;
+  left:6px;
+  height:36px;
+  background: rgba(0,0,0,0.65);
+  color: #ff2d2d;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  pointer-events: none;
+  opacity: 0.75;
+  z-index: 5;
+}
+.card.has-discount .discount-badge {
+  opacity: 1;
+  animation: badgePulse 2.5s infinite ease-in-out;
+}
+@keyframes badgePulse {
+  0%,100% { opacity:0.75; transform: scale(1); }
+  50% { opacity:1; transform: scale(1.12); }
+}
+
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.65);
+  padding: 20px 36px;
+  border-radius: 12px;
+  font-weight:700;
+  font-size:1.3rem;
+  text-align:center;
+  opacity:0;
+  transition: opacity 0.5s ease;
+  z-index:9999;
+  pointer-events:none;
+}
+.toast.show { opacity:1; }
+.toast.red { color: #ff2d2d; }
+.toast.white { color: #fff; }
+
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255,43,43,0.45);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.floating-cart img { width: 30px; height: 30px; }
+.floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
+
+/* Адаптив для телефонов */
+@media (max-width: 767px) {
+  .card .body {
+    padding-bottom: 6px; /* было 16px, уменьшаем, чтобы нижняя граница ближе */
+  }
+
+  .card .bottom {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-top:auto;
+    padding-bottom: 5px; /* текст ближе к низу */
+  }
+
+  .card .price { font-size:1.18rem; margin:0; line-height:1; }
+  .card .discount { font-size:1.18rem; margin:0; line-height:1; }
+  .card .old-price { font-size:1.14rem; margin:0; line-height:1; }
+  .card .note { font-size:1.02rem; margin:0; line-height:1; }
+
+  /* Плашка "Скидка" больше */
+  .discount-badge {
+    font-size:1.1rem;
+    padding:0 16px;
+    height:42px;
+  }
+}
+
+/* Адаптив для планшетов/ПК */
+@media (min-width: 768px) {
+  .discount-badge { top:4px; left:4px; } /* ближе к краю на 2-3 пикселя */
+}
+
+
+html, body {
+  background-color: #0f0f10;
+  overscroll-behavior: none; /* отключает пружинку на iOS/Android */
+  height: 100%;
+}
+
+body {
+  background-attachment: fixed; /* чтобы градиент не двигался */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 100px; /* добавляем пустоту снизу для мобильных */
+  }
+}
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap');
+
+:root {
+  --accent: #ff2d2d;
+  --text: #ffffff;
+}
+
+.menu-filters button,
+.menu-filters-floating button {
+  font-family: 'Jost', sans-serif;
+  background: rgba(255, 45, 45, 0.12);
+  border: none;
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.menu-filters button:hover,
+.menu-filters-floating button:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(255,45,45,0.3);
+}
+
+.menu-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.menu-filters-floating {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  background: rgba(15,15,16,0.9);
+  padding: 10px 0;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+}
+
+.menu-filters-floating.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 767px) {
+  .menu-filters button,
+  .menu-filters-floating button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+}
+
+.menu-section {
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-family: 'Jost', sans-serif; /* или Raleway */
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.menu-section .grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* центрируем карточки */
+  gap: 30px;
+}
+
+.menu-section .grid > .card {
+  max-width: 615px; /* сохраняем */
+  flex: 1 1 320px;  /* карточка растет до доступного места, но не меньше 320px */
+}
+
+.menu-bottom-space {
+  height: 70px; /* регулируй под нужное пространство */
+  width: 100%;
+}
+
+/* Исходное состояние всех элементов */
+.card,
+.menu-filters,
+.menu-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+/* Состояние "видимые" */
+.card.visible,
+.menu-filters.show,
+.menu-content.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Названия секций */
+.section-title {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.section-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Активная кнопка фильтра */
+.menu-filters button.active-filter,
+.menu-filters-floating button.active-filter {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(255,45,45,0.3);
+}
+
+
+
+
+
+
+
+.roll-select-wrapper {
+  position: relative;
+  top: 6px;
+  width: 205px; /* можно под карточку */
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+
+.select-btn {
+  width: 100%;
+  background: rgba(0,0,0,0.5); /* стильный полупрозрачный черный */
+  color: #fff;
+  border: none;
+  border-radius: 25px; /* плавные закругления */
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s, transform 0.2s;
+  backdrop-filter: blur(5px);
+}
+
+.select-btn:hover {
+  background: rgba(0,0,0,0.7);
+  transform: scale(1.02);
+}
+
+.arrow {
+  margin-left: 10px;
+  transition: transform 0.3s;
+}
+
+.select-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  padding: 5px 0;
+  list-style: none;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  backdrop-filter: blur(5px);
+  z-index: 10;
+}
+
+.select-dropdown.show {
+  max-height: 300px; /* достаточно для всех элементов */
+  opacity: 1;
+}
+
+.select-dropdown li {
+  padding: 10px 20px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s, color 0.2s;
+}
+
+.select-dropdown li:hover {
+  background: rgba(255, 45, 45, 0.2);
+  color: #ff2d2d;
+}
+
+
+
+
+
+/* Плавающая корзина */
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255,43,43,0.45);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.floating-cart:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.18); /* эффект поднятия */
+}
+.cart-count {
+  background: #FF7A59;        /* основной акцентный цвет кнопок/скидок */
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Fullscreen корзина */
+.cart-fullscreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #0f0f10;           /* фон как у секций меню */
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #ffffff;                   /* текст как на карточках */
+}
+.cart-fullscreen.open { transform: translateX(0); }
+
+.cart-fullscreen .cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
+.cart-fullscreen .cart-header button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #f00b0b;              /* кнопка закрытия в акцентном цвете */
+  cursor: pointer;
+}
+
+/* Товары в корзине */
+.cart-items {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cart-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #100f0f;             /* фон карточки */
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255,45,45,0.6);
+}
+.cart-item span {
+  font-size: 14px;
+  font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
+  color: #ffffff;                  /* текст как в карточках */
+}
+.cart-item-qty {
+  text-align: center;
+}
+.cart-item-total {
+  font-weight: bold;
+  text-align: right;
+  color: #FF7A59;               /* итоговая цена выделена акцентным цветом */
+}
+
+/* Итог */
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  color: #ffffff;
+}
+
+/* Фон при открытии */
+.cart-backdrop {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.25);  /* мягкий затемненный фон */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 900;
+}
+.cart-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+</style>
+
+
+<!-- Open Graph для соцсетей -->
+<meta property="og:title" content="SUSHI メ" />
+<meta property="og:image" content="https://sushix0.github.io/SUSHI-X/Foto/Logo.png" />
+<meta property="og:type" content="website" />
+
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DM67PTW8TB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DM67PTW8TB');
+</script>
+
+<body>
+
+
+<div class="wrap">
+  <header class="brand">
+    <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+  </header>
+  <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
+
+<!-- Основной фиксированный бар -->
+<div class="menu-filters" id="menuFilters">
+  <button>Предложения</button>
+  <button>Урамаки</button>
+  <button>Футомаки</button>
+  <button>Маки</button>
+  <button>Темпура</button>
+  <button>Запечённые</button>
+  <button>Нигири</button>
+  <button>Наборы</button>
+  <button>Дополнительно</button>
+</div>
+
+<!-- Плавающий бар -->
+<div class="menu-filters-floating" id="menuFiltersFloating">
+  <button>Предложения</button>
+  <button>Урамаки</button>
+  <button>Футомаки</button>
+  <button>Маки</button>
+  <button>Темпура</button>
+  <button>Запечённые</button>
+  <button>Нигири</button>
+  <button>Наборы</button>
+  <button>Дополнительно</button>
+</div>
+
+
+  <main>
+
+<section class="menu-section" id="specialOffers">
+  <h2 class="section-title">Предложения</h2>
+  <div class="grid"></div>
+</section>
+
+  <!-- Раздел: Урамаки -->
+  <section class="menu-section">
+    <h2 class="section-title">Урамаки</h2>
+    <div class="grid">
+      <article class="card" data-id="филадельфия">
+        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Филадельфия</span><span class="label-jp"><span class="scroll-text">フィラデルフィア</span></span></h3>
+          <p class="ingredients">Лосось · Philadelphia · Огурец · Авокадо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="снежный_краб">
+        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+          <p class="ingredients">Снежный краб · Philadelphia · Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="калифорния">
+        <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Калифорния</span><span class="label-jp"><span class="scroll-text">カリフォルニア</span></span></h3>
+          <p class="ingredients">Снежный краб · Philadelphia · Огурец · Масаго</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="аляска">
+        <div class="photo" style="background-image:url('Foto/Shushi-8.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+          <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Футомаки -->
+  <section class="menu-section">
+    <h2 class="section-title">Футомаки</h2>
+    <div class="grid">
+      <article class="card" data-id="футомаки_с_крабом">
+        <div class="photo" style="background-image:url('Foto/Shushi-4.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Футомаки с Крабом</span><span class="label-jp"><span class="scroll-text">クラブ太巻き</span></span></h3>
+          <p class="ingredients">Огурец · Авокадо · Сыр Philadelphia · Крабовое мясо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="футомаки_с_креветкой">
+        <div class="photo" style="background-image:url('Foto/Shushi-3.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Футомаки с креветкой</span><span class="label-jp"><span class="scroll-text">エビ太巻き</span></span></h3>
+          <p class="ingredients">Огурец · Сыр Philadelphia · Креветка</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Маки -->
+  <section class="menu-section">
+    <h2 class="section-title">Маки</h2>
+    <div class="grid">
+      <article class="card" data-id="маки_с_огурцом">
+        <div class="photo" style="background-image:url('Foto/Shushi-7.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с огурцом</span><span class="label-jp"><span class="scroll-text">キュウリ</span></span></h3>
+          <p class="ingredients">Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="маки_с_омлетом">
+        <div class="photo" style="background-image:url('Foto/Shushi-6.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Маки с омлетом</span><span class="label-jp"><span class="scroll-text">玉子巻</span></span></h3>
+          <p class="ingredients">Японский омлет</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Темпура -->
+  <section class="menu-section">
+    <h2 class="section-title">Темпура</h2>
+    <div class="grid">
+      <article class="card" data-id="темпура_с_крабом">
+        <div class="photo" style="background-image:url('Foto/Shushi-22.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Темпура с крабом</span><span class="label-jp"><span class="scroll-text">カニ天ぷら</span></span></h3>
+          <p class="ingredients">Огурец · Сыр Philadelphia · Крабовое мясо</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="темпура_с_курицей">
+        <div class="photo" style="background-image:url('Foto/Shushi-13.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Темпура с курицей</span><span class="label-jp"><span class="scroll-text">チキン天ぷら</span></span></h3>
+          <p class="ingredients">Огурец · Паприка · Сыр Philadelphia · Курица</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Запечённые -->
+  <section class="menu-section">
+    <h2 class="section-title">Запечённые</h2>
+    <div class="grid">
+      <article class="card" data-id="запечённый_ролл_нико">
+        <div class="photo" style="background-image:url('Foto/Shushi-19.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+    <!-- Шапочки -->
+    <div class="roll-select-wrapper">
+      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
+      <ul class="select-dropdown">
+        <li data-id="cheese-top">Сырная шапочка</li>
+        <li data-id="fish-top">Рыбная шапочка</li>
+        <li data-id="spicy-top">Спайси шапочка</li>
+        <li data-id="crab-top">Шапочка с крабом</li>
+        <li data-id="shrimp-top">Шапочка с креветкой</li>
+      </ul>
+    </div>
+
+
+
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Запечённый Ролл «Нико»</span><span class="label-jp"><span class="scroll-text">ニコ焼きロール</span></span></h3>
+          <p class="ingredients">Огурец · Сыр Philadelphia · Лосось, Крабовое мясо · Масаго</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="запечённый_ролл_салмон">
+        <div class="photo" style="background-image:url('Foto/Shushi-18.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Запечённый Ролл «Сaлмон»</span><span class="label-jp"><span class="scroll-text">サーモン焼きロール</span></span></h3>
+          <p class="ingredients">Авокадо · Сыр Philadelphia · Лосось</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Нигири -->
+  <section class="menu-section">
+    <h2 class="section-title">Нигири</h2>
+    <div class="grid">
+      <article class="card" data-id="нигири_с_креветкой">
+        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с креветкой</span><span class="label-jp"><span class="scroll-text">海老握り</span></span></h3>
+          <p class="ingredients">Креветка</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="нигири_с_угрём">
+        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Нигири с угрём</span><span class="label-jp"><span class="scroll-text">鰻握り</span></span></h3>
+          <p class="ingredients">Угорь</p>
+          <div class="bottom"><div class="note">2 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Раздел: Наборы -->
+<section class="menu-section">
+  <h2 class="section-title">Наборы</h2>
+  <div class="grid">
+    <article class="card" data-id="классика">
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+        <div class="overlay-unavailable"></div>
+      </div>
+      <div class="body">
+        <h3 class="title"><span class="name">Классика</span><span class="label-jp"><span class="scroll-text">クラシック</span></span></h3>
+        <p class="ingredients">Филадельфия · Снежный краб · Маки с огурцом</p>
+        <div class="bottom"><div class="note">24 шт</div><div class="price"></div></div>
+      </div>
+    </article>
+
+    <article class="card" data-id="премиум">
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+        <div class="overlay-unavailable"></div>
+      </div>
+      <div class="body">
+        <h3 class="title"><span class="name">Премиум</span><span class="label-jp"><span class="scroll-text">プレミアム</span></span></h3>
+        <p class="ingredients">Филадельфия · Аляска · Нигири с угрём · Нигири с креветкой</p>
+        <div class="bottom"><div class="note">20 шт</div><div class="price"></div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Раздел: Дополнительно -->
+<section class="menu-section">
+  <h2 class="section-title">Дополнительно</h2>
+  <div class="grid">
+    <article class="card" data-id="соевый_соус">
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+        <div class="overlay-unavailable"></div>
+      </div>
+      <div class="body">
+        <h3 class="title"><span class="name">Соевый соус</span><span class="label-jp"><span class="scroll-text">醤油</span></span></h3>
+        <p class="ingredients"></p>
+        <div class="bottom"><div class="note">50 мл</div><div class="price"></div></div>
+      </div>
+    </article>
+
+    <article class="card" data-id="имбирь">
+      <div class="photo" style="background-image:url('Foto/Shushi-31.jpg');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+        <div class="overlay-unavailable"></div>
+      </div>
+      <div class="body">
+        <h3 class="title"><span class="name">Имбирь</span><span class="label-jp"><span class="scroll-text">生姜</span></span></h3>
+        <p class="ingredients"></p>
+        <div class="bottom"><div class="note">50 г</div><div class="price"></div></div>
+      </div>
+    </article>
+
+    <article class="card" data-id="вакаме">
+      <div class="photo" style="background-image:url('Foto/Shushi-30.jpg');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+        <div class="overlay-unavailable"></div>
+      </div>
+      <div class="body">
+        <h3 class="title"><span class="name">Вакаме</span><span class="label-jp"><span class="scroll-text">ワカメ</span></span></h3>
+        <p class="ingredients"></p>
+        <div class="bottom"><div class="note">50 г</div><div class="price"></div></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+
+  <div class="menu-bottom-space"></div>
+</main>
+</div>
+
+<div class="toast" id="toast">Товар добавлен в корзину</div>
+<div class="floating-cart">
+  <img src="Foto/cart.png" alt="Корзина">
+  <span>Корзина</span>
+</div>
+
+
+
+
+<!-- Fullscreen корзина -->
+<div id="cartFullscreen" class="cart-fullscreen">
+  <div class="cart-header">
+    <h2>Ваша корзина</h2>
+    <button id="closeCart">&times;</button>
+  </div>
+  <div class="cart-content">
+    <div class="cart-items"></div>
+    <div class="cart-total">
+      <span>Итого:</span>
+      <span class="total-price">0.00 €</span>
+    </div>
+  </div>
+</div>
+<div id="cartBackdrop" class="cart-backdrop"></div>
+
+
+
+
+<script>
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
+
+// ===== Toast =====
+function showToast(message, isRed = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+  setTimeout(() => { toast.classList.remove('show'); }, 2500);
+}
+
+// ===== Плавающий фильтр =====
+const mainBar = document.getElementById('menuFilters');
+const floatingBar = document.getElementById('menuFiltersFloating');
+
+function shouldShowFloatingBar() {
+  if (window.innerWidth > 767) return true;
+  const firstSection = document.querySelector('.menu-section .grid');
+  if (!firstSection) return false;
+  const cards = Array.from(firstSection.children);
+  if (cards.length < 2) return false;
+  const rect1 = cards[0].getBoundingClientRect();
+  const rect2 = cards[1].getBoundingClientRect();
+  return rect1.top === rect2.top;
+}
+
+window.addEventListener('scroll', () => {
+  const mainTop = mainBar.getBoundingClientRect().top;
+  if (!shouldShowFloatingBar() || mainTop > 0) floatingBar.classList.remove('show');
+  else floatingBar.classList.add('show');
+
+  updateActiveFilter();
+});
+
+window.addEventListener('resize', () => {
+  if (!shouldShowFloatingBar()) floatingBar.classList.remove('show');
+});
+
+// ===== Обновление меню из Google Sheets =====
+async function updateMenuFromSheet() {
+  try {
+    const res = await fetch(sheetUrl);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r => r.split(','));
+    const headers = rows[0].map(h => h.trim());
+    const data = rows.slice(1).map(r => Object.fromEntries(r.map((v, i) => [headers[i], v.trim()])));
+
+    let ordersEnabled = true;
+
+    for (let item of data) {
+      if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
+        ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
+        document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
+        continue;
+      }
+
+      const el = document.querySelector(`.card[data-id="${item['id']}"]`);
+      if (!el) continue;
+
+      const priceEl = el.querySelector('.price');
+      const overlay = el.querySelector('.overlay-unavailable');
+      const cartIcon = el.querySelector('.cart-icon');
+
+      const available = (item['Доступно'] || '').toLowerCase() === 'true';
+      const hidden = (item['Скрыто'] || '').toLowerCase() === 'true';
+      el.style.display = hidden ? 'none' : '';
+
+      // Цена и скидка
+      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
+      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
+      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
+      let priceHTML = '';
+
+      if (discountPrice > 0 && discountPrice < basePrice) {
+        const formattedOld = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const formattedNew = discountPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
+        el.classList.add('has-discount');
+        if (!el.querySelector('.discount-badge')) {
+          const badge = document.createElement('div');
+          badge.className = 'discount-badge';
+          badge.textContent = 'Скидка';
+          el.querySelector('.photo').appendChild(badge);
+        }
+      } else {
+        const formattedBase = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        priceHTML = `${formattedBase} €`;
+        el.classList.remove('has-discount');
+      }
+      if(priceEl) priceEl.innerHTML = priceHTML;
+
+      // Доступность
+      if (!available) {
+        el.classList.add('unavailable');
+        if(overlay) overlay.textContent = 'Временно недоступно';
+        if(cartIcon) cartIcon.classList.add('hidden');
+      } else {
+        el.classList.remove('unavailable');
+        if(overlay) overlay.textContent = '';
+        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
+      }
+    }
+
+    // Корзина
+document.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const card = icon.closest('.card');
+    addToCart(card);
+  });
+});
+
+    document.querySelector('.floating-cart').onclick = () => {
+  if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
+  // иначе ничего не делаем, чтобы надпись не появлялась
+};
+
+
+    // Специальные предложения
+    updateSpecialOffersSection();
+
+  } catch (e) { console.error('Ошибка загрузки меню', e); }
+}
+
+// ===== Специальные предложения =====
+function updateSpecialOffersSection() {
+  const specialGrid = document.querySelector('#specialOffers .grid');
+  const specialSection = document.getElementById('specialOffers');
+  const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
+  if (!specialGrid || !specialSection) return;
+  specialGrid.innerHTML = '';
+  const discountedCards = document.querySelectorAll('.card.has-discount');
+
+  if (discountedCards.length > 0) {
+    discountedCards.forEach(card => {
+      const clone = card.cloneNode(true);
+      specialGrid.appendChild(clone);
+    });
+
+    specialSection.style.display = 'block';
+    specialSection.classList.add('special-offers-section');
+
+    buttons.forEach(btn => { 
+      if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
+    });
+
+    // Навешиваем корзину на клонированные карточки
+specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.onclick = () => {
+    const card = icon.closest('.card');
+    addToCart(card); // теперь товары добавляются в корзину с учётом количества
+  }
+});
+
+
+  } else {
+    specialSection.style.display = 'none';
+    buttons.forEach(btn => { 
+      if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='none'; 
+    });
+  }
+}
+
+// ===== Анимация карточек =====
+function animateCards() {
+  const sections = document.querySelectorAll('.menu-section');
+  sections.forEach((section, secIndex) => {
+    const cards = section.querySelectorAll('.card');
+    cards.forEach((card, i) => {
+      card.style.opacity = 0;
+      card.style.transform = 'translateY(20px) scale(0.95)';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        card.style.opacity = 1;
+        card.style.transform = 'translateY(0) scale(1)';
+      }, i * 60 + secIndex * 120);
+    });
+    const title = section.querySelector('.section-title');
+    if (title) {
+      title.style.opacity = 0;
+      title.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        title.style.opacity = 1;
+        title.style.transform = 'translateY(0)';
+      }, cards.length * 60 + secIndex * 130);
+    }
+    setTimeout(() => section.classList.add('show'), cards.length * 60 + secIndex * 150);
+  });
+  mainBar.classList.add('show');
+}
+
+// ===== Активный фильтр =====
+const sections = document.querySelectorAll('.menu-section');
+const buttons = document.querySelectorAll('#menuFilters button, #menuFiltersFloating button');
+
+function updateActiveFilter() {
+  const scrollTop = window.scrollY + 120; // небольшой отступ сверху
+  let currentSection = null;
+
+    // Если пользователь в самом верху страницы — активируем первый раздел
+  if (window.scrollY < 50) {
+    const firstSection = sections[0];
+    if (firstSection) {
+      const firstName = firstSection.querySelector('.section-title')?.textContent.trim().toLowerCase();
+      buttons.forEach(btn => {
+        if (btn.textContent.trim().toLowerCase() === firstName) btn.classList.add('active-filter');
+        else btn.classList.remove('active-filter');
+      });
+    }
+    return; // чтобы не выполнялась остальная часть
+  }
+
+
+  const specialSection = document.querySelector('.special-offers-section');
+  if (specialSection) {
+    const sectionTop = specialSection.offsetTop;
+    const sectionBottom = sectionTop + specialSection.offsetHeight;
+    if (scrollTop >= sectionTop && scrollTop < sectionTop + specialSection.offsetHeight / 2) {
+      currentSection = specialSection;
+    }
+  }
+
+  if (!currentSection) {
+    sections.forEach(sec => {
+      if (sec.classList.contains('special-offers-section')) return;
+      const top = sec.offsetTop;
+      const bottom = top + sec.offsetHeight;
+      if (scrollTop >= top && scrollTop < bottom) {
+        currentSection = sec;
+      }
+    });
+  }
+
+  if (!currentSection) return;
+  const sectionName = currentSection.querySelector('.section-title')?.textContent.trim().toLowerCase();
+  buttons.forEach(btn => {
+    if (btn.textContent.trim().toLowerCase() === sectionName) btn.classList.add('active-filter');
+    else btn.classList.remove('active-filter');
+  });
+}
+
+// ===== Плавный скролл по кнопке =====
+buttons.forEach(btn => {
+  btn.addEventListener('click', e => {
+    const text = e.target.textContent.trim().toLowerCase();
+    const targetSection = Array.from(sections).find(sec => {
+      const title = sec.querySelector('.section-title');
+      return title && title.textContent.trim().toLowerCase() === text;
+    });
+    if (targetSection) {
+      window.scrollTo({
+        top: targetSection.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+// ===== Инициализация =====
+(async () => {
+  await updateMenuFromSheet();   // ждем загрузку меню
+  updateActiveFilter();          // обновляем активный фильтр
+  setTimeout(() => {
+    animateCards();              // запускаем анимацию
+  }, 250);
+})();
+
+
+
+
+
+
+
+
+
+
+
 // ===== Выбор шапочки =====
 const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
 
@@ -42,3 +1345,85 @@ rollSelectWrappers.forEach(wrapper => {
     }
   });
 });
+
+
+
+const cartItemsContainer = document.querySelector('.cart-items');
+const totalPriceEl = document.querySelector('.total-price');
+const cartCountEl = document.querySelector('.cart-count');
+const floatingCart = document.querySelector('.floating-cart');
+const cartFullscreen = document.getElementById('cartFullscreen');
+const cartBackdrop = document.getElementById('cartBackdrop');
+const closeCartBtn = document.getElementById('closeCart');
+
+const cart = new Map();
+
+function addToCart(card) {
+  const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
+  if (!ordersEnabled) return showToast('Заказы временно не принимаются', true);
+
+  const id = card.dataset.id || card.querySelector('.title')?.textContent.trim();
+  const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
+  const priceEl = card.querySelector('.price');
+  const newPriceEl = priceEl.querySelector('.new-price');
+  const unitPrice = newPriceEl
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'))
+    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+  if (cart.has(id)) {
+    const item = cart.get(id);
+    item.qty++;
+  } else {
+    cart.set(id, { name, unitPrice, qty: 1 });
+  }
+
+  renderCart();
+  showToast('Товар добавлен в корзину');
+}
+
+function renderCart() {
+  cartItemsContainer.innerHTML = '';
+  let total = 0;
+  let count = 0;
+
+  cart.forEach(item => {
+    const itemEl = document.createElement('div');
+    itemEl.className = 'cart-item';
+    itemEl.innerHTML = `
+      <span class="cart-item-name">${item.name}</span>
+      <span class="cart-item-unit">${item.unitPrice.toFixed(2)} €</span>
+      <span class="cart-item-qty">${item.qty}</span>
+      <span class="cart-item-total">${(item.unitPrice*item.qty).toFixed(2)} €</span>
+    `;
+    cartItemsContainer.appendChild(itemEl);
+    total += item.unitPrice * item.qty;
+    count += item.qty;
+  });
+
+  totalPriceEl.textContent = total.toFixed(2) + ' €';
+  cartCountEl.textContent = count;
+}
+
+// Открытие/закрытие корзины
+floatingCart.addEventListener('click', () => {
+  cartFullscreen.classList.add('open');
+  cartBackdrop.classList.add('show');
+});
+closeCartBtn.addEventListener('click', () => {
+  cartFullscreen.classList.remove('open');
+  cartBackdrop.classList.remove('show');
+});
+cartBackdrop.addEventListener('click', () => {
+  cartFullscreen.classList.remove('open');
+  cartBackdrop.classList.remove('show');
+});
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
