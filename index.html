@@ -1319,9 +1319,8 @@ function addToCart(card) {
 }
 
 function renderCart() {
-  cartItemsContainer.innerHTML = '';
+  if (cartItemsContainer) cartItemsContainer.innerHTML = '';
   let total = 0;
-  let count = 0;
 
   cart.forEach(item => {
     const itemEl = document.createElement('div');
@@ -1330,16 +1329,19 @@ function renderCart() {
       <span class="cart-item-name">${item.name}</span>
       <span class="cart-item-unit">${item.unitPrice.toFixed(2)} €</span>
       <span class="cart-item-qty">${item.qty}</span>
-      <span class="cart-item-total">${(item.unitPrice*item.qty).toFixed(2)} €</span>
+      <span class="cart-item-total">${(item.unitPrice * item.qty).toFixed(2)} €</span>
     `;
-    cartItemsContainer.appendChild(itemEl);
+    if (cartItemsContainer) cartItemsContainer.appendChild(itemEl);
     total += item.unitPrice * item.qty;
-    count += item.qty;
   });
 
-  totalPriceEl.textContent = total.toFixed(2) + ' €';
-  cartCountEl.textContent = count;
+  // обновляем итоговую сумму
+  if (totalPriceEl) totalPriceEl.textContent = total.toFixed(2) + ' €';
+
+  // просто пропускаем обновление cartCountEl, если его нет
+  if (cartCountEl) cartCountEl.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
 }
+
 
 // Открытие/закрытие корзины
 floatingCart.addEventListener('click', () => {
