@@ -502,6 +502,135 @@ body {
 
 
 
+/* Плавающая корзина */
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255,43,43,0.45);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.floating-cart:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.18); /* эффект поднятия */
+}
+.cart-count {
+  background: #FF7A59;        /* основной акцентный цвет кнопок/скидок */
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Fullscreen корзина */
+.cart-fullscreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #0f0f10;           /* фон как у секций меню */
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #ffffff;                   /* текст как на карточках */
+}
+.cart-fullscreen.open { transform: translateX(0); }
+
+.cart-fullscreen .cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
+.cart-fullscreen .cart-header button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #f00b0b;              /* кнопка закрытия в акцентном цвете */
+  cursor: pointer;
+}
+
+/* Товары в корзине */
+.cart-items {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cart-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #100f0f;             /* фон карточки */
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cart-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255,45,45,0.6);
+}
+.cart-item span {
+  font-size: 14px;
+  font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
+  color: #ffffff;                  /* текст как в карточках */
+}
+.cart-item-qty {
+  text-align: center;
+}
+.cart-item-total {
+  font-weight: bold;
+  text-align: right;
+  color: #FF7A59;               /* итоговая цена выделена акцентным цветом */
+}
+
+/* Итог */
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  color: #ffffff;
+}
+
+/* Фон при открытии */
+.cart-backdrop {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.25);  /* мягкий затемненный фон */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 900;
+}
+.cart-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
 
 
 
@@ -722,21 +851,7 @@ body {
         <div class="photo" style="background-image:url('Foto/Shushi-19.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
-    <!-- Шапочки -->
-    <div class="roll-select-wrapper">
-      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
-      <ul class="select-dropdown">
-        <li data-id="cheese-top">Сырная шапочка</li>
-        <li data-id="fish-top">Рыбная шапочка</li>
-        <li data-id="spicy-top">Спайси шапочка</li>
-        <li data-id="crab-top">Шапочка с крабом</li>
-        <li data-id="shrimp-top">Шапочка с креветкой</li>
-      </ul>
-    </div>
-
-
-
-        </div>
+          </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Нико»</span><span class="label-jp"><span class="scroll-text">ニコ焼きロール</span></span></h3>
           <p class="ingredients">Огурец · Сыр Philadelphia · Лосось, Крабовое мясо · Масаго</p>
@@ -872,6 +987,28 @@ body {
   <span>Корзина</span>
 </div>
 
+
+
+
+<!-- Fullscreen корзина -->
+<div id="cartFullscreen" class="cart-fullscreen">
+  <div class="cart-header">
+    <h2>Ваша корзина</h2>
+    <button id="closeCart">&times;</button>
+  </div>
+  <div class="cart-content">
+    <div class="cart-items"></div>
+    <div class="cart-total">
+      <span>Итого:</span>
+      <span class="total-price">0.00 €</span>
+    </div>
+  </div>
+</div>
+<div id="cartBackdrop" class="cart-backdrop"></div>
+
+
+
+
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
 
@@ -976,12 +1113,13 @@ async function updateMenuFromSheet() {
     }
 
     // Корзина
-    document.querySelectorAll('.cart-icon').forEach(icon => {
-      icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
-    });
+document.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.addEventListener('click', () => {
+    const card = icon.closest('.card');
+    addToCart(card);
+  });
+});
+
     document.querySelector('.floating-cart').onclick = () => {
   if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
   // иначе ничего не делаем, чтобы надпись не появлялась
@@ -1018,13 +1156,13 @@ function updateSpecialOffersSection() {
     });
 
     // Навешиваем корзину на клонированные карточки
-    const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
-    specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
-      icon.onclick = () => {
-        if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
-        else showToast('Товар добавлен в корзину', false);
-      }
-    });
+specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
+  icon.onclick = () => {
+    const card = icon.closest('.card');
+    addToCart(card); // теперь товары добавляются в корзину с учётом количества
+  }
+});
+
 
   } else {
     specialSection.style.display = 'none';
@@ -1147,52 +1285,81 @@ buttons.forEach(btn => {
 
 
 
+const cartItemsContainer = document.querySelector('.cart-items');
+const totalPriceEl = document.querySelector('.total-price');
+const cartCountEl = document.querySelector('.cart-count');
+const floatingCart = document.querySelector('.floating-cart');
+const cartFullscreen = document.getElementById('cartFullscreen');
+const cartBackdrop = document.getElementById('cartBackdrop');
+const closeCartBtn = document.getElementById('closeCart');
 
+const cart = new Map();
 
-// ===== Выбор шапочки =====
-const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
+function addToCart(card) {
+  const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
+  if (!ordersEnabled) return showToast('Заказы временно не принимаются', true);
 
-rollSelectWrappers.forEach(wrapper => {
-  const btn = wrapper.querySelector('.select-btn');
-  const dropdown = wrapper.querySelector('.select-dropdown');
-  const arrow = wrapper.querySelector('.arrow');
+  const id = card.dataset.id || card.querySelector('.title')?.textContent.trim();
+  const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
+  const priceEl = card.querySelector('.price');
+  const newPriceEl = priceEl.querySelector('.new-price');
+  const unitPrice = newPriceEl
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'))
+    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
 
-  // Проверяем, есть ли "Сырная шапочка" в списке
-  let defaultTopping = 'Сырная шапочка';
-  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
-  if (!exists) {
-    const li = document.createElement('li');
-    li.textContent = defaultTopping;
-    dropdown.prepend(li);
+  if (cart.has(id)) {
+    const item = cart.get(id);
+    item.qty++;
+  } else {
+    cart.set(id, { name, unitPrice, qty: 1 });
   }
 
-  // Устанавливаем значение по умолчанию
-  btn.firstChild.textContent = defaultTopping + ' ';
+  renderCart();
+  showToast('Товар добавлен в корзину');
+}
 
-  // Открытие/закрытие списка
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    dropdown.classList.toggle('show');
-    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+function renderCart() {
+  if (cartItemsContainer) cartItemsContainer.innerHTML = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    const itemEl = document.createElement('div');
+    itemEl.className = 'cart-item';
+    itemEl.innerHTML = `
+      <span class="cart-item-name">${item.name}</span>
+      <span class="cart-item-unit">${item.unitPrice.toFixed(2)} €</span>
+      <span class="cart-item-qty">${item.qty}</span>
+      <span class="cart-item-total">${(item.unitPrice * item.qty).toFixed(2)} €</span>
+    `;
+    if (cartItemsContainer) cartItemsContainer.appendChild(itemEl);
+    total += item.unitPrice * item.qty;
   });
 
-  // Выбор элемента из списка
-  dropdown.querySelectorAll('li').forEach(item => {
-    item.addEventListener('click', () => {
-      btn.firstChild.textContent = item.textContent + ' ';
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    });
-  });
+  // обновляем итоговую сумму
+  if (totalPriceEl) totalPriceEl.textContent = total.toFixed(2) + ' €';
 
-  // Закрытие при клике вне области
-  document.addEventListener('click', (e) => {
-    if (!wrapper.contains(e.target)) {
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    }
-  });
+  // просто пропускаем обновление cartCountEl, если его нет
+  if (cartCountEl) cartCountEl.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
+}
+
+
+// Открытие/закрытие корзины
+floatingCart.addEventListener('click', () => {
+  cartFullscreen.classList.add('open');
+  cartBackdrop.classList.add('show');
 });
+closeCartBtn.addEventListener('click', () => {
+  cartFullscreen.classList.remove('open');
+  cartBackdrop.classList.remove('show');
+});
+cartBackdrop.addEventListener('click', () => {
+  cartFullscreen.classList.remove('open');
+  cartBackdrop.classList.remove('show');
+});
+
+
+
+
 
 
 
