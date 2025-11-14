@@ -635,6 +635,190 @@ body {
 
 
 
+
+
+
+/* ---------- Cart fullscreen styles (custom) ---------- */
+.cart-fullscreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  pointer-events: none;
+}
+.cart-fullscreen[aria-hidden="true"] { opacity: 0; transform: translateX(100%); transition: transform .28s ease, opacity .2s ease; }
+.cart-fullscreen[aria-hidden="false"] { opacity: 1; transform: translateX(0); pointer-events: auto; transition: transform .28s ease, opacity .2s ease; }
+
+.cart-inner {
+  width: calc(100% - 36px);
+  max-width: 2980px;
+  height: calc(100% - 64px);
+  background: linear-gradient(180deg, #0e0e0f 0%, #121213 100%);
+  border-radius: 16px;
+  overflow: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,45,45,0.06);
+  display: flex; flex-direction: column;
+  padding: 20px;
+}
+
+/* Header */
+.cart-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  padding-bottom:8px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.cart-title { font-size:1.35rem; font-weight:700; color:#fff; margin:0; }
+.cart-close {
+  background:transparent;
+  border: none;
+  font-size:28px;
+  color:#ff4c4c;
+  cursor:pointer;
+  line-height:1;
+}
+
+/* Body layout */
+.cart-body {
+  display:flex;
+  gap:20px;
+  padding-top:18px;
+  padding-bottom:30px;
+  align-items:flex-start;
+  flex:1;
+  flex-direction:column;
+}
+
+/* Items list */
+.cart-items {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  width:100%;
+}
+
+/* Single item */
+.cart-item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#111111;
+  border-radius:18px;
+  padding:14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  border:1px solid rgba(255,255,255,0.02);
+}
+.cart-item .name { flex:1; font-weight:600; color:#fff; font-size:1.02rem; }
+.cart-item .unit { width:84px; color: #bcbcbc; text-align:center; }
+.cart-item .line-total { width:84px; text-align:right; font-weight:700; color:#ff7a59; }
+.cart-item .qty-wrap {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#0e0e0e;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.03);
+}
+.qty-btn {
+  background:transparent;
+  border:none;
+  font-size:18px;
+  color:#bfbfbf;
+  cursor:pointer;
+  padding:6px;
+}
+.qty-value { min-width:28px; text-align:center; font-weight:600; color:#fff; }
+
+/* Remove button */
+.remove-btn {
+  background:transparent;
+  border:none;
+  color:#ff4c4c;
+  font-size:20px;
+  cursor:pointer;
+  margin-left:8px;
+}
+
+/* Summary */
+.cart-summary {
+  margin-top:16px;
+  border-radius:12px;
+  padding:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(0,0,0,0.02));
+  border: 1px solid rgba(255,255,255,0.02);
+  color:#d0d0d0;
+  width:100%;
+  max-width:420px;
+}
+.summary-row { display:flex; justify-content:space-between; padding:6px 0; color:#bfbfbf; }
+.summary-divider { height:1px; background:rgba(255,255,255,0.03); margin:10px 0; }
+.summary-total { display:flex; justify-content:space-between; padding-top:6px; font-weight:800; font-size:1.15rem; color:#fff; }
+
+/* Checkout card */
+.checkout-card {
+  margin-top:18px;
+  background:#111111;
+  padding:16px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.02);
+  width:100%;
+  max-width:420px;
+}
+.checkout-card h3 { margin:0 0 10px 0; color:#fff; font-weight:700; }
+.checkout-form { display:flex; flex-direction:column; gap:10px; }
+.checkout-form input,
+.checkout-form select {
+  padding:12px 14px;
+  border-radius:12px;
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,0.03);
+  color:#fff;
+  outline:none;
+}
+.checkout-actions { display:flex; gap:10px; margin-top:8px; }
+.btn-primary {
+  background: linear-gradient(90deg,#ff4c4c,#ff7a59);
+  color:#fff;
+  border:none;
+  padding:12px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+}
+.btn-ghost {
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.04);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+/* Responsive */
+@media (min-width:900px) {
+  .cart-body { flex-direction:row; align-items:flex-start; }
+  .cart-items { flex:1 1 56%; }
+  .cart-summary, .checkout-card { flex: 0 0 44%; }
+}
+@media (max-width:899px) {
+  .cart-inner { padding:16px; border-radius:12px; }
+  .cart-body { gap:12px; }
+}
+
+
+
+
+
+
+
+
 </style>
 
 
@@ -991,20 +1175,57 @@ body {
 
 
 <!-- Fullscreen корзина -->
-<div id="cartFullscreen" class="cart-fullscreen">
-  <div class="cart-header">
-    <h2>Ваша корзина</h2>
-    <button id="closeCart">&times;</button>
-  </div>
-  <div class="cart-content">
-    <div class="cart-items"></div>
-    <div class="cart-total">
-      <span>Итого:</span>
-      <span class="total-price">0.00 €</span>
+<div id="cartFullscreen" class="cart-fullscreen" aria-hidden="true">
+  <div class="cart-inner">
+    <div class="cart-header">
+      <h2 class="cart-title">Ваша корзина</h2>
+      <button id="closeCart" class="cart-close" aria-label="Закрыть корзину">&times;</button>
+    </div>
+
+    <div class="cart-body">
+      <!-- Список товаров -->
+      <div class="cart-items" role="list"></div>
+
+      <!-- Итоги -->
+      <div class="cart-summary">
+        <div class="summary-row"><span>Товары</span><span class="subtotal-price">0.00 €</span></div>
+        <div class="summary-row"><span>Доставка</span><span class="delivery-price">0.00 €</span></div>
+        <div class="summary-row"><span>Скидка</span><span class="discount-price">0.00 €</span></div>
+        <div class="summary-divider"></div>
+        <div class="summary-total"><span>Итого</span><span class="total-price">0.00 €</span></div>
+      </div>
+
+      <!-- Форма оформления -->
+      <div class="checkout-card">
+        <h3>Оформление заказа</h3>
+        <form id="checkoutForm" class="checkout-form" onsubmit="return false;">
+          <input name="name" type="text" placeholder="Имя" autocomplete="name" />
+          <input name="phone" type="tel" placeholder="Номер телефона" autocomplete="tel" />
+          <input name="email" type="email" placeholder="Почта" autocomplete="email" />
+          <select name="payment">
+            <option value="" disabled selected>Способ оплаты</option>
+            <option>Наличные</option>
+            <option>Карта онлайн</option>
+            <option>Apple Pay / Google Pay</option>
+          </select>
+          <select name="method">
+            <option value="" disabled selected>Способ получения</option>
+            <option>Самовывоз</option>
+            <option>Доставка</option>
+          </select>
+
+          <div class="checkout-actions">
+            <button id="placeOrder" class="btn-primary" type="button">Оформить заказ</button>
+            <button id="clearCartBtn" class="btn-ghost" type="button">Очистить корзину</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
 <div id="cartBackdrop" class="cart-backdrop"></div>
+
 
 
 
@@ -1275,6 +1496,7 @@ buttons.forEach(btn => {
   setTimeout(() => {
     animateCards();              // запускаем анимацию
   }, 250);
+  
 })();
 
 
@@ -1285,18 +1507,42 @@ buttons.forEach(btn => {
 
 
 
-const cartItemsContainer = document.querySelector('.cart-items');
-const totalPriceEl = document.querySelector('.total-price');
-const cartCountEl = document.querySelector('.cart-count');
-const floatingCart = document.querySelector('.floating-cart');
-const cartFullscreen = document.getElementById('cartFullscreen');
-const cartBackdrop = document.getElementById('cartBackdrop');
-const closeCartBtn = document.getElementById('closeCart');
 
+
+// ===== Настройки =====
+const cartItemsContainer = document.querySelector('.cart-items');
+const subtotalEl = document.querySelector('.subtotal-price');
+const deliveryEl = document.querySelector('.delivery-price');
+const discountEl = document.querySelector('.discount-price');
+const totalEl = document.querySelector('.total-price');
+const cartCountEl = document.querySelector('.cart-count');
+const cartFullscreenEl = document.getElementById('cartFullscreen');
+const cartBackdrop = document.getElementById('cartBackdrop');
+const closeBtn = document.getElementById('closeCart');
+const placeOrderBtn = document.getElementById('placeOrder');
+const clearCartBtn = document.getElementById('clearCartBtn');
+const checkoutForm = document.getElementById('checkoutForm');
+
+// Настройки корзины
+let DELIVERY_COST = 5.00; // стоимость доставки
+let FREE_DELIVERY_LIMIT = 50.00; // порог бесплатной доставки
+const ITEM_LIMIT = 20; // лимит на одну позицию
+
+// Глобальная корзина
 const cart = new Map();
 
+// ======= TOAST =======
+function showToast(message, isRed = false) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ======= Добавление товара =======
 function addToCart(card) {
-  const ordersEnabled = document.getElementById('orders-disabled-note').style.display === 'none';
+  const ordersEnabled = document.getElementById('orders-disabled-note')?.style.display === 'none';
   if (!ordersEnabled) return showToast('Заказы временно не принимаются', true);
 
   const id = card.dataset.id || card.querySelector('.title')?.textContent.trim();
@@ -1309,57 +1555,164 @@ function addToCart(card) {
 
   if (cart.has(id)) {
     const item = cart.get(id);
-    item.qty++;
+    if (item.qty < ITEM_LIMIT) {
+      item.qty++;
+      cart.set(id, item);
+      showToast('Товар добавлен в корзину');
+    } else {
+      showToast(`Максимум ${ITEM_LIMIT} штук`, true);
+    }
   } else {
     cart.set(id, { name, unitPrice, qty: 1 });
+    showToast('Товар добавлен в корзину');
   }
 
   renderCart();
-  showToast('Товар добавлен в корзину');
 }
 
+// ======= Рендер корзины =======
 function renderCart() {
-  if (cartItemsContainer) cartItemsContainer.innerHTML = '';
-  let total = 0;
+  if (!cartItemsContainer) return;
+  cartItemsContainer.innerHTML = '';
 
-  cart.forEach(item => {
+  let subtotal = 0;
+  cart.forEach((item, id) => {
+    const lineTotal = item.unitPrice * item.qty;
+    subtotal += lineTotal;
+
     const itemEl = document.createElement('div');
     itemEl.className = 'cart-item';
+    itemEl.dataset.id = id;
+
     itemEl.innerHTML = `
-      <span class="cart-item-name">${item.name}</span>
-      <span class="cart-item-unit">${item.unitPrice.toFixed(2)} €</span>
-      <span class="cart-item-qty">${item.qty}</span>
-      <span class="cart-item-total">${(item.unitPrice * item.qty).toFixed(2)} €</span>
+      <div class="name">${escapeHtml(item.name)}</div>
+      <div class="unit">${item.unitPrice.toFixed(2)} €</div>
+      <div class="qty-wrap">
+        <button class="qty-btn btn-decr" aria-label="Уменьшить">−</button>
+        <div class="qty-value">${item.qty}</div>
+        <button class="qty-btn btn-incr" aria-label="Увеличить">+</button>
+      </div>
+      <div class="line-total">${lineTotal.toFixed(2)} €</div>
+      <button class="remove-btn" title="Удалить">×</button>
     `;
-    if (cartItemsContainer) cartItemsContainer.appendChild(itemEl);
-    total += item.unitPrice * item.qty;
+
+    // Обработчики кнопок
+    const incrBtn = itemEl.querySelector('.btn-incr');
+    const decrBtn = itemEl.querySelector('.btn-decr');
+    const removeBtn = itemEl.querySelector('.remove-btn');
+
+    incrBtn && incrBtn.addEventListener('click', () => {
+      if (item.qty < ITEM_LIMIT) {
+        item.qty++;
+        cart.set(id, item);
+      } else {
+        showToast(`Максимум ${ITEM_LIMIT} штук`, true);
+      }
+      renderCart();
+    });
+
+    decrBtn && decrBtn.addEventListener('click', () => {
+      if (item.qty > 1) {
+        item.qty--;
+        cart.set(id, item);
+      } else {
+        cart.delete(id);
+      }
+      renderCart();
+    });
+
+    removeBtn && removeBtn.addEventListener('click', () => {
+      cart.delete(id);
+      renderCart();
+    });
+
+    cartItemsContainer.appendChild(itemEl);
   });
 
-  // обновляем итоговую сумму
-  if (totalPriceEl) totalPriceEl.textContent = total.toFixed(2) + ' €';
+  // Вычисляем доставку и скидку
+  const delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
+  const discount = 0; // пока 0, можно добавить динамическую скидку
+  const total = subtotal + delivery - discount;
 
-  // просто пропускаем обновление cartCountEl, если его нет
-  if (cartCountEl) cartCountEl.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
+  if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + ' €';
+  if (deliveryEl) deliveryEl.textContent = delivery.toFixed(2) + ' €';
+  if (discountEl) discountEl.textContent = discount > 0 ? '-' + discount.toFixed(2) + ' €' : '0.00 €';
+  if (totalEl) totalEl.textContent = total.toFixed(2) + ' €';
+
+  if (cartCountEl) {
+    let cnt = 0;
+    cart.forEach(i => cnt += i.qty);
+    cartCountEl.textContent = cnt;
+  }
+}
+
+// ======= Open / Close корзины =======
+function openCart() {
+  cartFullscreenEl?.setAttribute('aria-hidden', 'false');
+  cartBackdrop?.classList.add('show');
+}
+function closeCart() {
+  cartFullscreenEl?.setAttribute('aria-hidden', 'true');
+  cartBackdrop?.classList.remove('show');
+}
+
+document.querySelector('.floating-cart')?.addEventListener('click', openCart);
+closeBtn?.addEventListener('click', closeCart);
+cartBackdrop?.addEventListener('click', closeCart);
+
+// ======= Очистка корзины =======
+clearCartBtn?.addEventListener('click', () => {
+  cart.clear();
+  renderCart();
+  showToast('Корзина очищена');
+});
+
+// ======= Оформление заказа =======
+placeOrderBtn?.addEventListener('click', () => {
+  const form = checkoutForm;
+  if (!form) return;
+
+  const name = form.name.value.trim();
+  const phone = form.phone.value.trim();
+  const email = form.email.value.trim();
+  const payment = form.payment.value;
+  const method = form.method.value;
+
+  if (!name || !phone || !email || !payment || !method) {
+    showToast('Заполните все поля', true);
+    return;
+  }
+
+  if (cart.size === 0) {
+    showToast('В корзине нет товаров', true);
+    return;
+  }
+
+  showToast('Заказ принят — спасибо!');
+  cart.clear();
+  renderCart();
+  setTimeout(closeCart, 900);
+});
+
+// ======= Экранировка HTML =======
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[s]);
 }
 
 
-// Открытие/закрытие корзины
-floatingCart.addEventListener('click', () => {
-  cartFullscreen.classList.add('open');
-  cartBackdrop.classList.add('show');
-});
-closeCartBtn.addEventListener('click', () => {
-  cartFullscreen.classList.remove('open');
-  cartBackdrop.classList.remove('show');
-});
-cartBackdrop.addEventListener('click', () => {
-  cartFullscreen.classList.remove('open');
-  cartBackdrop.classList.remove('show');
-});
+// ======= Инициалный рендер =======
+renderCart();
 
+// ======= Функции для изменения настроек =======
+window.setDeliveryCost = function(cost) {
+  DELIVERY_COST = parseFloat(cost) || 0;
+  renderCart();
+};
 
-
-
+window.setFreeDeliveryLimit = function(limit) {
+  FREE_DELIVERY_LIMIT = parseFloat(limit) || 0;
+  renderCart();
+};
 
 
 
