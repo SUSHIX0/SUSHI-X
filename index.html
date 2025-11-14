@@ -1496,6 +1496,7 @@ buttons.forEach(btn => {
   setTimeout(() => {
     animateCards();              // запускаем анимацию
   }, 250);
+  
 })();
 
 
@@ -1645,9 +1646,6 @@ function renderCart() {
   }
 }
 
-
-
-
 // ======= Open / Close корзины =======
 function openCart() {
   cartFullscreenEl?.setAttribute('aria-hidden', 'false');
@@ -1715,100 +1713,6 @@ window.setFreeDeliveryLimit = function(limit) {
   FREE_DELIVERY_LIMIT = parseFloat(limit) || 0;
   renderCart();
 };
-
-
-
-
-
-async function updateMenuFromSheet() {
-  try {
-    const res = await fetch(sheetUrl);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(r => r.split(','));
-    const headers = rows[0].map(h => h.trim());
-    const data = rows.slice(1).map(r => Object.fromEntries(r.map((v, i) => [headers[i], v.trim()])));
-
-    let ordersEnabled = true;
-
-    for (let item of data) {
-      if(item['id']) {
-        const idLower = item['id'].toLowerCase();
-
-        // ===== Подгрузка стоимости доставки и порога бесплатной доставки =====
-        if(idLower === 'delivery_cost') {
-          DELIVERY_COST = parseFloat(item['Цена'].replace(',', '.')) || DELIVERY_COST;
-          continue;
-        }
-        if(idLower === 'free_delivery_limit') {
-          FREE_DELIVERY_LIMIT = parseFloat(item['Цена'].replace(',', '.')) || FREE_DELIVERY_LIMIT;
-          continue;
-        }
-
-        if(idLower === 'orders_enabled') {
-          ordersEnabled = (item['Доступно'] || 'yes').toLowerCase() === 'yes';
-          document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
-          continue;
-        }
-      }
-
-      // ===== Обновление карточек товаров =====
-      const el = document.querySelector(`.card[data-id="${item['id']}"]`);
-      if (!el) continue;
-
-      const priceEl = el.querySelector('.price');
-      const overlay = el.querySelector('.overlay-unavailable');
-      const cartIcon = el.querySelector('.cart-icon');
-
-      const available = (item['Доступно'] || '').toLowerCase() === 'true';
-      const hidden = (item['Скрыто'] || '').toLowerCase() === 'true';
-      el.style.display = hidden ? 'none' : '';
-
-      // Цена и скидка
-      const basePrice = parseFloat(item['Цена'].replace(',', '.')) || 0;
-      const discountPrice = parseFloat(item['Цена_со_скидкой']?.replace(',', '.')) || 0;
-      const discountPercent = item['Скидка'] ? parseInt(item['Скидка']) : 0;
-      let priceHTML = '';
-
-      if (discountPrice > 0 && discountPrice < basePrice) {
-        const formattedOld = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const formattedNew = discountPrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        priceHTML = `<span class="discount">-${discountPercent}%</span> <span class="old-price">${formattedOld} €</span> <span class="new-price">${formattedNew} €</span>`;
-        el.classList.add('has-discount');
-      } else {
-        const formattedBase = basePrice.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        priceHTML = `${formattedBase} €`;
-        el.classList.remove('has-discount');
-      }
-      if(priceEl) priceEl.innerHTML = priceHTML;
-
-      // Доступность
-      if (!available) {
-        el.classList.add('unavailable');
-        if(overlay) overlay.textContent = 'Временно недоступно';
-        if(cartIcon) cartIcon.classList.add('hidden');
-      } else {
-        el.classList.remove('unavailable');
-        if(overlay) overlay.textContent = '';
-        if(cartIcon) ordersEnabled ? cartIcon.classList.remove('hidden') : cartIcon.classList.add('hidden');
-      }
-    }
-
-    // ===== Обновление корзины =====
-    renderCart();
-    updateSpecialOffersSection();
-
-  } catch (e) {
-    console.error('Ошибка загрузки меню', e);
-  }
-}
-
-// ===== Навешиваем корзину на все карточки =====
-document.querySelectorAll('.card .cart-icon').forEach(icon => {
-  icon.onclick = () => {
-    const card = icon.closest('.card');
-    addToCart(card);
-  };
-});
 
 
 
