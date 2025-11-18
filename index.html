@@ -812,6 +812,13 @@ body {
   .cart-body { gap:12px; }
 }
 
+.free-delivery-info {
+    text-align: center;
+    color: #d90000;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: none; /* скрыто до загрузки таблицы */
+}
 
 
 
@@ -1178,7 +1185,9 @@ body {
 <div id="cartFullscreen" class="cart-fullscreen" aria-hidden="true">
   <div class="cart-inner">
     <div class="cart-header">
-      <h2 class="cart-title">Ваша корзина</h2>
+      <h2 class="cart-title">Корзина</h2>
+      <div id="free-delivery-info" class="free-delivery-info"></div>
+
       <button id="closeCart" class="cart-close" aria-label="Закрыть корзину">&times;</button>
     </div>
 
@@ -1286,6 +1295,20 @@ async function updateMenuFromSheet() {
         continue;
       }
 
+
+// НАСТРОЙКИ ДОСТАВКИ ИЗ ТАБЛИЦЫ
+if (item['id'] && item['id'].toLowerCase() === 'delivery_cost') {
+    DELIVERY_COST = parseFloat(item['Цена']?.replace(',', '.')) || 0;
+    continue;
+}
+
+if (item['id'] && item['id'].toLowerCase() === 'free_delivery_limit') {
+    FREE_DELIVERY_LIMIT = parseFloat(item['Цена']?.replace(',', '.')) || 0;
+    continue;
+}
+
+
+
       const el = document.querySelector(`.card[data-id="${item['id']}"]`);
       if (!el) continue;
 
@@ -1349,6 +1372,9 @@ document.querySelectorAll('.cart-icon').forEach(icon => {
 
     // Специальные предложения
     updateSpecialOffersSection();
+
+renderCart();
+
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
 }
@@ -1574,6 +1600,14 @@ function addToCart(card) {
 function renderCart() {
   if (!cartItemsContainer) return;
   cartItemsContainer.innerHTML = '';
+
+  const freeInfo = document.getElementById('free-delivery-info');
+  if (FREE_DELIVERY_LIMIT > 0) {
+      freeInfo.style.display = 'block';
+      freeInfo.textContent = `Бесплатная доставка при покупке на ${FREE_DELIVERY_LIMIT} €`;
+  } else {
+      freeInfo.style.display = 'none';
+  }
 
   let subtotal = 0;
   cart.forEach((item, id) => {
