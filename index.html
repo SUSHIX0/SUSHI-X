@@ -1212,7 +1212,7 @@ body {
         <h3>Оформление заказа</h3>
         <form id="checkoutForm" class="checkout-form" onsubmit="return false;">
           <input name="name" type="text" placeholder="Имя" autocomplete="name" />
-          <input name="phone" type="tel" placeholder="Номер телефона" autocomplete="tel" />
+          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона" autocomplete="tel" required/>
           <input name="email" type="email" placeholder="Почта" autocomplete="email" />
           <select name="payment">
             <option value="" disabled selected>Способ оплаты</option>
@@ -1551,6 +1551,14 @@ const closeBtn = document.getElementById('closeCart');
 const placeOrderBtn = document.getElementById('placeOrder');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
+const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
+if (phoneInput) {
+  phoneInput.addEventListener('input', () => {
+    // Удаляем все символы кроме цифр и +
+    phoneInput.value = phoneInput.value.replace(/[^+\d]/g, '');
+  });
+};
+
 
 // Настройки корзины
 let DELIVERY_COST = 5.00; // стоимость доставки
