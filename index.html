@@ -816,8 +816,9 @@ body {
     text-align: center;
     color: #ff2d2d;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: -20px;
     display: none; /* скрыто до загрузки таблицы */
+    font-size: 16.5px;
 }
 
 
@@ -1604,7 +1605,7 @@ function renderCart() {
   const freeInfo = document.getElementById('free-delivery-info');
   if (FREE_DELIVERY_LIMIT > 0) {
       freeInfo.style.display = 'block';
-      freeInfo.textContent = `Бесплатная доставка при покупке на ${FREE_DELIVERY_LIMIT} €`;
+      freeInfo.textContent = `Бесплатная доставка при покупке на сумму ${FREE_DELIVERY_LIMIT} €`;
   } else {
       freeInfo.style.display = 'none';
   }
