@@ -43,7 +43,7 @@ header.brand h1 .jp{
   font-family:"Noto Sans JP"; 
   font-weight:700; 
   font-size:3.2rem; 
-  color:var(--accent);
+  color: #ff0000;
 }
 .note-orders-disabled {
   color: var(--accent);
@@ -564,7 +564,7 @@ body {
 .cart-fullscreen .cart-header button {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 35px;
   color: #ff0000;              /* кнопка закрытия в акцентном цвете */
   cursor: pointer;
 }
@@ -594,7 +594,7 @@ body {
 .cart-item span {
   font-size: 14px;
   font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
-  color: #ffffff;                  /* текст как в карточках */
+  color: #bcbcbc85;                  /* текст как в карточках */
 }
 .cart-item-qty {
   text-align: center;
@@ -715,8 +715,8 @@ body {
   border:1px solid rgba(255,255,255,0.02);
 }
 .cart-item .name { flex:1; font-weight:600; color:#fff; font-size:1.02rem; }
-.cart-item .unit { width:84px; color: #bcbcbc; text-align:center; }
-.cart-item .line-total { width:84px; text-align:right; font-weight:700; color:#ff2d2d; }
+.cart-item .unit { width:84px; color: #d7d7d7f1; text-align:center; }
+.cart-item .line-total { width:84px; text-align:right; font-weight:600; color:#ff2d2d; }
 .cart-item .qty-wrap {
   display:flex;
   align-items:center;
@@ -820,6 +820,8 @@ body {
     display: none; /* скрыто до загрузки таблицы */
     font-size: 16.5px;
 }
+
+
 
 
 
@@ -1210,7 +1212,7 @@ body {
         <h3>Оформление заказа</h3>
         <form id="checkoutForm" class="checkout-form" onsubmit="return false;">
           <input name="name" type="text" placeholder="Имя" autocomplete="name" />
-          <input name="phone" type="tel" placeholder="Номер телефона" autocomplete="tel" />
+          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона" autocomplete="tel" required/>
           <input name="email" type="email" placeholder="Почта" autocomplete="email" />
           <select name="payment">
             <option value="" disabled selected>Способ оплаты</option>
@@ -1549,6 +1551,14 @@ const closeBtn = document.getElementById('closeCart');
 const placeOrderBtn = document.getElementById('placeOrder');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
+const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
+if (phoneInput) {
+  phoneInput.addEventListener('input', () => {
+    // Удаляем все символы кроме цифр и +
+    phoneInput.value = phoneInput.value.replace(/[^+\d]/g, '');
+  });
+};
+
 
 // Настройки корзины
 let DELIVERY_COST = 5.00; // стоимость доставки
@@ -1567,7 +1577,7 @@ function showToast(message, isRed = false) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ======= Добавление товара =======
+// ======= Добавление товара с учётом старой цены =======
 function addToCart(card) {
   const ordersEnabled = document.getElementById('orders-disabled-note')?.style.display === 'none';
   if (!ordersEnabled) return showToast('Заказы временно не принимаются', true);
@@ -1575,10 +1585,18 @@ function addToCart(card) {
   const id = card.dataset.id || card.querySelector('.title')?.textContent.trim();
   const name = card.querySelector('.title .name')?.textContent.trim() || 'Товар';
   const priceEl = card.querySelector('.price');
-  const newPriceEl = priceEl.querySelector('.new-price');
+
+  // Если карточка содержит элементы .new-price и .old-price — берём их
+  const newPriceEl = priceEl?.querySelector('.new-price');
+  const oldPriceEl = priceEl?.querySelector('.old-price');
+
   const unitPrice = newPriceEl
-    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.'))
-    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0
+    : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+  const originalPrice = oldPriceEl
+    ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || unitPrice
+    : unitPrice;
 
   if (cart.has(id)) {
     const item = cart.get(id);
@@ -1590,12 +1608,14 @@ function addToCart(card) {
       showToast(`Максимум ${ITEM_LIMIT} штук`, true);
     }
   } else {
-    cart.set(id, { name, unitPrice, qty: 1 });
+    // Сохраняем обе цены: unitPrice (текущая), originalPrice (до скидки)
+    cart.set(id, { name, unitPrice, originalPrice, qty: 1 });
     showToast('Товар добавлен в корзину');
   }
 
   renderCart();
 }
+
 
 // ======= Рендер корзины =======
 function renderCart() {
@@ -1621,7 +1641,13 @@ function renderCart() {
 
     itemEl.innerHTML = `
       <div class="name">${escapeHtml(item.name)}</div>
-      <div class="unit">${item.unitPrice.toFixed(2)} €</div>
+      <div class="unit">
+    ${item.unitPrice.toFixed(2)} €
+    ${item.originalPrice && item.originalPrice > item.unitPrice 
+        ? `<span class="old-price">${item.originalPrice.toFixed(2)} €</span>` 
+        : ''}
+</div>
+
       <div class="qty-wrap">
         <button class="qty-btn btn-decr" aria-label="Уменьшить">−</button>
         <div class="qty-value">${item.qty}</div>
