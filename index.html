@@ -821,6 +821,75 @@ body {
     font-size: 16.5px;
 }
 
+/* На телефоне адаптация */
+@media (max-width: 899px) {
+  .free-delivery-info {
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+}
+
+
+
+
+/* На телефоне адаптация */
+@media (max-width: 899px) {
+  .free-delivery-info {
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    white-space: normal;
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+}
+
+
+
+
+
+
+@media (max-width: 599px) {
+.cart-item {
+  position: relative; /* чтобы позиционировать крестик */
+  display: flex;
+  flex-direction: column;
+  gap:6px;
+  background:#111111;
+  border-radius:18px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+
+
+
+  .cart-item .line-total {
+    text-align: center; /* итоговую цену оставляем справа */
+  }
+}
+
+/* ===== Крестик удаления товара ===== */
+@media (max-width: 599px) {
+.remove-btn {
+  position: absolute; /* фиксируем в углу */
+  top: 8px;
+  right: 8px;
+  background:transparent;
+  border:none;
+  color:#ff0000;
+  font-size:20px;
+  cursor:pointer;
+  z-index:10;
+}}
 
 
 
