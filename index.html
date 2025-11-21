@@ -2008,6 +2008,17 @@ function renderCart() {
   if (!cartItemsContainer) return;
   cartItemsContainer.innerHTML = '';
 
+
+const freeInfo = document.getElementById('free-delivery-info');
+if (FREE_DELIVERY_LIMIT > 0) {
+    freeInfo.style.display = 'block';
+    freeInfo.textContent = `Бесплатная доставка при покупке на сумму ${FREE_DELIVERY_LIMIT} €`;
+} else {
+    freeInfo.style.display = 'none';
+}
+
+
+
   let subtotal = 0;
   cart.forEach((item, id) => subtotal += item.unitPrice * item.qty);
 
