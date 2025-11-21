@@ -885,6 +885,52 @@ body {
 
 
 
+/* Кнопка открытия поля */
+.promo-toggle-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Коробка промокода использует стиль как у checkout-form */
+.promo-code-box {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.promo-code-box input {
+  margin-bottom: 10px;
+}
+
+.promo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.promo-message {
+  margin-top: 8px;
+  font-size: 14px;
+  min-height: 18px;
+}
+
+.promo-message.success {
+  color: #2ecc71;
+}
+
+.promo-message.error {
+  color: #ff5252;
+}
+
+.promo-toggle-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+
+
+
+
+
+
 
 
 
@@ -1262,6 +1308,22 @@ body {
         <div class="summary-row"><span>Товары</span><span class="subtotal-price">0.00 €</span></div>
         <div class="summary-row"><span>Доставка</span><span class="delivery-price">0.00 €</span></div>
         <div class="summary-row"><span>Скидка</span><span class="discount-price">0.00 €</span></div>
+<!-- Кнопка показать поле промокода -->
+<button id="showPromoBtn" class="btn-primary promo-toggle-btn">Ввести промокод</button>
+
+
+<!-- Поле для ввода промокода (изначально скрыто) -->
+<div class="promo-code-box" style="display:none;">
+  <div class="checkout-form input"><input id="promoInput" type="text" placeholder="Промокод"></div>
+ 
+  
+  <div class="promo-actions">
+    <button id="applyPromo" class="btn-primary">Применить</button>
+    <button id="cancelPromo" class="btn-ghost">Отмена</button>
+  </div>
+
+  <div id="promoMessage" class="promo-message"></div>
+</div>
         <div class="summary-divider"></div>
         <div class="summary-total"><span>Итого</span><span class="total-price">0.00 €</span></div>
       </div>
@@ -1818,6 +1880,74 @@ placeOrderBtn?.addEventListener('click', () => {
 function escapeHtml(str) {
   return String(str).replace(/[&<>"]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[s]);
 }
+
+
+
+
+
+// === Промокоды ===
+
+// Здесь список промокодов (можешь менять)
+const PROMO_CODES = {
+  "HELLO10": 10,
+  "WOW20": 20,
+  "SALE30": 30
+};
+
+let appliedPromo = null;
+
+// показать поле
+document.getElementById("showPromoBtn").addEventListener("click", () => {
+  document.querySelector(".promo-code-box").style.display = "block";
+  document.getElementById("showPromoBtn").style.display = "none";
+});
+
+// отмена
+document.getElementById("cancelPromo").addEventListener("click", () => {
+  document.querySelector(".promo-code-box").style.display = "none";
+  document.getElementById("showPromoBtn").style.display = "block";
+});
+
+// применить
+document.getElementById("applyPromo").addEventListener("click", () => {
+  const code = document.getElementById("promoInput").value.trim().toUpperCase();
+  const msg = document.getElementById("promoMessage");
+
+  if (!PROMO_CODES[code]) {
+    appliedPromo = null;
+    msg.textContent = "Промокод недействителен";
+    msg.className = "promo-message error";
+    renderCart();
+    return;
+  }
+
+  appliedPromo = PROMO_CODES[code];
+  msg.textContent = `Промокод применён (-${appliedPromo}%)`;
+  msg.className = "promo-message success";
+
+  renderCart();
+});
+
+
+// Изменяем renderCart, чтобы учитывал промокод:
+const originalRenderCart = renderCart;
+renderCart = function () {
+  originalRenderCart();
+
+  if (appliedPromo) {
+    const subtotal = parseFloat(subtotalEl.textContent);
+    const discount = subtotal * (appliedPromo / 100);
+    const delivery = parseFloat(deliveryEl.textContent);
+
+    discountEl.textContent = `-${discount.toFixed(2)} €`;
+    totalEl.textContent = (subtotal - discount + delivery).toFixed(2) + " €";
+  }
+};
+
+
+
+
+
 
 
 // ======= Инициалный рендер =======
