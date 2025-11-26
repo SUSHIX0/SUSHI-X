@@ -1744,52 +1744,35 @@ function addToCart(card){
 }
 
 // ===== РЕНДЕР КОРЗИНЫ =====
-function renderCart(){
-    if(!cartItemsContainer) return;
+function renderCart() {
+    if (!cartItemsContainer) return;
     cartItemsContainer.innerHTML = '';
 
     const freeInfo = document.getElementById('free-delivery-info');
-    if(FREE_DELIVERY_LIMIT>0){
-        freeInfo.style.display='block';
-        freeInfo.textContent=`Бесплатная доставка при покупке на сумму ${FREE_DELIVERY_LIMIT} €`;
-    } else freeInfo.style.display='none';
+    if (FREE_DELIVERY_LIMIT > 0) {
+        freeInfo.style.display = 'block';
+        freeInfo.textContent = `Бесплатная доставка при покупке на сумму ${FREE_DELIVERY_LIMIT} €`;
+    } else {
+        freeInfo.style.display = 'none';
+    }
 
     let subtotal = 0;
-
-// ======= ОБРАБОТКА БЕСПЛАТНОГО ТОВАРА =======
-if (activePromo && activePromo.type === 'free_item' && activePromo.itemId) {
-  const promoId = activePromo.itemId + '_promo';
-  const exists = cart.get(promoId);
-
-  // Добавляем бесплатный товар, если сумма >= min и товара нет
-  if (subtotal >= (activePromo.min || 0) && !exists) {
-    const name = activePromo.itemName || 'Бесплатный товар';
-    cart.set(promoId, {
-      name,
-      unitPrice: 0,
-      originalPrice: 0,
-      qty: 1,
-      promoFree: true
-    });
-  }
-
-  // Удаляем товар, если сумма < min
-  if (subtotal < (activePromo.min || 0) && exists) {
-    cart.delete(promoId);
-  }
-}
+    cart.forEach((item, id) => subtotal += item.unitPrice * item.qty);
 
 
-    cart.forEach((item,id)=>{
+cart.forEach((item, id) => {
         const lineTotal = item.unitPrice * item.qty;
-        subtotal += lineTotal;
 
         const el = document.createElement('div');
-        el.className='cart-item';
-        el.dataset.id=id;
-        el.innerHTML=`
+        el.className = 'cart-item';
+        el.dataset.id = id;
+
+        el.innerHTML = `
             <div class="name">${escapeHtml(item.name)}</div>
-            <div class="unit">${item.unitPrice.toFixed(2)} €${item.originalPrice && item.originalPrice>item.unitPrice?`<span class="old-price">${item.originalPrice.toFixed(2)} €</span>`:''}</div>
+            <div class="unit">
+                ${item.unitPrice.toFixed(2)} €
+                ${item.originalPrice && item.originalPrice > item.unitPrice ? `<span class="old-price">${item.originalPrice.toFixed(2)} €</span>` : ''}
+            </div>
             <div class="qty-wrap">
                 <button class="qty-btn btn-decr">−</button>
                 <div class="qty-value">${item.qty}</div>
@@ -1799,26 +1782,33 @@ if (activePromo && activePromo.type === 'free_item' && activePromo.itemId) {
             <button class="remove-btn">×</button>
         `;
 
-        const incr = el.querySelector('.btn-incr');
+                const incr = el.querySelector('.btn-incr');
         const decr = el.querySelector('.btn-decr');
         const removeBtn = el.querySelector('.remove-btn');
 
-        incr?.addEventListener('click',()=>{
-            if(item.unitPrice===0) return showToast('Бесплатную позицию можно добавить только один раз',true);
-            if(item.qty<ITEM_LIMIT) item.qty++;
-            cart.set(id,item);
+        incr.addEventListener('click', () => {
+            if(item.unitPrice === 0) {
+                showToast('Бесплатную позицию можно добавить только один раз', true);
+                return;
+            }
+            if(item.qty < ITEM_LIMIT) item.qty++;
+            cart.set(id, item);
             saveCart();
             renderCart();
         });
 
-        decr?.addEventListener('click',()=>{
-            if(item.qty>1) item.qty--;
-            else cart.delete(id);
+        decr.addEventListener('click', () => {
+            if(item.qty > 1) {
+                item.qty--;
+                cart.set(id, item);
+            } else {
+                cart.delete(id);
+            }
             saveCart();
             renderCart();
         });
 
-        removeBtn?.addEventListener('click',()=>{
+        removeBtn.addEventListener('click', () => {
             cart.delete(id);
             saveCart();
             renderCart();
@@ -1827,29 +1817,35 @@ if (activePromo && activePromo.type === 'free_item' && activePromo.itemId) {
         cartItemsContainer.appendChild(el);
     });
 
-    let delivery = subtotal>=FREE_DELIVERY_LIMIT?0:DELIVERY_COST;
+    let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
     let discount = 0;
-    if(activePromo){
-        switch(activePromo.type){
-            case 'cart_discount': discount=subtotal*(activePromo.value/100); break;
-            case 'flat_discount': discount=activePromo.value; break;
-            case 'min_total_discount': if(subtotal>=activePromo.min) discount=activePromo.value; break;
-            case 'free_delivery': delivery=0; break;
+
+    if(activePromo) {
+        switch(activePromo.type) {
+            case 'cart_discount': discount = subtotal * (activePromo.value/100); break;
+            case 'flat_discount': discount = activePromo.value; break;
+            case 'min_total_discount': if(subtotal >= activePromo.min) discount = activePromo.value; break;
+            case 'free_delivery': delivery = 0; break;
         }
     }
 
-    const total = subtotal+delivery-discount;
-    subtotalEl && (subtotalEl.textContent=subtotal.toFixed(2)+' €');
-    deliveryEl && (deliveryEl.textContent=delivery.toFixed(2)+' €');
-    discountEl && (discountEl.textContent=activePromo?.type==='free_item'?'Бесплатная позиция':(discount>0?'-'+discount.toFixed(2)+' €':'0.00 €'));
-    totalEl && (totalEl.textContent=total.toFixed(2)+' €');
+    const total = subtotal + delivery - discount;
 
-    if(cartCountEl){
-        let cnt=0;
-        cart.forEach(i=>cnt+=i.qty);
-        cartCountEl.textContent=cnt;
+    subtotalEl.textContent = subtotal.toFixed(2) + " €";
+    deliveryEl.textContent = delivery.toFixed(2) + " €";
+    discountEl.textContent =
+        activePromo?.type === 'free_item'
+        ? 'Бесплатная позиция'
+        : discount > 0 ? '-' + discount.toFixed(2) + ' €' : '0.00 €';
+    totalEl.textContent = total.toFixed(2) + " €";
+
+    if(cartCountEl) {
+        let cnt = 0;
+        cart.forEach(i => cnt += i.qty);
+        cartCountEl.textContent = cnt;
     }
 
+    // Сохраняем корзину в localStorage
     saveCart();
 }
 
@@ -1931,6 +1927,27 @@ const promoSheetUrl =
 let promoCodes = {}; 
 let activePromo = null;
 
+// ===== Сохранение и загрузка промокода =====
+function savePromo() {
+  if (activePromo) localStorage.setItem('activePromo', JSON.stringify(activePromo));
+  else localStorage.removeItem('activePromo');
+}
+
+function loadPromo() {
+  const data = localStorage.getItem('activePromo');
+  if (data) {
+    activePromo = JSON.parse(data);
+    promoInput.value = activePromo.code || '';
+    if (activePromo.type === 'free_item' && activePromo.min > 0) {
+      promoMessage.textContent = `Промокод "${activePromo.code}" активен при покупке от ${activePromo.min} €`;
+    } else {
+      promoMessage.textContent = `Промокод "${activePromo.code}" применён`;
+    }
+    promoMessage.style.color = 'green';
+  }
+}
+
+
 async function loadPromoCodes() {
   try {
     const res = await fetch(promoSheetUrl);
@@ -2001,14 +2018,28 @@ document.getElementById("cancelPromo").addEventListener("click", () => {
 // ========================================================
 applyPromoBtn.addEventListener('click', () => {
   const code = promoInput.value.trim().toUpperCase();
-
   if (!code) return;
+
+// ===== УДАЛЯЕМ бесплатный товар от предыдущего промокода =====
+if (activePromo && activePromo.type === 'free_item') {
+    const oldId = activePromo.itemId + '_promo';
+    if (cart.has(oldId)) {
+        cart.delete(oldId);
+        saveCart();
+    }
+}
+
 
   if (promoCodes[code]) {
     activePromo = promoCodes[code];
     activePromo.code = code;
+    savePromo();
 
-    promoMessage.textContent = `Промокод "${code}" применён`;
+    if (activePromo.type === 'free_item', 'min_total_discount' && activePromo.min > 0) {
+      promoMessage.textContent = `Промокод "${code}" активен при покупке от ${activePromo.min} €`;
+    } else {      
+      promoMessage.textContent = `Промокод "${code}" применён`;
+    }
     promoMessage.style.color = 'green';
   } else {
     promoMessage.textContent = 'Промокод не найден';
@@ -2018,6 +2049,7 @@ applyPromoBtn.addEventListener('click', () => {
 
   renderCart();
 });
+
 
 
 // ========================================================
@@ -2189,10 +2221,21 @@ if (FREE_DELIVERY_LIMIT > 0) {
     cart.forEach(i => cnt += i.qty);
     cartCountEl.textContent = cnt;
   }
+  saveCart();
+  savePromo();
 }
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
 loadCart();
+loadPromo();
+
+// ===== АВТОРАСКРЫТИЕ ПРОМОБЛОКА ПРИ ПЕРЕЗАГРУЗКЕ =====
+if (localStorage.getItem('activePromo')) {
+    promoBox.style.display = 'block';
+    showPromoBtn.style.display = 'none';
+}
+
+
 renderCart();
 
 </script>
