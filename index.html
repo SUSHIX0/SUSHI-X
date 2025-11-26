@@ -1898,6 +1898,14 @@ placeOrderBtn?.addEventListener('click', () => {
     showToast('В корзине нет товаров', true);
     return;
   }
+
+  // ===== НОВАЯ ПРОВЕРКА =====
+  const total = parseFloat(totalEl.textContent);
+  if (total <= 0) {
+    showToast('Сумма заказа должна быть больше 0 €', true);
+    return;
+  }
+
   if (!name || !phone || !email || !payment || !method) {
     showToast('Заполните все поля', true);
     return;
