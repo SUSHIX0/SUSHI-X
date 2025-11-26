@@ -923,7 +923,96 @@ body {
   margin-top: 12px;
 }
 
+/* Для экранов до 767px (телефоны) */
+@media (max-width: 767px) {
+  #checkoutForm input,
+  #checkoutForm select,
+  #checkoutForm textarea {
+    font-size: 18px;       /* удобный размер для ввода */
+  }
 
+  #checkoutForm label {
+    font-size: 16px;       /* текст метки чуть больше */
+  }
+
+  #checkoutForm button {
+    font-size: 18px;       /* кнопки тоже крупнее */
+  }
+}
+
+
+
+
+
+
+@media (max-width: 767px) {
+  /* Поля формы */
+  #checkoutForm input,
+  #checkoutForm select,
+  #checkoutForm textarea,
+  #promoInput {
+
+    box-sizing: border-box;
+  }
+
+  /* Метки полей */
+  #checkoutForm label {
+    font-size: 16px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* Кнопки формы */
+  #checkoutForm button,
+  #applyPromo,
+  #cancelPromo,
+  .floating-cart,
+  #showPromoBtn {    /* кнопка "ввести промокод" */
+    font-size: 18px;
+
+    box-sizing: border-box;
+  }
+
+  /* Блок промокода */
+  .promo-code-box {
+    padding: 10px;
+  }
+
+  #promoMessage {
+    font-size: 16px;
+  }
+
+  /* Товары в корзине */
+  .cart-item .name,
+  .cart-item .unit,
+  .cart-item .line-total {
+    font-size: 16px;
+  }
+
+  .cart-item .qty-wrap button {
+    font-size: 18px;
+    padding: 6px 12px;
+  }
+
+  /* Отступы между полями */
+  #checkoutForm .form-group {
+    margin-bottom: 12px;
+  }
+
+  .promo-code-box input {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+}
+
+@media (max-width: 767px) {
+  #menuFilters button.active-filter,
+  #menuFiltersFloating button.active-filter {
+    background-color: initial;
+    color: initial;
+    box-shadow: none;
+  }
+}
 
 
 
