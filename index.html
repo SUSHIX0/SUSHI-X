@@ -2382,118 +2382,162 @@ const deliveryCalendar = document.getElementById('deliveryCalendar');
 const chooseDateBtn = document.getElementById('chooseDateBtn');
 const methodSelect = checkoutForm?.method;
 
+let selectedDate = null;
 
+// Google Sheets CSV
+const blockedSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpwD3J-s9r0BLacaNsM3CQMM4Gsdx2IcP2EHhjy2jKq1aysv4YToAjWpz-Pn9cTj4MUwGIMKvbT7m/pub?output=csv";
+
+let blockedDates = [];
+let blockedWeekday = false;
+let blockedWeekend = false;
+
+// Загрузка CSV с Google Sheets
+async function loadBlockedDates() {
+    try {
+        const res = await fetch(blockedSheetUrl);
+        const csv = await res.text();
+        const lines = csv.trim().split('\n').slice(1); // пропускаем заголовок
+
+        blockedDates = [];
+        blockedWeekday = false;
+        blockedWeekend = false;
+
+        lines.forEach(line => {
+            if(!line.trim()) return;
+            const cols = line.split(',');
+            const dateStr = cols[0].trim(); // 01.12.2025
+            const weekdayBlocked = cols[1].trim().toUpperCase() === "YES";
+            const weekendBlockedRow = cols[2].trim().toUpperCase() === "YES";
+
+            if(dateStr){
+                const [day, month, year] = dateStr.split('.').map(Number);
+                const d = new Date(year, month-1, day);
+                blockedDates.push(d.toISOString().split('T')[0]);
+            }
+            if(weekdayBlocked) blockedWeekday = true;
+            if(weekendBlockedRow) blockedWeekend = true;
+        });
+    } catch(err) {
+        console.error("Ошибка загрузки заблокированных дат:", err);
+    }
+}
+
+// Проверка, заблокирована ли дата
+function isBlocked(date) {
+    const isoDate = date.toISOString().split('T')[0];
+
+    // конкретная дата
+    if(blockedDates.includes(isoDate)) return true;
+
+    const day = date.getDay(); // 0 = вс, 1 = пн ... 6 = сб
+    if(day === 0 || day === 6) return blockedWeekend;
+    return blockedWeekday;
+}
+
+// Показываем/скрываем поля доставки
 function updateDeliveryFields() {
-  if(methodSelect.value.toLowerCase() === "доставка"){
-    deliveryFields.style.display = "block";
-  } else {
-    deliveryFields.style.display = "none";
-    selectedDate = null;
-    deliveryCalendar.style.display = "none";
-    chooseDateBtn.textContent = "Выбрать дату доставки";
-  }
+    if(methodSelect.value.toLowerCase() === "доставка"){
+        deliveryFields.style.display = "block";
+    } else {
+        deliveryFields.style.display = "none";
+        selectedDate = null;
+        deliveryCalendar.style.display = "none";
+        chooseDateBtn.textContent = "Выбрать дату доставки";
+    }
 }
 
 methodSelect?.addEventListener('change', updateDeliveryFields);
-
-// Проверка при загрузке страницы
 updateDeliveryFields();
 
-
-
-let selectedDate = null;
-
-methodSelect?.addEventListener('change', () => {
-  if(methodSelect.value.toLowerCase() === "доставка"){
-    deliveryFields.style.display = "block";
-  } else {
-    deliveryFields.style.display = "none";
-    selectedDate = null;
-    deliveryCalendar.style.display = "none";
-    chooseDateBtn.textContent = "Выбрать дату доставки";
-  }
-});
-
 chooseDateBtn?.addEventListener('click', () => {
-  deliveryCalendar.style.display = "block";
-  renderCalendar();
+    deliveryCalendar.style.display = "block";
+    renderCalendar();
 });
 
+// Рендер календаря
 function renderCalendar() {
-  deliveryCalendar.innerHTML = '';
+    deliveryCalendar.innerHTML = '';
 
-  const today = new Date();
-  const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 7);
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 7);
 
-  // доступные даты
-  const dates = [];
-  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  while(current <= maxDate){
-    dates.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-
-  // группируем по месяцам
-  const months = {};
-  dates.forEach(d => {
-    const key = d.getFullYear() + '-' + (d.getMonth() + 1);
-    if(!months[key]) months[key] = [];
-    months[key].push(d);
-  });
-
-  for(const [key, monthDates] of Object.entries(months)){
-    const monthLabel = document.createElement('div');
-    monthLabel.className = 'month-label';
-    monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
-    deliveryCalendar.appendChild(monthLabel);
-
-    const daysContainer = document.createElement('div');
-    daysContainer.className = 'days';
-
-    const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
-    const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
-
-    // пустые ячейки для сдвига 1-го числа
-    const startDay = (firstDate.getDay() + 6) % 7; // понедельник = 0
-    for(let i=0; i<startDay; i++){
-      const emptyDiv = document.createElement('div');
-      daysContainer.appendChild(emptyDiv);
+    const dates = [];
+    const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    while(current <= maxDate){
+        dates.push(new Date(current));
+        current.setDate(current.getDate() + 1);
     }
 
-    for(let day=1; day<=lastDate.getDate(); day++){
-      const date = new Date(firstDate.getFullYear(), firstDate.getMonth(), day);
-      const dayDiv = document.createElement('div');
-      dayDiv.className = 'day';
-      dayDiv.textContent = day;
+    // группировка по месяцам
+    const months = {};
+    dates.forEach(d => {
+        const key = d.getFullYear() + '-' + (d.getMonth() + 1);
+        if(!months[key]) months[key] = [];
+        months[key].push(d);
+    });
 
-      const isoDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
-      dayDiv.dataset.date = isoDate;
+    for(const [key, monthDates] of Object.entries(months)){
+        const monthLabel = document.createElement('div');
+        monthLabel.className = 'month-label';
+        monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
+        deliveryCalendar.appendChild(monthLabel);
 
-      if(dates.some(d => d.getDate()===date.getDate() && d.getMonth()===date.getMonth() && d.getFullYear()===date.getFullYear())){
-        dayDiv.classList.add('available');
-      } else {
-        dayDiv.classList.add('unavailable');
-      }
+        const daysContainer = document.createElement('div');
+        daysContainer.className = 'days';
 
-      if(selectedDate === isoDate){
-        dayDiv.classList.add('selected');
-      }
+        const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
+        const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
 
-      dayDiv.addEventListener('click', () => {
-        if(dayDiv.classList.contains('unavailable')) return;
-        selectedDate = isoDate;
-        chooseDateBtn.textContent = "Дата: " + isoDate.split('-').reverse().join('.');
-        deliveryCalendar.style.display = "none";
-        renderCalendar();
-      });
+        // пустые ячейки для выравнивания первого числа по дню недели (понедельник = 0)
+        const startDay = (firstDate.getDay() + 6) % 7;
+        for(let i=0; i<startDay; i++){
+            const emptyDiv = document.createElement('div');
+            daysContainer.appendChild(emptyDiv);
+        }
 
-      daysContainer.appendChild(dayDiv);
+        for(let day=1; day<=lastDate.getDate(); day++){
+            const date = new Date(firstDate.getFullYear(), firstDate.getMonth(), day);
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'day';
+            dayDiv.textContent = day;
+
+            const isoDate = date.toISOString().split('T')[0];
+            dayDiv.dataset.date = isoDate;
+
+            if(dates.some(d => d.getDate()===date.getDate() && d.getMonth()===date.getMonth() && d.getFullYear()===date.getFullYear()) && !isBlocked(date)){
+                dayDiv.classList.add('available');
+            } else {
+                dayDiv.classList.add('unavailable');
+            }
+
+            if(selectedDate === isoDate){
+                dayDiv.classList.add('selected');
+            }
+
+            dayDiv.addEventListener('click', () => {
+                if(dayDiv.classList.contains('unavailable')) return;
+                selectedDate = isoDate;
+                const [year, month, d] = isoDate.split('-').map(Number);
+                chooseDateBtn.textContent = "Дата: " + `${d.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+                deliveryCalendar.style.display = "none";
+                renderCalendar();
+            });
+
+            daysContainer.appendChild(dayDiv);
+        }
+
+        deliveryCalendar.appendChild(daysContainer);
     }
-
-    deliveryCalendar.appendChild(daysContainer);
-  }
 }
+
+// Загружаем Google Sheets и рендерим
+loadBlockedDates().then(() => {
+    if(methodSelect.value.toLowerCase() === "доставка"){
+        renderCalendar();
+    }
+});
+
 
 
 
