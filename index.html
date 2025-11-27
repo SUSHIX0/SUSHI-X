@@ -1062,7 +1062,7 @@ body {
 }
 
 .custom-calendar .day.selected {
-  background-color: #ff0000;
+  background-color: #ff2d2d;
   color: #fff;
   font-weight: bold;
 }
@@ -1079,7 +1079,12 @@ body {
   border-radius: 12px;
 }
 
-
+.deliveryNote {
+  color: #ff0000; /* красный цвет */
+  text-align: center; /* по центру */
+  font-weight: bold;
+  margin-top: 8px;
+}
 
 
 
@@ -1503,9 +1508,7 @@ body {
           </select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
-  <p style="margin-top:5px; font-size:0.9em; color:#fff;">
-    NB! Доставка осуществляется только по Tiskre Küla
-  </p>  
+  <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
   <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
