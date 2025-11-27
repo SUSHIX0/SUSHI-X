@@ -1900,6 +1900,9 @@ cart.forEach((item, id) => {
     });
 
     let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
+      const method = checkoutForm?.method?.value?.toLowerCase();
+    if (method === "самовывоз") delivery = 0;
+
     let discount = 0;
 
     if(activePromo) {
@@ -1930,6 +1933,10 @@ cart.forEach((item, id) => {
     // Сохраняем корзину в localStorage
     saveCart();
 }
+
+// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
+checkoutForm?.method?.addEventListener('change', renderCart);
+
 
 // ===== OPEN/CLOSE =====
 function openCart(){ cartFullscreenEl?.setAttribute('aria-hidden','false'); cartBackdrop?.classList.add('show'); }
@@ -2269,7 +2276,10 @@ if (FREE_DELIVERY_LIMIT > 0) {
   // 6. СКИДКИ, ДОСТАВКА, ИТОГИ
   // ========================================================
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
-  let discount = 0;
+  const method = checkoutForm?.method?.value?.toLowerCase();
+    if (method === "самовывоз") delivery = 0;
+
+    let discount = 0;
 
   if (activePromo) {
     switch (activePromo.type) {
@@ -2314,6 +2324,10 @@ if (FREE_DELIVERY_LIMIT > 0) {
   saveCart();
   savePromo();
 }
+
+
+// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
+checkoutForm?.method?.addEventListener('change', renderCart);
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
 loadCart();
