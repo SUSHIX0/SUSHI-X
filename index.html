@@ -2387,8 +2387,31 @@ const deliveryTime = document.getElementById('deliveryTime');
 const deliveryAddress = document.getElementById('deliveryAddress');
 
 let selectedDate = null;
+let blockedDates = new Set();
+let blockedWeekday = false;
+let blockedWeekend = false;
 
-// Функция показа/скрытия полей в зависимости от способа получения
+// ===== ЗАГРУЗКА GOOGLE SHEET =====
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpwD3J-s9r0BLacaNsM3CQMM4Gsdx2IcP2EHhjy2jKq1aysv4YToAjWpz-Pn9cTj4MUwGIMKvbT7m/pub?output=csv";
+
+async function loadBlockedDates() {
+  try {
+    const res = await fetch(sheetUrl);
+    const csv = await res.text();
+    const lines = csv.split("\n").map(l => l.trim());
+    for(let i = 1; i < lines.length; i++){
+      if(!lines[i]) continue;
+      const [date, weekday, weekend] = lines[i].split(",");
+      if(date) blockedDates.add(date.trim());
+      if(weekday && weekday.trim().toUpperCase() === "YES") blockedWeekday = true;
+      if(weekend && weekend.trim().toUpperCase() === "YES") blockedWeekend = true;
+    }
+  } catch(err) {
+    console.error("Ошибка загрузки Google Sheet", err);
+  }
+}
+
+// ===== ОБНОВЛЕНИЕ ПОЛЕЙ ДЛЯ ДОСТАВКИ =====
 function updateDeliveryFields() {
   const method = methodSelect.value?.toLowerCase();
 
@@ -2396,11 +2419,11 @@ function updateDeliveryFields() {
     deliveryFields.style.display = "block";
 
     if(method === "доставка"){
-      deliveryNote.style.display = "block";        // показываем NB!
-      deliveryAddress.style.display = "block";     // показываем поле адреса
-    } else { // самовывоз
-      deliveryNote.style.display = "none";         // скрываем NB!
-      deliveryAddress.style.display = "none";      // скрываем поле адреса
+      deliveryNote.style.display = "block";        
+      deliveryAddress.style.display = "block";     
+    } else { 
+      deliveryNote.style.display = "none";         
+      deliveryAddress.style.display = "none";      
     }
   } else {
     deliveryFields.style.display = "none";
@@ -2410,24 +2433,21 @@ function updateDeliveryFields() {
   }
 }
 
-// Привязка к select
 methodSelect?.addEventListener('change', updateDeliveryFields);
-
-// Проверка при загрузке страницы
 updateDeliveryFields();
 
-// Открытие календаря
+// ===== ОТКРЫТИЕ КАЛЕНДАРЯ =====
 chooseDateBtn?.addEventListener('click', () => {
   deliveryCalendar.style.display = "block";
   renderCalendar();
 });
 
-// Рендер календаря (пример с ограничением 7 дней вперед)
+// ===== РЕНДЕР КАЛЕНДАРЯ =====
 function renderCalendar() {
   deliveryCalendar.innerHTML = '';
   const today = new Date();
   const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 7); // максимум +6 дней
+  maxDate.setDate(today.getDate() + 7);
 
   const dates = [];
   const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -2436,7 +2456,6 @@ function renderCalendar() {
     current.setDate(current.getDate() + 1);
   }
 
-  // Группируем по месяцам
   const months = {};
   dates.forEach(d => {
     const key = d.getFullYear() + '-' + (d.getMonth()+1);
@@ -2448,7 +2467,7 @@ function renderCalendar() {
     const monthLabel = document.createElement('div');
     monthLabel.className = 'month-label';
     monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
-    monthLabel.style.marginTop = "10px"; // отступ между месяцами
+    monthLabel.style.marginTop = "10px";
     deliveryCalendar.appendChild(monthLabel);
 
     const daysContainer = document.createElement('div');
@@ -2457,8 +2476,7 @@ function renderCalendar() {
     const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
     const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
 
-    // пустые ячейки для сдвига 1-го числа
-    const startDay = (firstDate.getDay() + 6) % 7; // понедельник = 0
+    const startDay = (firstDate.getDay() + 6) % 7;
     for(let i=0; i<startDay; i++){
       const emptyDiv = document.createElement('div');
       daysContainer.appendChild(emptyDiv);
@@ -2473,8 +2491,18 @@ function renderCalendar() {
       const isoDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
       dayDiv.dataset.date = isoDate;
 
+      // Блокировка по Google Sheets
+      const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+      const isWeekday = (date.getDay() >= 1 && date.getDay() <= 5);
+
       if(dates.some(d => d.getDate()===date.getDate() && d.getMonth()===date.getMonth() && d.getFullYear()===date.getFullYear())){
         dayDiv.classList.add('available');
+        if(blockedDates.has(`${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`) ||
+           (blockedWeekend && isWeekend) ||
+           (blockedWeekday && isWeekday)){
+          dayDiv.classList.remove('available');
+          dayDiv.classList.add('unavailable');
+        }
       } else {
         dayDiv.classList.add('unavailable');
       }
@@ -2499,6 +2527,9 @@ function renderCalendar() {
     deliveryCalendar.appendChild(daysContainer);
   }
 }
+
+// ===== ЗАГРУЗКА БЛОКИРОВОК И СТАРТОВЫЙ РЕНДЕР =====
+loadBlockedDates().then(() => renderCalendar());
 
 
 
