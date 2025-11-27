@@ -791,12 +791,12 @@ body {
   font-weight:700;
 }
 .btn-ghost {
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.04);
-  color:#fff;
-  padding:10px 14px;
+  padding:12px 14px;
   border-radius:12px;
-  cursor:pointer;
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,0.03);
+  color:#fff;
+  outline:none;
 }
 
 /* Responsive */
@@ -1005,6 +1005,86 @@ body {
 }
 }
 
+
+
+
+
+
+
+.custom-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #161616;
+  padding: 10px;
+  border-radius: 12px;
+  color: #fff;
+  width: 300px;
+  font-family: sans-serif;
+}
+
+.custom-calendar .month-label {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.custom-calendar .days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.custom-calendar .day {
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.custom-calendar .day.available {
+  background-color: #000;
+  color: #fff;
+}
+
+.custom-calendar .day.available:hover {
+  background-color: #222;
+}
+
+.custom-calendar .day.unavailable {
+  color: #666;
+  cursor: not-allowed;
+  background-color: #333;
+}
+
+.custom-calendar .day.selected {
+  background-color: #ff2d2d;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+#deliveryCalendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем содержимое по горизонтали */
+  margin: 10px auto;  /* Отступ сверху/снизу и авто слева/справа для центрирования */
+  max-width: 320px;   /* Можно ограничить ширину */
+  background-color: #181818;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.deliveryNote {
+  color: #ff2d2d; /* красный цвет */
+  text-align: center; /* по центру */
+  font-weight: bold;
+  margin-top: 8px;
+}
 
 
 
@@ -1426,6 +1506,27 @@ body {
             <option>Самовывоз</option>
             <option>Доставка</option>
           </select>
+
+<div id="deliveryFields" style="display:none; margin-top:10px;">
+  <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
+  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
+  <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
+
+  <select id="deliveryTime">
+    <option value="">Выберите время</option>
+    <option>09:00 - 12:00</option>
+    <option>12:00 - 15:00</option>
+    <option>15:00 - 18:00</option>
+  </select>
+<input type="text" id="deliveryAddress" placeholder="Введите адрес" class="checkout-form">
+
+
+</div>
+
+
+
+
+
 
           <div class="checkout-actions">
             <button id="placeOrder" class="btn-primary" type="button">Оформить заказ</button>
@@ -1900,6 +2001,9 @@ cart.forEach((item, id) => {
     });
 
     let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
+      const method = checkoutForm?.method?.value?.toLowerCase();
+    if (method === "самовывоз") delivery = 0;
+
     let discount = 0;
 
     if(activePromo) {
@@ -1930,6 +2034,10 @@ cart.forEach((item, id) => {
     // Сохраняем корзину в localStorage
     saveCart();
 }
+
+// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
+checkoutForm?.method?.addEventListener('change', renderCart);
+
 
 // ===== OPEN/CLOSE =====
 function openCart(){ cartFullscreenEl?.setAttribute('aria-hidden','false'); cartBackdrop?.classList.add('show'); }
@@ -2268,8 +2376,175 @@ if (FREE_DELIVERY_LIMIT > 0) {
   // ========================================================
   // 6. СКИДКИ, ДОСТАВКА, ИТОГИ
   // ========================================================
+
+const checkoutForm = document.getElementById('checkoutForm');
+const methodSelect = checkoutForm?.method;
+const deliveryFields = document.getElementById('deliveryFields');
+const deliveryNote = document.querySelector('.deliveryNote');
+const chooseDateBtn = document.getElementById('chooseDateBtn');
+const deliveryCalendar = document.getElementById('deliveryCalendar');
+const deliveryTime = document.getElementById('deliveryTime');
+const deliveryAddress = document.getElementById('deliveryAddress');
+
+let selectedDate = null;
+let blockedDates = new Set();
+let blockedWeekday = false;
+let blockedWeekend = false;
+
+// ===== ЗАГРУЗКА GOOGLE SHEET =====
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpwD3J-s9r0BLacaNsM3CQMM4Gsdx2IcP2EHhjy2jKq1aysv4YToAjWpz-Pn9cTj4MUwGIMKvbT7m/pub?output=csv";
+
+async function loadBlockedDates() {
+  try {
+    const res = await fetch(sheetUrl);
+    const csv = await res.text();
+    const lines = csv.split("\n").map(l => l.trim());
+    for(let i = 1; i < lines.length; i++){
+      if(!lines[i]) continue;
+      const [date, weekday, weekend] = lines[i].split(",");
+      if(date) blockedDates.add(date.trim());
+      if(weekday && weekday.trim().toUpperCase() === "YES") blockedWeekday = true;
+      if(weekend && weekend.trim().toUpperCase() === "YES") blockedWeekend = true;
+    }
+  } catch(err) {
+    console.error("Ошибка загрузки Google Sheet", err);
+  }
+}
+
+// ===== ОБНОВЛЕНИЕ ПОЛЕЙ ДЛЯ ДОСТАВКИ =====
+function updateDeliveryFields() {
+  const method = methodSelect.value?.toLowerCase();
+
+  if(method === "доставка" || method === "самовывоз"){
+    deliveryFields.style.display = "block";
+
+    if(method === "доставка"){
+      deliveryNote.style.display = "block";        
+      deliveryAddress.style.display = "block";     
+    } else { 
+      deliveryNote.style.display = "none";         
+      deliveryAddress.style.display = "none";      
+    }
+  } else {
+    deliveryFields.style.display = "none";
+    deliveryCalendar.style.display = "none";
+    selectedDate = null;
+    chooseDateBtn.textContent = "Выбрать дату доставки";
+  }
+}
+
+methodSelect?.addEventListener('change', updateDeliveryFields);
+updateDeliveryFields();
+
+// ===== ОТКРЫТИЕ КАЛЕНДАРЯ =====
+chooseDateBtn?.addEventListener('click', () => {
+  deliveryCalendar.style.display = "block";
+  renderCalendar();
+});
+
+// ===== РЕНДЕР КАЛЕНДАРЯ =====
+function renderCalendar() {
+  deliveryCalendar.innerHTML = '';
+  const today = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(today.getDate() + 7);
+
+  const dates = [];
+  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  while(current <= maxDate){
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  const months = {};
+  dates.forEach(d => {
+    const key = d.getFullYear() + '-' + (d.getMonth()+1);
+    if(!months[key]) months[key] = [];
+    months[key].push(d);
+  });
+
+  for(const [key, monthDates] of Object.entries(months)){
+    const monthLabel = document.createElement('div');
+    monthLabel.className = 'month-label';
+    monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
+    monthLabel.style.marginTop = "10px";
+    deliveryCalendar.appendChild(monthLabel);
+
+    const daysContainer = document.createElement('div');
+    daysContainer.className = 'days';
+
+    const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
+    const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
+
+    const startDay = (firstDate.getDay() + 6) % 7;
+    for(let i=0; i<startDay; i++){
+      const emptyDiv = document.createElement('div');
+      daysContainer.appendChild(emptyDiv);
+    }
+
+    for(let day=1; day<=lastDate.getDate(); day++){
+      const date = new Date(firstDate.getFullYear(), firstDate.getMonth(), day);
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'day';
+      dayDiv.textContent = day;
+
+      const isoDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
+      dayDiv.dataset.date = isoDate;
+
+      // Блокировка по Google Sheets
+      const isWeekend = (date.getDay() === 0 || date.getDay() === 6);
+      const isWeekday = (date.getDay() >= 1 && date.getDay() <= 5);
+
+      if(dates.some(d => d.getDate()===date.getDate() && d.getMonth()===date.getMonth() && d.getFullYear()===date.getFullYear())){
+        dayDiv.classList.add('available');
+        if(blockedDates.has(`${date.getDate().toString().padStart(2,'0')}.${(date.getMonth()+1).toString().padStart(2,'0')}.${date.getFullYear()}`) ||
+           (blockedWeekend && isWeekend) ||
+           (blockedWeekday && isWeekday)){
+          dayDiv.classList.remove('available');
+          dayDiv.classList.add('unavailable');
+        }
+      } else {
+        dayDiv.classList.add('unavailable');
+      }
+
+      if(selectedDate === isoDate){
+        dayDiv.classList.add('selected');
+      }
+
+      dayDiv.addEventListener('click', () => {
+        if(dayDiv.classList.contains('unavailable')) return;
+        selectedDate = isoDate;
+        const [year, month, day] = isoDate.split('-').map(Number);
+        const formatted = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+        chooseDateBtn.textContent = "Дата: " + formatted;
+        deliveryCalendar.style.display = "none";
+        renderCalendar();
+      });
+
+      daysContainer.appendChild(dayDiv);
+    }
+
+    deliveryCalendar.appendChild(daysContainer);
+  }
+}
+
+// ===== ЗАГРУЗКА БЛОКИРОВОК И СТАРТОВЫЙ РЕНДЕР =====
+loadBlockedDates().then(() => renderCalendar());
+
+
+
+
+
+
+
+
+
+
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
-  let discount = 0;
+  const method = checkoutForm?.method?.value?.toLowerCase();
+    if (method === "самовывоз") delivery = 0;
+
+    let discount = 0;
 
   if (activePromo) {
     switch (activePromo.type) {
@@ -2314,6 +2589,9 @@ if (FREE_DELIVERY_LIMIT > 0) {
   saveCart();
   savePromo();
 }
+
+
+
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
 loadCart();
