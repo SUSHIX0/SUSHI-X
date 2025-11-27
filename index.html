@@ -1011,6 +1011,73 @@ body {
 
 
 
+.custom-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #181818; /* тёмный фон */
+  padding: 10px;
+  border-radius: 12px;
+  color: #fff;
+  width: 300px;
+  font-family: sans-serif;
+}
+
+.custom-calendar .month-label {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.custom-calendar .days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.custom-calendar .day {
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.custom-calendar .day.available {
+  background-color: #000;
+  color: #fff;
+}
+
+.custom-calendar .day.available:hover {
+  background-color: #222;
+}
+
+.custom-calendar .day.unavailable {
+  color: #666;
+  cursor: not-allowed;
+  background-color: #333;
+  border-color: #666;
+}
+
+.custom-calendar .day.selected {
+  background-color: #ff0000;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1426,6 +1493,28 @@ body {
             <option>Самовывоз</option>
             <option>Доставка</option>
           </select>
+
+<div id="deliveryFields" style="display:none; margin-top:10px;">
+  <button type="button" class="btn-primary" id="chooseDateBtn">Выбрать дату доставки</button>
+  <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
+
+<label>Выберите время доставки:</label>
+  <select id="deliveryTime">
+    <option value="">Выберите время</option>
+    <option>09:00 - 12:00</option>
+    <option>12:00 - 15:00</option>
+    <option>15:00 - 18:00</option>
+  </select>
+
+  <p style="margin-top:5px; font-size:0.9em; color:#fff;">
+    NB! Доставка осуществляется только по Tiskre Küla
+  </p>
+</div>
+
+
+
+
+
 
           <div class="checkout-actions">
             <button id="placeOrder" class="btn-primary" type="button">Оформить заказ</button>
@@ -2275,6 +2364,112 @@ if (FREE_DELIVERY_LIMIT > 0) {
   // ========================================================
   // 6. СКИДКИ, ДОСТАВКА, ИТОГИ
   // ========================================================
+
+const deliveryFields = document.getElementById('deliveryFields');
+const deliveryCalendar = document.getElementById('deliveryCalendar');
+const chooseDateBtn = document.getElementById('chooseDateBtn');
+const deliveryTime = document.getElementById('deliveryTime');
+const methodSelect = checkoutForm?.method;
+
+let selectedDate = null;
+
+// Показ/скрытие полей доставки
+methodSelect?.addEventListener('change', () => {
+  if(methodSelect.value.toLowerCase() === "доставка"){
+    deliveryFields.style.display = "block";
+  } else {
+    deliveryFields.style.display = "none";
+    selectedDate = null;
+    deliveryCalendar.style.display = "none";
+    chooseDateBtn.textContent = "Выбрать дату доставки";
+  }
+});
+
+// Открытие календаря по кнопке
+chooseDateBtn?.addEventListener('click', () => {
+  deliveryCalendar.style.display = "block";
+  renderCalendar();
+});
+
+function renderCalendar() {
+  deliveryCalendar.innerHTML = '';
+
+  const today = new Date();
+  const maxDate = new Date();
+  maxDate.setDate(today.getDate() + 6); // следующие 7 дней
+
+  // создаём массив всех допустимых дат
+  const dates = [];
+  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Локальная дата без времени
+  while (current <= maxDate) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  // группировка по месяцам
+  const months = {};
+  dates.forEach(d => {
+    const key = d.getFullYear() + '-' + (d.getMonth() + 1);
+    if (!months[key]) months[key] = [];
+    months[key].push(d);
+  });
+
+  for (const [key, monthDates] of Object.entries(months)) {
+    const monthLabel = document.createElement('div');
+    monthLabel.className = 'month-label';
+    monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
+    deliveryCalendar.appendChild(monthLabel);
+
+    const daysContainer = document.createElement('div');
+    daysContainer.className = 'days';
+
+    // полный месяц
+    const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
+    const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
+
+    for (let day = 1; day <= lastDate.getDate(); day++) {
+      const date = new Date(firstDate.getFullYear(), firstDate.getMonth(), day);
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'day';
+      dayDiv.textContent = day;
+
+      // локальный ISO формат без смещения
+      const isoDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
+      dayDiv.dataset.date = isoDate;
+
+      if (dates.some(d => d.getDate() === date.getDate() && d.getMonth() === date.getMonth() && d.getFullYear() === date.getFullYear())) {
+        dayDiv.classList.add('available');
+      } else {
+        dayDiv.classList.add('unavailable');
+      }
+
+      if (selectedDate === isoDate) {
+        dayDiv.classList.add('selected');
+      }
+
+      dayDiv.addEventListener('click', () => {
+        if(dayDiv.classList.contains('unavailable')) return;
+        selectedDate = isoDate;
+
+        chooseDateBtn.textContent = "Дата: " + isoDate.split('-').reverse().join('.'); // дд.мм.гггг
+        deliveryCalendar.style.display = "none";
+        renderCalendar();
+      });
+
+      daysContainer.appendChild(dayDiv);
+    }
+
+    deliveryCalendar.appendChild(daysContainer);
+  }
+}
+
+
+
+
+
+
+
+
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
   const method = checkoutForm?.method?.value?.toLowerCase();
     if (method === "самовывоз") delivery = 0;
@@ -2326,8 +2521,7 @@ if (FREE_DELIVERY_LIMIT > 0) {
 }
 
 
-// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
-checkoutForm?.method?.addEventListener('change', renderCart);
+
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
 loadCart();
