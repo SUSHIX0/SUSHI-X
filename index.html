@@ -1080,7 +1080,7 @@ body {
 }
 
 .deliveryNote {
-  color: #ff0000; /* красный цвет */
+  color: #ff2d2d; /* красный цвет */
   text-align: center; /* по центру */
   font-weight: bold;
   margin-top: 8px;
@@ -1518,6 +1518,7 @@ body {
     <option>12:00 - 15:00</option>
     <option>15:00 - 18:00</option>
   </select>
+<input type="text" id="deliveryAddress" placeholder="Введите адрес" class="checkout-form">
 
 
 </div>
@@ -2423,7 +2424,7 @@ function renderCalendar() {
 
   const today = new Date();
   const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 6);
+  maxDate.setDate(today.getDate() + 7);
 
   // доступные даты
   const dates = [];
