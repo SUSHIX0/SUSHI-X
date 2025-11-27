@@ -1015,7 +1015,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background-color: #181818; /* тёмный фон */
+  background-color: #161616;
   padding: 10px;
   border-radius: 12px;
   color: #fff;
@@ -1059,7 +1059,6 @@ body {
   color: #666;
   cursor: not-allowed;
   background-color: #333;
-  border-color: #666;
 }
 
 .custom-calendar .day.selected {
@@ -1067,6 +1066,7 @@ body {
   color: #fff;
   font-weight: bold;
 }
+
 
 
 
@@ -1498,7 +1498,6 @@ body {
   <button type="button" class="btn-primary" id="chooseDateBtn">Выбрать дату доставки</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
-<label>Выберите время доставки:</label>
   <select id="deliveryTime">
     <option value="">Выберите время</option>
     <option>09:00 - 12:00</option>
@@ -2368,12 +2367,10 @@ if (FREE_DELIVERY_LIMIT > 0) {
 const deliveryFields = document.getElementById('deliveryFields');
 const deliveryCalendar = document.getElementById('deliveryCalendar');
 const chooseDateBtn = document.getElementById('chooseDateBtn');
-const deliveryTime = document.getElementById('deliveryTime');
 const methodSelect = checkoutForm?.method;
 
 let selectedDate = null;
 
-// Показ/скрытие полей доставки
 methodSelect?.addEventListener('change', () => {
   if(methodSelect.value.toLowerCase() === "доставка"){
     deliveryFields.style.display = "block";
@@ -2385,7 +2382,6 @@ methodSelect?.addEventListener('change', () => {
   }
 });
 
-// Открытие календаря по кнопке
 chooseDateBtn?.addEventListener('click', () => {
   deliveryCalendar.style.display = "block";
   renderCalendar();
@@ -2396,25 +2392,25 @@ function renderCalendar() {
 
   const today = new Date();
   const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 6); // следующие 7 дней
+  maxDate.setDate(today.getDate() + 6);
 
-  // создаём массив всех допустимых дат
+  // доступные даты
   const dates = [];
-  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Локальная дата без времени
-  while (current <= maxDate) {
+  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  while(current <= maxDate){
     dates.push(new Date(current));
     current.setDate(current.getDate() + 1);
   }
 
-  // группировка по месяцам
+  // группируем по месяцам
   const months = {};
   dates.forEach(d => {
     const key = d.getFullYear() + '-' + (d.getMonth() + 1);
-    if (!months[key]) months[key] = [];
+    if(!months[key]) months[key] = [];
     months[key].push(d);
   });
 
-  for (const [key, monthDates] of Object.entries(months)) {
+  for(const [key, monthDates] of Object.entries(months)){
     const monthLabel = document.createElement('div');
     monthLabel.className = 'month-label';
     monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -2423,35 +2419,39 @@ function renderCalendar() {
     const daysContainer = document.createElement('div');
     daysContainer.className = 'days';
 
-    // полный месяц
     const firstDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth(), 1);
     const lastDate = new Date(monthDates[0].getFullYear(), monthDates[0].getMonth() + 1, 0);
 
-    for (let day = 1; day <= lastDate.getDate(); day++) {
+    // пустые ячейки для сдвига 1-го числа
+    const startDay = (firstDate.getDay() + 6) % 7; // понедельник = 0
+    for(let i=0; i<startDay; i++){
+      const emptyDiv = document.createElement('div');
+      daysContainer.appendChild(emptyDiv);
+    }
+
+    for(let day=1; day<=lastDate.getDate(); day++){
       const date = new Date(firstDate.getFullYear(), firstDate.getMonth(), day);
       const dayDiv = document.createElement('div');
       dayDiv.className = 'day';
       dayDiv.textContent = day;
 
-      // локальный ISO формат без смещения
       const isoDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
       dayDiv.dataset.date = isoDate;
 
-      if (dates.some(d => d.getDate() === date.getDate() && d.getMonth() === date.getMonth() && d.getFullYear() === date.getFullYear())) {
+      if(dates.some(d => d.getDate()===date.getDate() && d.getMonth()===date.getMonth() && d.getFullYear()===date.getFullYear())){
         dayDiv.classList.add('available');
       } else {
         dayDiv.classList.add('unavailable');
       }
 
-      if (selectedDate === isoDate) {
+      if(selectedDate === isoDate){
         dayDiv.classList.add('selected');
       }
 
       dayDiv.addEventListener('click', () => {
         if(dayDiv.classList.contains('unavailable')) return;
         selectedDate = isoDate;
-
-        chooseDateBtn.textContent = "Дата: " + isoDate.split('-').reverse().join('.'); // дд.мм.гггг
+        chooseDateBtn.textContent = "Дата: " + isoDate.split('-').reverse().join('.');
         deliveryCalendar.style.display = "none";
         renderCalendar();
       });
@@ -2462,6 +2462,7 @@ function renderCalendar() {
     deliveryCalendar.appendChild(daysContainer);
   }
 }
+
 
 
 
