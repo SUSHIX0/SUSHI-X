@@ -791,12 +791,12 @@ body {
   font-weight:700;
 }
 .btn-ghost {
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.04);
-  color:#fff;
-  padding:10px 14px;
+  padding:12px 14px;
   border-radius:12px;
-  cursor:pointer;
+  background:#0b0b0b;
+  border:1px solid rgba(255,255,255,0.03);
+  color:#fff;
+  outline:none;
 }
 
 /* Responsive */
@@ -1495,7 +1495,10 @@ body {
           </select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
-  <button type="button" class="btn-primary" id="chooseDateBtn">Выбрать дату доставки</button>
+  <p style="margin-top:5px; font-size:0.9em; color:#fff;">
+    NB! Доставка осуществляется только по Tiskre Küla
+  </p>  
+  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
   <select id="deliveryTime">
@@ -1505,9 +1508,7 @@ body {
     <option>15:00 - 18:00</option>
   </select>
 
-  <p style="margin-top:5px; font-size:0.9em; color:#fff;">
-    NB! Доставка осуществляется только по Tiskre Küla
-  </p>
+
 </div>
 
 
@@ -2368,6 +2369,25 @@ const deliveryFields = document.getElementById('deliveryFields');
 const deliveryCalendar = document.getElementById('deliveryCalendar');
 const chooseDateBtn = document.getElementById('chooseDateBtn');
 const methodSelect = checkoutForm?.method;
+
+
+function updateDeliveryFields() {
+  if(methodSelect.value.toLowerCase() === "доставка"){
+    deliveryFields.style.display = "block";
+  } else {
+    deliveryFields.style.display = "none";
+    selectedDate = null;
+    deliveryCalendar.style.display = "none";
+    chooseDateBtn.textContent = "Выбрать дату доставки";
+  }
+}
+
+methodSelect?.addEventListener('change', updateDeliveryFields);
+
+// Проверка при загрузке страницы
+updateDeliveryFields();
+
+
 
 let selectedDate = null;
 
