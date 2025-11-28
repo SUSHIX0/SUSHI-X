@@ -1027,6 +1027,7 @@ body {
   text-align: center;
   font-weight: bold;
   font-size: 1.2em;
+  margin-bottom: 8px; /* небольшой отступ вниз, чтобы метка не прилипала к сетке дат */
 }
 
 .custom-calendar .days {
@@ -1056,7 +1057,7 @@ body {
 }
 
 .custom-calendar .day.unavailable {
-  color: #666;
+  color: #686868;
   cursor: not-allowed;
   background-color: #333;
 }
@@ -1085,9 +1086,6 @@ body {
   font-weight: bold;
   margin-top: 8px;
 }
-
-
-
 
 
 
@@ -2467,7 +2465,7 @@ function renderCalendar() {
     const monthLabel = document.createElement('div');
     monthLabel.className = 'month-label';
     monthLabel.textContent = monthDates[0].toLocaleString('default', { month: 'long', year: 'numeric' });
-    monthLabel.style.marginTop = "10px";
+    monthLabel.style.marginTop = "20px";
     deliveryCalendar.appendChild(monthLabel);
 
     const daysContainer = document.createElement('div');
