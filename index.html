@@ -1510,12 +1510,8 @@ body {
   <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
-  <select id="deliveryTime">
-    <option value="">Выберите время</option>
-    <option>09:00 - 12:00</option>
-    <option>12:00 - 15:00</option>
-    <option>15:00 - 18:00</option>
-  </select>
+<select id="deliveryTime"></select>
+
 <input type="text" id="deliveryAddress" placeholder="Введите адрес" class="checkout-form">
 
 
@@ -2383,6 +2379,56 @@ const chooseDateBtn = document.getElementById('chooseDateBtn');
 const deliveryCalendar = document.getElementById('deliveryCalendar');
 const deliveryTime = document.getElementById('deliveryTime');
 const deliveryAddress = document.getElementById('deliveryAddress');
+
+// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
+const deliveryTimesSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRX0JspC9IYruIabndHXdKQwkUQduQVz7gfSKTXRx1znSSmuWBdntXRi6MZJidVqb8sKpnQ4yPgV8cg/pub?output=csv";
+
+let deliveryTimes = [];
+
+async function loadDeliveryTimes() {
+    try {
+        const res = await fetch(deliveryTimesSheetUrl);
+        const csv = await res.text();
+        const lines = csv.split("\n").map(l => l.trim());
+        deliveryTimes = [];
+
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i]) continue;
+            const [method, time, active] = lines[i].split(",");
+            if (active?.trim().toUpperCase() === "YES") {
+                deliveryTimes.push({ method: method.trim().toLowerCase(), time: time.trim() });
+            }
+        }
+
+        updateDeliveryTimes();
+    } catch (err) {
+        console.error("Ошибка загрузки времени доставки", err);
+    }
+}
+
+function updateDeliveryTimes() {
+    if (!deliveryTime) return;
+
+    const method = methodSelect?.value?.toLowerCase();
+    if (!method) return;
+
+    deliveryTime.innerHTML = ""; // очищаем
+
+    const options = deliveryTimes.filter(d => d.method === method);
+    options.forEach(opt => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opt.time;
+        optionEl.textContent = opt.time;
+        deliveryTime.appendChild(optionEl);
+    });
+}
+
+// Обновляем при смене способа доставки
+methodSelect?.addEventListener('change', updateDeliveryTimes);
+
+// Загружаем сразу при старте
+loadDeliveryTimes();
+
 
 let selectedDate = null;
 let blockedDates = new Set();
