@@ -1825,7 +1825,50 @@ buttons.forEach(btn => {
 })();
 
 
+// ===== Выбор шапочки =====
+const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
 
+rollSelectWrappers.forEach(wrapper => {
+  const btn = wrapper.querySelector('.select-btn');
+  const dropdown = wrapper.querySelector('.select-dropdown');
+  const arrow = wrapper.querySelector('.arrow');
+
+  // Проверяем, есть ли "Сырная шапочка" в списке
+  let defaultTopping = 'Сырная шапочка';
+  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
+  if (!exists) {
+    const li = document.createElement('li');
+    li.textContent = defaultTopping;
+    dropdown.prepend(li);
+  }
+
+  // Устанавливаем значение по умолчанию
+  btn.firstChild.textContent = defaultTopping + ' ';
+
+  // Открытие/закрытие списка
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdown.classList.toggle('show');
+    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  // Выбор элемента из списка
+  dropdown.querySelectorAll('li').forEach(item => {
+    item.addEventListener('click', () => {
+      btn.firstChild.textContent = item.textContent + ' ';
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    });
+  });
+
+  // Закрытие при клике вне области
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+});
 
 
 
