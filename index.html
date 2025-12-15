@@ -1088,6 +1088,17 @@ body {
 }
 
 
+/* ===== ОБЯЗАТЕЛЬНЫЕ ПОЛЯ ===== */
+.required-star {
+  color: #e53935;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.required-field {
+  border: 2px solid #e53935 !important;
+  background: #fff6f6 !important;
+}
 
 
 
@@ -1490,29 +1501,28 @@ body {
       <div class="checkout-card">
         <h3>Оформление заказа</h3>
         <form id="checkoutForm" class="checkout-form" onsubmit="return false;">
-          <input name="name" type="text" placeholder="Имя" autocomplete="name" />
-          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона" autocomplete="tel" required/>
-          <input name="email" type="email" placeholder="Почта" autocomplete="email" />
+          <input name="name" type="text" placeholder="Имя *" autocomplete="name" />
+          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона *" autocomplete="tel" required/>
+          <input name="email" type="email" placeholder="Почта *" autocomplete="email" />
           <select name="payment">
-            <option value="" disabled selected>Способ оплаты</option>
+            <option value="" disabled selected>Способ оплаты *</option>
             <option>Наличные</option>
             <option>Карта онлайн</option>
-            <option>Apple Pay / Google Pay</option>
           </select>
           <select name="method">
-            <option value="" disabled selected>Способ получения</option>
+            <option value="" disabled selected>Способ получения *</option>
             <option>Самовывоз</option>
             <option>Доставка</option>
           </select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
   <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
-  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
+  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки *</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
 <select id="deliveryTime"></select>
 
-<input type="text" id="deliveryAddress" placeholder="Введите адрес" class="checkout-form">
+<input type="text" id="deliveryAddress" placeholder="Адрес доставки *" class="checkout-form">
 
 
 </div>
@@ -2457,6 +2467,14 @@ function updateDeliveryTimes() {
 
     deliveryTime.innerHTML = ""; // очищаем
 
+    // Добавляем первый вариант-подсказку
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = "";
+    placeholderOption.textContent = "Выбрать время *";
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    deliveryTime.appendChild(placeholderOption);
+
     const options = deliveryTimes.filter(d => d.method === method);
     options.forEach(opt => {
         const optionEl = document.createElement('option');
@@ -2465,6 +2483,7 @@ function updateDeliveryTimes() {
         deliveryTime.appendChild(optionEl);
     });
 }
+
 
 // Обновляем при смене способа доставки
 methodSelect?.addEventListener('change', updateDeliveryTimes);
