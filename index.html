@@ -2124,41 +2124,72 @@ if (checkoutForm) {
 
 // ====== Очистка формы при оформлении заказа ======
 placeOrderBtn?.addEventListener('click', () => {
-  if (!checkoutForm) return;
-  const name = checkoutForm.name.value.trim();
-  const phone = checkoutForm.phone.value.trim();
-  const email = checkoutForm.email.value.trim();
-  const payment = checkoutForm.payment.value;
-  const method = checkoutForm.method.value;
+    if (!checkoutForm) return;
 
-  if (cart.size === 0) {
-    showToast('В корзине нет товаров', true);
-    return;
-  }
+    const name = checkoutForm.name.value.trim();
+    const phone = checkoutForm.phone.value.trim();
+    const email = checkoutForm.email.value.trim();
+    const payment = checkoutForm.payment.value;
+    const method = checkoutForm.method.value.toLowerCase();
 
-  // ===== НОВАЯ ПРОВЕРКА =====
-  const total = parseFloat(totalEl.textContent);
-  if (total <= 0) {
-    showToast('Сумма заказа должна быть больше 0 €', true);
-    return;
-  }
+    // ===== проверка корзины =====
+    if (cart.size === 0) {
+        showToast('В корзине нет товаров', true);
+        return;
+    }
+    // ===== проверка основных полей =====
+    if (!name || !phone || !email || !payment || !method) {
+        showToast('Заполните все обязательные поля', true);
+        return;
+    }
 
-  if (!name || !phone || !email || !payment || !method) {
-    showToast('Заполните все поля', true);
-    return;
-  }
+    const isDelivery = method === 'доставка';
+    const isPickup = method === 'самовывоз';
 
-  showToast('Заказ принят — спасибо!');
-  cart.clear();
-  saveCart();
-  renderCart();
+    const dateBtn = document.getElementById('chooseDateBtn');
+    const timeSelect = document.getElementById('deliveryTime');
+    const addressInput = document.getElementById('deliveryAddress');
 
-  // очищаем форму и localStorage формы
-  checkoutForm.reset();
-  localStorage.removeItem('checkoutFormData');
+    // ===== проверка даты =====
+    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Дата'))) {
+        showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
+        return;
+    }
 
-  setTimeout(closeCart, 900);
+    // ===== проверка времени =====
+    if ((isDelivery || isPickup) && (!timeSelect || !timeSelect.value)) {
+        showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
+        return;
+    }
+
+    // ===== проверка адреса для доставки =====
+    if (isDelivery && (!addressInput || !addressInput.value.trim())) {
+        showToast('Заполните все обязательные поля', true);
+        return;
+    }
+
+    // ===== проверка суммы =====
+    const total = parseFloat(totalEl.textContent);
+    if (total <= 0) {
+        showToast('Сумма заказа должна быть больше 0 €', true);
+        return;
+    }
+
+    // ===== оформление заказа =====
+    showToast('Заказ принят — спасибо!');
+    cart.clear();
+    saveCart();
+    renderCart();
+
+    checkoutForm.reset();
+    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+    if (timeSelect) timeSelect.value = '';
+    if (addressInput) addressInput.value = '';
+
+    localStorage.removeItem('checkoutFormData');
+    setTimeout(closeCart, 900);
 });
+
 
 
 
