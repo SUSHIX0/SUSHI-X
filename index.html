@@ -2112,6 +2112,22 @@ if (checkoutForm) {
     }
   }
 
+const addressInput = document.getElementById('deliveryAddress');
+
+// загрузка сохранённого адреса
+if (addressInput) {
+    const savedAddress = localStorage.getItem('deliveryAddress');
+    if (savedAddress) {
+        addressInput.value = savedAddress;
+    }
+
+    // сохраняем при изменении
+    addressInput.addEventListener('input', () => {
+        localStorage.setItem('deliveryAddress', addressInput.value.trim());
+    });
+}
+
+
   // Сохраняем при изменении любого поля
   checkoutForm.addEventListener('input', () => {
     const data = {};
@@ -2125,6 +2141,7 @@ if (checkoutForm) {
 // ====== Очистка формы при оформлении заказа ======
 placeOrderBtn?.addEventListener('click', () => {
     if (!checkoutForm) return;
+    
 
     const name = checkoutForm.name.value.trim();
     const phone = checkoutForm.phone.value.trim();
@@ -2187,6 +2204,7 @@ placeOrderBtn?.addEventListener('click', () => {
     if (addressInput) addressInput.value = '';
 
     localStorage.removeItem('checkoutFormData');
+    localStorage.removeItem('deliveryAddress');
     setTimeout(closeCart, 900);
 });
 
