@@ -1902,6 +1902,13 @@ let DELIVERY_COST = 5.00;
 let FREE_DELIVERY_LIMIT = 50.00;
 const ITEM_LIMIT = 20;
 const cart = new Map();
+const toppingPrices = {
+    "Сырная шапочка": 0,
+    "Рыбная шапочка": 2,
+    "Острые креветки": 1.5,
+    // добавь все варианты
+};
+
 
 
 // ===== LOCALSTORAGE =====
@@ -1940,28 +1947,44 @@ function addToCart(card){
     const newPriceEl = priceEl?.querySelector('.new-price');
     const oldPriceEl = priceEl?.querySelector('.old-price');
 
-    const unitPrice = newPriceEl
+    const basePrice = newPriceEl
         ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0
         : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0;
     const originalPrice = oldPriceEl
-        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||unitPrice
-        : unitPrice;
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||basePrice
+        : basePrice;
 
-    if(cart.has(id)){
-        const item = cart.get(id);
-        if(item.qty<ITEM_LIMIT){
+    // Получаем выбранную шапочку
+    const toppingWrapper = card.querySelector('.roll-select-wrapper');
+    let topping = '';
+    if (toppingWrapper) {
+        topping = toppingWrapper.querySelector('.select-btn').firstChild.textContent.trim();
+    }
+
+    // Наценка за шапочку
+    const toppingPrice = toppingPrices[topping] || 0;
+    const unitPrice = basePrice + toppingPrice;
+
+    // Уникальный id для корзины
+    const cartId = topping ? `${id}__${topping}` : id;
+    const displayName = topping ? `${name} (${topping})` : name;
+
+    if(cart.has(cartId)){
+        const item = cart.get(cartId);
+        if(item.qty < ITEM_LIMIT){
             item.qty++;
-            cart.set(id,item);
+            cart.set(cartId,item);
             showToast('Товар добавлен в корзину');
         } else showToast(`Максимум ${ITEM_LIMIT} штук`, true);
     } else {
-        cart.set(id,{name,unitPrice,originalPrice,qty:1});
+        cart.set(cartId,{name: displayName, unitPrice, originalPrice, qty:1, baseId:id, topping: topping, basePrice});
         showToast('Товар добавлен в корзину');
     }
 
     saveCart();
     renderCart();
 }
+
 
 // ===== РЕНДЕР КОРЗИНЫ =====
 function renderCart() {
@@ -2407,6 +2430,43 @@ if (FREE_DELIVERY_LIMIT > 0) {
     });
 
     cartItemsContainer.appendChild(el);
+
+// ====== Изменение шапочки прямо в корзине ======
+if(item.topping && el.querySelector('.topping-select-wrapper')){
+    const wrapper = el.querySelector('.topping-select-wrapper');
+    const select = wrapper.querySelector('select');
+
+    // Заполняем варианты
+    select.innerHTML = '';
+    for(const t in toppingPrices){
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        if(t === item.topping) opt.selected = true;
+        select.appendChild(opt);
+    }
+
+    select.addEventListener('change', (e) => {
+        const newTopping = e.target.value;
+        const newCartId = `${item.baseId}__${newTopping}`;
+        const newDisplayName = `${item.name.split(' (')[0]} (${newTopping})`;
+        const newUnitPrice = item.basePrice + (toppingPrices[newTopping] || 0);
+
+        // Если такой вариант уже есть, увеличиваем qty
+        if(cart.has(newCartId)){
+            const existing = cart.get(newCartId);
+            existing.qty += item.qty;
+            cart.set(newCartId, existing);
+        } else {
+            cart.set(newCartId, {...item, name: newDisplayName, topping: newTopping, unitPrice: newUnitPrice});
+        }
+
+        cart.delete(el.dataset.id);
+        renderCart();
+    });
+}
+
+
   });
 
 
