@@ -123,7 +123,7 @@ header.brand h1 .jp{
 .card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
 .label-jp .scroll-text {
   display: inline-block;
-  animation: scroll-marquee 4s linear infinite alternate;
+  animation: scroll-marquee 5s cubic-bezier(0.3, 0.07, 0.66, 0.93) infinite alternate;
 }
 @keyframes scroll-marquee {
   0% { transform: translateX(0); }
@@ -1081,13 +1081,24 @@ body {
 }
 
 .deliveryNote {
-  color: #ff2d2d; /* красный цвет */
+  color: #ff0000; /* красный цвет */
   text-align: center; /* по центру */
   font-weight: bold;
   margin-top: 8px;
 }
 
 
+/* ===== ОБЯЗАТЕЛЬНЫЕ ПОЛЯ ===== */
+.required-star {
+  color: #e53935;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.required-field {
+  border: 2px solid #e53935 !important;
+  background: #fff6f6 !important;
+}
 
 
 
@@ -1490,33 +1501,28 @@ body {
       <div class="checkout-card">
         <h3>Оформление заказа</h3>
         <form id="checkoutForm" class="checkout-form" onsubmit="return false;">
-          <input name="name" type="text" placeholder="Имя" autocomplete="name" />
-          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона" autocomplete="tel" required/>
-          <input name="email" type="email" placeholder="Почта" autocomplete="email" />
+          <input name="name" type="text" placeholder="Имя *" autocomplete="name" />
+          <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона *" autocomplete="tel" required/>
+          <input name="email" type="email" placeholder="Почта *" autocomplete="email" />
           <select name="payment">
-            <option value="" disabled selected>Способ оплаты</option>
+            <option value="" disabled selected>Способ оплаты *</option>
             <option>Наличные</option>
             <option>Карта онлайн</option>
-            <option>Apple Pay / Google Pay</option>
           </select>
           <select name="method">
-            <option value="" disabled selected>Способ получения</option>
+            <option value="" disabled selected>Способ получения *</option>
             <option>Самовывоз</option>
             <option>Доставка</option>
           </select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
   <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
-  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату доставки</button>
+  <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату *</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
-  <select id="deliveryTime">
-    <option value="">Выберите время</option>
-    <option>09:00 - 12:00</option>
-    <option>12:00 - 15:00</option>
-    <option>15:00 - 18:00</option>
-  </select>
-<input type="text" id="deliveryAddress" placeholder="Введите адрес" class="checkout-form">
+<select id="deliveryTime"></select>
+
+<input type="text" id="deliveryAddress" placeholder="Адрес доставки *" class="checkout-form">
 
 
 </div>
@@ -1543,7 +1549,7 @@ body {
 
 
 <script>
-const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?output=csv';
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
 
 // ===== Toast =====
 function showToast(message, isRed = false) {
@@ -1829,7 +1835,50 @@ buttons.forEach(btn => {
 })();
 
 
+// ===== Выбор шапочки =====
+const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
 
+rollSelectWrappers.forEach(wrapper => {
+  const btn = wrapper.querySelector('.select-btn');
+  const dropdown = wrapper.querySelector('.select-dropdown');
+  const arrow = wrapper.querySelector('.arrow');
+
+  // Проверяем, есть ли "Сырная шапочка" в списке
+  let defaultTopping = 'Сырная шапочка';
+  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
+  if (!exists) {
+    const li = document.createElement('li');
+    li.textContent = defaultTopping;
+    dropdown.prepend(li);
+  }
+
+  // Устанавливаем значение по умолчанию
+  btn.firstChild.textContent = defaultTopping + ' ';
+
+  // Открытие/закрытие списка
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdown.classList.toggle('show');
+    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  // Выбор элемента из списка
+  dropdown.querySelectorAll('li').forEach(item => {
+    item.addEventListener('click', () => {
+      btn.firstChild.textContent = item.textContent + ' ';
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    });
+  });
+
+  // Закрытие при клике вне области
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+});
 
 
 
@@ -2063,6 +2112,22 @@ if (checkoutForm) {
     }
   }
 
+const addressInput = document.getElementById('deliveryAddress');
+
+// загрузка сохранённого адреса
+if (addressInput) {
+    const savedAddress = localStorage.getItem('deliveryAddress');
+    if (savedAddress) {
+        addressInput.value = savedAddress;
+    }
+
+    // сохраняем при изменении
+    addressInput.addEventListener('input', () => {
+        localStorage.setItem('deliveryAddress', addressInput.value.trim());
+    });
+}
+
+
   // Сохраняем при изменении любого поля
   checkoutForm.addEventListener('input', () => {
     const data = {};
@@ -2075,41 +2140,74 @@ if (checkoutForm) {
 
 // ====== Очистка формы при оформлении заказа ======
 placeOrderBtn?.addEventListener('click', () => {
-  if (!checkoutForm) return;
-  const name = checkoutForm.name.value.trim();
-  const phone = checkoutForm.phone.value.trim();
-  const email = checkoutForm.email.value.trim();
-  const payment = checkoutForm.payment.value;
-  const method = checkoutForm.method.value;
+    if (!checkoutForm) return;
+    
 
-  if (cart.size === 0) {
-    showToast('В корзине нет товаров', true);
-    return;
-  }
+    const name = checkoutForm.name.value.trim();
+    const phone = checkoutForm.phone.value.trim();
+    const email = checkoutForm.email.value.trim();
+    const payment = checkoutForm.payment.value;
+    const method = checkoutForm.method.value.toLowerCase();
 
-  // ===== НОВАЯ ПРОВЕРКА =====
-  const total = parseFloat(totalEl.textContent);
-  if (total <= 0) {
-    showToast('Сумма заказа должна быть больше 0 €', true);
-    return;
-  }
+    // ===== проверка корзины =====
+    if (cart.size === 0) {
+        showToast('В корзине нет товаров', true);
+        return;
+    }
+    // ===== проверка основных полей =====
+    if (!name || !phone || !email || !payment || !method) {
+        showToast('Заполните все обязательные поля', true);
+        return;
+    }
 
-  if (!name || !phone || !email || !payment || !method) {
-    showToast('Заполните все поля', true);
-    return;
-  }
+    const isDelivery = method === 'доставка';
+    const isPickup = method === 'самовывоз';
 
-  showToast('Заказ принят — спасибо!');
-  cart.clear();
-  saveCart();
-  renderCart();
+    const dateBtn = document.getElementById('chooseDateBtn');
+    const timeSelect = document.getElementById('deliveryTime');
+    const addressInput = document.getElementById('deliveryAddress');
 
-  // очищаем форму и localStorage формы
-  checkoutForm.reset();
-  localStorage.removeItem('checkoutFormData');
+    // ===== проверка даты =====
+    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Дата'))) {
+        showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
+        return;
+    }
 
-  setTimeout(closeCart, 900);
+    // ===== проверка времени =====
+    if ((isDelivery || isPickup) && (!timeSelect || !timeSelect.value)) {
+        showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
+        return;
+    }
+
+    // ===== проверка адреса для доставки =====
+    if (isDelivery && (!addressInput || !addressInput.value.trim())) {
+        showToast('Заполните все обязательные поля', true);
+        return;
+    }
+
+    // ===== проверка суммы =====
+    const total = parseFloat(totalEl.textContent);
+    if (total <= 0) {
+        showToast('Сумма заказа должна быть больше 0 €', true);
+        return;
+    }
+
+    // ===== оформление заказа =====
+    showToast('Заказ принят — спасибо!');
+    cart.clear();
+    saveCart();
+    renderCart();
+
+    checkoutForm.reset();
+    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+    if (timeSelect) timeSelect.value = '';
+    if (addressInput) addressInput.value = '';
+
+    localStorage.removeItem('checkoutFormData');
+    localStorage.removeItem('deliveryAddress');
+    setTimeout(closeCart, 900);
 });
+
 
 
 
@@ -2118,7 +2216,7 @@ placeOrderBtn?.addEventListener('click', () => {
 // 1. ЗАГРУЗКА ПРОМОКОДОВ ИЗ GOOGLE SHEETS
 // ========================================================
 const promoSheetUrl =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6aXM_9zQjiMLBqJerBRUULXMMjvaA3OJTLXhg7OdIcI3KQJjze7OMdV30gEsv5nI4m0UAoWsMjRW/pub?output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=1716078291&single=true&output=csv";
 
 let promoCodes = {}; 
 let activePromo = null;
@@ -2384,13 +2482,72 @@ const deliveryCalendar = document.getElementById('deliveryCalendar');
 const deliveryTime = document.getElementById('deliveryTime');
 const deliveryAddress = document.getElementById('deliveryAddress');
 
+// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
+const deliveryTimesSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=1115998539&single=true&output=csv";
+
+let deliveryTimes = [];
+
+async function loadDeliveryTimes() {
+    try {
+        const res = await fetch(deliveryTimesSheetUrl);
+        const csv = await res.text();
+        const lines = csv.split("\n").map(l => l.trim());
+        deliveryTimes = [];
+
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i]) continue;
+            const [method, time, active] = lines[i].split(",");
+            if (active?.trim().toUpperCase() === "YES") {
+                deliveryTimes.push({ method: method.trim().toLowerCase(), time: time.trim() });
+            }
+        }
+
+        updateDeliveryTimes();
+    } catch (err) {
+        console.error("Ошибка загрузки времени доставки", err);
+    }
+}
+
+function updateDeliveryTimes() {
+    if (!deliveryTime) return;
+
+    const method = methodSelect?.value?.toLowerCase();
+    if (!method) return;
+
+    deliveryTime.innerHTML = ""; // очищаем
+
+    // Добавляем первый вариант-подсказку
+    const placeholderOption = document.createElement('option');
+    placeholderOption.value = "";
+    placeholderOption.textContent = "Выбрать время *";
+    placeholderOption.disabled = true;
+    placeholderOption.selected = true;
+    deliveryTime.appendChild(placeholderOption);
+
+    const options = deliveryTimes.filter(d => d.method === method);
+    options.forEach(opt => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opt.time;
+        optionEl.textContent = opt.time;
+        deliveryTime.appendChild(optionEl);
+    });
+}
+
+
+// Обновляем при смене способа доставки
+methodSelect?.addEventListener('change', updateDeliveryTimes);
+
+// Загружаем сразу при старте
+loadDeliveryTimes();
+
+
 let selectedDate = null;
 let blockedDates = new Set();
 let blockedWeekday = false;
 let blockedWeekend = false;
 
 // ===== ЗАГРУЗКА GOOGLE SHEET =====
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtpwD3J-s9r0BLacaNsM3CQMM4Gsdx2IcP2EHhjy2jKq1aysv4YToAjWpz-Pn9cTj4MUwGIMKvbT7m/pub?output=csv";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=425843351&single=true&output=csv";
 
 async function loadBlockedDates() {
   try {
@@ -2445,7 +2602,7 @@ function renderCalendar() {
   deliveryCalendar.innerHTML = '';
   const today = new Date();
   const maxDate = new Date();
-  maxDate.setDate(today.getDate() + 7);
+  maxDate.setDate(today.getDate() + 6);
 
   const dates = [];
   const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
