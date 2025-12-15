@@ -1309,21 +1309,6 @@ body {
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
           </div>
-    <!-- Шапочки -->
-    <div class="roll-select-wrapper">
-      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
-      <ul class="select-dropdown">
-        <li data-id="cheese-top">Сырная шапочка</li>
-        <li data-id="fish-top">Рыбная шапочка</li>
-        <li data-id="spicy-top">Спайси шапочка</li>
-        <li data-id="crab-top">Шапочка с крабом</li>
-        <li data-id="shrimp-top">Шапочка с креветкой</li>
-      </ul>
-    </div>
-
-
-
-        </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Нико»</span><span class="label-jp"><span class="scroll-text">ニコ焼きロール</span></span></h3>
           <p class="ingredients">Огурец · Сыр Philadelphia · Лосось, Крабовое мясо · Масаго</p>
@@ -1335,21 +1320,6 @@ body {
         <div class="photo" style="background-image:url('Foto/Shushi-18.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
-        </div>
-    <!-- Шапочки -->
-    <div class="roll-select-wrapper">
-      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
-      <ul class="select-dropdown">
-        <li data-id="cheese-top">Сырная шапочка</li>
-        <li data-id="fish-top">Рыбная шапочка</li>
-        <li data-id="spicy-top">Спайси шапочка</li>
-        <li data-id="crab-top">Шапочка с крабом</li>
-        <li data-id="shrimp-top">Шапочка с креветкой</li>
-      </ul>
-    </div>
-
-
-
         </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Сaлмон»</span><span class="label-jp"><span class="scroll-text">サーモン焼きロール</span></span></h3>
@@ -1932,13 +1902,6 @@ let DELIVERY_COST = 5.00;
 let FREE_DELIVERY_LIMIT = 50.00;
 const ITEM_LIMIT = 20;
 const cart = new Map();
-const toppingPrices = {
-    "Сырная шапочка": 0,
-    "Рыбная шапочка": 2,
-    "Острые креветки": 1.5,
-    // добавь все варианты
-};
-
 
 
 // ===== LOCALSTORAGE =====
@@ -1977,44 +1940,28 @@ function addToCart(card){
     const newPriceEl = priceEl?.querySelector('.new-price');
     const oldPriceEl = priceEl?.querySelector('.old-price');
 
-    const basePrice = newPriceEl
+    const unitPrice = newPriceEl
         ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0
         : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||0;
     const originalPrice = oldPriceEl
-        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||basePrice
-        : basePrice;
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||unitPrice
+        : unitPrice;
 
-    // Получаем выбранную шапочку
-    const toppingWrapper = card.querySelector('.roll-select-wrapper');
-    let topping = '';
-    if (toppingWrapper) {
-        topping = toppingWrapper.querySelector('.select-btn').firstChild.textContent.trim();
-    }
-
-    // Наценка за шапочку
-    const toppingPrice = toppingPrices[topping] || 0;
-    const unitPrice = basePrice + toppingPrice;
-
-    // Уникальный id для корзины
-    const cartId = topping ? `${id}__${topping}` : id;
-    const displayName = topping ? `${name} (${topping})` : name;
-
-    if(cart.has(cartId)){
-        const item = cart.get(cartId);
-        if(item.qty < ITEM_LIMIT){
+    if(cart.has(id)){
+        const item = cart.get(id);
+        if(item.qty<ITEM_LIMIT){
             item.qty++;
-            cart.set(cartId,item);
+            cart.set(id,item);
             showToast('Товар добавлен в корзину');
         } else showToast(`Максимум ${ITEM_LIMIT} штук`, true);
     } else {
-        cart.set(cartId,{name: displayName, unitPrice, originalPrice, qty:1, baseId:id, topping: topping, basePrice});
+        cart.set(id,{name,unitPrice,originalPrice,qty:1});
         showToast('Товар добавлен в корзину');
     }
 
     saveCart();
     renderCart();
 }
-
 
 // ===== РЕНДЕР КОРЗИНЫ =====
 function renderCart() {
@@ -2460,43 +2407,6 @@ if (FREE_DELIVERY_LIMIT > 0) {
     });
 
     cartItemsContainer.appendChild(el);
-
-// ====== Изменение шапочки прямо в корзине ======
-if(item.topping && el.querySelector('.topping-select-wrapper')){
-    const wrapper = el.querySelector('.topping-select-wrapper');
-    const select = wrapper.querySelector('select');
-
-    // Заполняем варианты
-    select.innerHTML = '';
-    for(const t in toppingPrices){
-        const opt = document.createElement('option');
-        opt.value = t;
-        opt.textContent = t;
-        if(t === item.topping) opt.selected = true;
-        select.appendChild(opt);
-    }
-
-    select.addEventListener('change', (e) => {
-        const newTopping = e.target.value;
-        const newCartId = `${item.baseId}__${newTopping}`;
-        const newDisplayName = `${item.name.split(' (')[0]} (${newTopping})`;
-        const newUnitPrice = item.basePrice + (toppingPrices[newTopping] || 0);
-
-        // Если такой вариант уже есть, увеличиваем qty
-        if(cart.has(newCartId)){
-            const existing = cart.get(newCartId);
-            existing.qty += item.qty;
-            cart.set(newCartId, existing);
-        } else {
-            cart.set(newCartId, {...item, name: newDisplayName, topping: newTopping, unitPrice: newUnitPrice});
-        }
-
-        cart.delete(el.dataset.id);
-        renderCart();
-    });
-}
-
-
   });
 
 
