@@ -2488,12 +2488,35 @@ const deliveryCalendar = document.getElementById('deliveryCalendar');
 const deliveryTime = document.getElementById('deliveryTime');
 const deliveryAddress = document.getElementById('deliveryAddress');
 
-// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
+// ===== ССЫЛКИ НА GOOGLE SHEETS =====
 const deliveryTimesSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=1115998539&single=true&output=csv";
+const minHoursSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=669184474&single=true&output=csv";
 
-// Теперь объект по дате и методу
+// ===== Данные =====
 let deliveryTimesByDate = {}; // ключ: "дд.мм.гггг|метод"
+let minHoursRanges = [];      // массив объектов { maxItems: число или null, hours: число }
 
+// ===== ЗАГРУЗКА МИН. ЧАСОВ ИЗ GOOGLE SHEETS =====
+async function loadMinHours() {
+    try {
+        const res = await fetch(minHoursSheetUrl);
+        const csv = await res.text();
+        const lines = csv.split("\n").map(l => l.trim());
+
+        minHoursRanges = [];
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i]) continue;
+            const [maxItemsStr, hoursStr] = lines[i].split(",");
+            const maxItems = maxItemsStr ? Number(maxItemsStr.trim()) : null;
+            const hours = Number(hoursStr.trim());
+            if (!isNaN(hours)) minHoursRanges.push({ maxItems, hours });
+        }
+    } catch (err) {
+        console.error("Ошибка загрузки мин. часов из таблицы", err);
+    }
+}
+
+// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
 async function loadDeliveryTimes() {
     try {
         const res = await fetch(deliveryTimesSheetUrl);
@@ -2508,7 +2531,7 @@ async function loadDeliveryTimes() {
             if (!active || active.trim().toUpperCase() !== "YES") continue;
             if (!dateStr || !method || !time) continue;
 
-            // Проверяем, есть ли диапазон дат
+            // Проверяем диапазон дат
             if (dateStr.includes("-")) {
                 const [startStr, endStr] = dateStr.split("-").map(s => s.trim());
                 const [startDay, startMonth, startYear] = startStr.split(".").map(Number);
@@ -2542,15 +2565,46 @@ async function loadDeliveryTimes() {
     }
 }
 
+// ===== ФИЛЬТРАЦИЯ СЛОТОВ ПО МИН. ЧАСАМ =====
+function filterDeliveryTimes(times) {
+    if (!selectedDate) return [];
+
+    const now = new Date();
+
+    // считаем общее количество товаров в корзине
+    let totalItems = 0;
+    cart.forEach(i => totalItems += i.qty);
+
+    // ищем нужный диапазон
+    let minHours = 0;
+    for (const range of minHoursRanges) {
+        if (range.maxItems === null || totalItems <= range.maxItems) {
+            minHours = range.hours;
+            break;
+        }
+    }
+
+    const [day, month, year] = selectedDate.split(".").map(Number);
+
+    return times.filter(t => {
+        const [startTime] = t.split("–");
+        const [hours, minutes] = startTime.split(":").map(Number);
+        const slotDate = new Date(year, month - 1, day, hours, minutes);
+        const diffHours = (slotDate - now) / (1000 * 60 * 60);
+        return diffHours >= minHours;
+    });
+}
+
+// ===== ОБНОВЛЕНИЕ ВРЕМЕНИ В SELECT =====
 function updateDeliveryTimes() {
     if (!deliveryTime) return;
 
     const method = methodSelect?.value?.toLowerCase();
     if (!method) return;
 
-    deliveryTime.innerHTML = ""; // очищаем
+    deliveryTime.innerHTML = "";
 
-    // placeholder — всегда показываем
+    // placeholder
     const placeholderOption = document.createElement('option');
     placeholderOption.value = "";
     placeholderOption.textContent = "Выбрать время *";
@@ -2558,35 +2612,13 @@ function updateDeliveryTimes() {
     placeholderOption.selected = true;
     deliveryTime.appendChild(placeholderOption);
 
-    // Если дата ещё не выбрана, пока не добавляем реальные слоты
     if (!selectedDate) return;
 
     const key = `${selectedDate}|${method}`;
     let times = deliveryTimesByDate[key] || [];
 
-// ===== фильтрация слотов по прошедшему времени и минимальному времени до заказа =====
-const now = new Date();
-
-// Считаем количество товаров в корзине
-let totalItems = 0;
-cart.forEach(i => totalItems += i.qty);
-
-// Определяем минимальное время до слота
-let minHours = 16; // маленький заказ
-if(totalItems > 5 && totalItems <= 15) minHours = 24; // средний заказ
-if(totalItems > 15) minHours = 40; // большой заказ
-
-times = times.filter(t => {
-    // формат слота "12:00–14:00"
-    const [startTime] = t.split("–");
-    const [hours, minutes] = startTime.split(":").map(Number);
-    const [day, month, year] = selectedDate.split(".").map(Number);
-    const slotDate = new Date(year, month - 1, day, hours, minutes);
-
-    const diffHours = (slotDate - now) / (1000 * 60 * 60); // разница в часах
-    return diffHours >= minHours;
-});
-
+    // фильтруем прошедшие слоты и по мин. часам
+    times = filterDeliveryTimes(times);
 
     if (times.length === 0) {
         const option = document.createElement('option');
@@ -2605,20 +2637,15 @@ times = times.filter(t => {
     });
 }
 
-
-// Обновляем при смене способа доставки
+// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ МЕТОДА =====
 methodSelect?.addEventListener('change', updateDeliveryTimes);
 
-// Загружаем сразу при старте
-loadDeliveryTimes();
+// ===== ЗАГРУЗКА ПРИ СТАРТЕ =====
+Promise.all([loadMinHours(), loadDeliveryTimes()]);
 
 
 
-// обновление времени при смене метода
-methodSelect?.addEventListener('change', updateDeliveryTimes);
 
-// загрузка при старте
-loadDeliveryTimes();
 
 
 
