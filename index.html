@@ -2491,38 +2491,42 @@ const deliveryAddress = document.getElementById('deliveryAddress');
 // ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
 const deliveryTimesSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=1115998539&single=true&output=csv";
 
-let deliveryTimes = [];
+// Теперь объект по дате и методу
+let deliveryTimesByDate = {}; // ключ: "дд.мм.гггг|метод"
 
 async function loadDeliveryTimes() {
     try {
         const res = await fetch(deliveryTimesSheetUrl);
         const csv = await res.text();
         const lines = csv.split("\n").map(l => l.trim());
-        deliveryTimes = [];
+
+        deliveryTimesByDate = {};
 
         for (let i = 1; i < lines.length; i++) {
             if (!lines[i]) continue;
-            const [method, time, active] = lines[i].split(",");
-            if (active?.trim().toUpperCase() === "YES") {
-                deliveryTimes.push({ method: method.trim().toLowerCase(), time: time.trim() });
-            }
+            const [date, method, time, active] = lines[i].split(",");
+            if (!active || active.trim().toUpperCase() !== "YES") continue;
+
+            const key = `${date.trim()}|${method.trim().toLowerCase()}`;
+            if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
+            deliveryTimesByDate[key].push(time.trim());
         }
 
-        updateDeliveryTimes();
+        updateDeliveryTimes(); // первый рендер
     } catch (err) {
         console.error("Ошибка загрузки времени доставки", err);
     }
 }
 
 function updateDeliveryTimes() {
-    if (!deliveryTime) return;
+    if (!deliveryTime || !selectedDate) return;
 
     const method = methodSelect?.value?.toLowerCase();
     if (!method) return;
 
     deliveryTime.innerHTML = ""; // очищаем
 
-    // Добавляем первый вариант-подсказку
+    // placeholder
     const placeholderOption = document.createElement('option');
     placeholderOption.value = "";
     placeholderOption.textContent = "Выбрать время *";
@@ -2530,21 +2534,32 @@ function updateDeliveryTimes() {
     placeholderOption.selected = true;
     deliveryTime.appendChild(placeholderOption);
 
-    const options = deliveryTimes.filter(d => d.method === method);
-    options.forEach(opt => {
+    const key = `${selectedDate}|${method}`;
+    const times = deliveryTimesByDate[key] || [];
+
+    if (times.length === 0) {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "Нет доступного времени";
+        option.disabled = true;
+        deliveryTime.appendChild(option);
+        return;
+    }
+
+    times.forEach(t => {
         const optionEl = document.createElement('option');
-        optionEl.value = opt.time;
-        optionEl.textContent = opt.time;
+        optionEl.value = t;
+        optionEl.textContent = t;
         deliveryTime.appendChild(optionEl);
     });
 }
 
-
-// Обновляем при смене способа доставки
+// обновление времени при смене метода
 methodSelect?.addEventListener('change', updateDeliveryTimes);
 
-// Загружаем сразу при старте
+// загрузка при старте
 loadDeliveryTimes();
+
 
 
 let selectedDate = null;
@@ -2673,14 +2688,20 @@ function renderCalendar() {
       }
 
       dayDiv.addEventListener('click', () => {
-        if(dayDiv.classList.contains('unavailable')) return;
-        selectedDate = isoDate;
-        const [year, month, day] = isoDate.split('-').map(Number);
-        const formatted = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
-        chooseDateBtn.textContent = "Дата: " + formatted;
-        deliveryCalendar.style.display = "none";
-        renderCalendar();
-      });
+    if(dayDiv.classList.contains('unavailable')) return;
+
+    const [year, month, day] = isoDate.split('-').map(Number);
+
+    // selectedDate в формате дд.мм.гггг
+    selectedDate = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+
+    chooseDateBtn.textContent = "Дата: " + selectedDate;
+    deliveryCalendar.style.display = "none";
+
+    renderCalendar();
+    updateDeliveryTimes(); // сразу обновляем список времени для выбранной даты
+});
+
 
       daysContainer.appendChild(dayDiv);
     }
