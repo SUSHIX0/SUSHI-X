@@ -2443,10 +2443,16 @@ if (FREE_DELIVERY_LIMIT > 0) {
 
     // + кнопка
     incr.addEventListener('click', () => {
-      if (item.unitPrice === 0) {
+
+    if (item.unitPrice === 0) {
         showToast('Бесплатную позицию можно добавить только один раз', true);
         return;
-      }
+    }
+
+    if (item.qty >= ITEM_LIMIT) {
+        showToast(`Максимум ${ITEM_LIMIT} штук`, true);
+        return;
+    }
       if (item.qty < ITEM_LIMIT) item.qty++;
       cart.set(id, item);
       renderCart();
@@ -2482,41 +2488,123 @@ const deliveryCalendar = document.getElementById('deliveryCalendar');
 const deliveryTime = document.getElementById('deliveryTime');
 const deliveryAddress = document.getElementById('deliveryAddress');
 
-// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
+// ===== ССЫЛКИ НА GOOGLE SHEETS =====
 const deliveryTimesSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=1115998539&single=true&output=csv";
+const minHoursSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=669184474&single=true&output=csv";
 
-let deliveryTimes = [];
+// ===== Данные =====
+let deliveryTimesByDate = {}; // ключ: "дд.мм.гггг|метод"
+let minHoursRanges = [];      // массив объектов { maxItems: число или null, hours: число }
 
+// ===== ЗАГРУЗКА МИН. ЧАСОВ ИЗ GOOGLE SHEETS =====
+async function loadMinHours() {
+    try {
+        const res = await fetch(minHoursSheetUrl);
+        const csv = await res.text();
+        const lines = csv.split("\n").map(l => l.trim());
+
+        minHoursRanges = [];
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i]) continue;
+            const [maxItemsStr, hoursStr] = lines[i].split(",");
+            const maxItems = maxItemsStr ? Number(maxItemsStr.trim()) : null;
+            const hours = Number(hoursStr.trim());
+            if (!isNaN(hours)) minHoursRanges.push({ maxItems, hours });
+        }
+    } catch (err) {
+        console.error("Ошибка загрузки мин. часов из таблицы", err);
+    }
+}
+
+// ===== ЗАГРУЗКА ВРЕМЕНИ ДОСТАВКИ ИЗ GOOGLE SHEETS =====
 async function loadDeliveryTimes() {
     try {
         const res = await fetch(deliveryTimesSheetUrl);
         const csv = await res.text();
         const lines = csv.split("\n").map(l => l.trim());
-        deliveryTimes = [];
+
+        deliveryTimesByDate = {};
 
         for (let i = 1; i < lines.length; i++) {
             if (!lines[i]) continue;
-            const [method, time, active] = lines[i].split(",");
-            if (active?.trim().toUpperCase() === "YES") {
-                deliveryTimes.push({ method: method.trim().toLowerCase(), time: time.trim() });
+            const [dateStr, method, time, active] = lines[i].split(",");
+            if (!active || active.trim().toUpperCase() !== "YES") continue;
+            if (!dateStr || !method || !time) continue;
+
+            // Проверяем диапазон дат
+            if (dateStr.includes("-")) {
+                const [startStr, endStr] = dateStr.split("-").map(s => s.trim());
+                const [startDay, startMonth, startYear] = startStr.split(".").map(Number);
+                const [endDay, endMonth, endYear] = endStr.split(".").map(Number);
+
+                let current = new Date(startYear, startMonth - 1, startDay);
+                const end = new Date(endYear, endMonth - 1, endDay);
+
+                while (current <= end) {
+                    const day = current.getDate().toString().padStart(2, "0");
+                    const month = (current.getMonth() + 1).toString().padStart(2, "0");
+                    const year = current.getFullYear();
+                    const formatted = `${day}.${month}.${year}`;
+
+                    const key = `${formatted}|${method.trim().toLowerCase()}`;
+                    if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
+                    deliveryTimesByDate[key].push(time.trim());
+
+                    current.setDate(current.getDate() + 1);
+                }
+            } else {
+                const key = `${dateStr.trim()}|${method.trim().toLowerCase()}`;
+                if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
+                deliveryTimesByDate[key].push(time.trim());
             }
         }
 
-        updateDeliveryTimes();
+        updateDeliveryTimes(); // первый рендер
     } catch (err) {
         console.error("Ошибка загрузки времени доставки", err);
     }
 }
 
+// ===== ФИЛЬТРАЦИЯ СЛОТОВ ПО МИН. ЧАСАМ =====
+function filterDeliveryTimes(times) {
+    if (!selectedDate) return [];
+
+    const now = new Date();
+
+    // считаем общее количество товаров в корзине
+    let totalItems = 0;
+    cart.forEach(i => totalItems += i.qty);
+
+    // ищем нужный диапазон
+    let minHours = 0;
+    for (const range of minHoursRanges) {
+        if (range.maxItems === null || totalItems <= range.maxItems) {
+            minHours = range.hours;
+            break;
+        }
+    }
+
+    const [day, month, year] = selectedDate.split(".").map(Number);
+
+    return times.filter(t => {
+        const [startTime] = t.split("–");
+        const [hours, minutes] = startTime.split(":").map(Number);
+        const slotDate = new Date(year, month - 1, day, hours, minutes);
+        const diffHours = (slotDate - now) / (1000 * 60 * 60);
+        return diffHours >= minHours;
+    });
+}
+
+// ===== ОБНОВЛЕНИЕ ВРЕМЕНИ В SELECT =====
 function updateDeliveryTimes() {
     if (!deliveryTime) return;
 
     const method = methodSelect?.value?.toLowerCase();
     if (!method) return;
 
-    deliveryTime.innerHTML = ""; // очищаем
+    deliveryTime.innerHTML = "";
 
-    // Добавляем первый вариант-подсказку
+    // placeholder
     const placeholderOption = document.createElement('option');
     placeholderOption.value = "";
     placeholderOption.textContent = "Выбрать время *";
@@ -2524,21 +2612,41 @@ function updateDeliveryTimes() {
     placeholderOption.selected = true;
     deliveryTime.appendChild(placeholderOption);
 
-    const options = deliveryTimes.filter(d => d.method === method);
-    options.forEach(opt => {
+    if (!selectedDate) return;
+
+    const key = `${selectedDate}|${method}`;
+    let times = deliveryTimesByDate[key] || [];
+
+    // фильтруем прошедшие слоты и по мин. часам
+    times = filterDeliveryTimes(times);
+
+    if (times.length === 0) {
+        const option = document.createElement('option');
+        option.value = "";
+        option.textContent = "Нет доступного времени";
+        option.disabled = true;
+        deliveryTime.appendChild(option);
+        return;
+    }
+
+    times.forEach(t => {
         const optionEl = document.createElement('option');
-        optionEl.value = opt.time;
-        optionEl.textContent = opt.time;
+        optionEl.value = t;
+        optionEl.textContent = t;
         deliveryTime.appendChild(optionEl);
     });
 }
 
-
-// Обновляем при смене способа доставки
+// ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ МЕТОДА =====
 methodSelect?.addEventListener('change', updateDeliveryTimes);
 
-// Загружаем сразу при старте
-loadDeliveryTimes();
+// ===== ЗАГРУЗКА ПРИ СТАРТЕ =====
+Promise.all([loadMinHours(), loadDeliveryTimes()]);
+
+
+
+
+
 
 
 let selectedDate = null;
@@ -2667,14 +2775,20 @@ function renderCalendar() {
       }
 
       dayDiv.addEventListener('click', () => {
-        if(dayDiv.classList.contains('unavailable')) return;
-        selectedDate = isoDate;
-        const [year, month, day] = isoDate.split('-').map(Number);
-        const formatted = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
-        chooseDateBtn.textContent = "Дата: " + formatted;
-        deliveryCalendar.style.display = "none";
-        renderCalendar();
-      });
+    if(dayDiv.classList.contains('unavailable')) return;
+
+    const [year, month, day] = isoDate.split('-').map(Number);
+
+    // selectedDate в формате дд.мм.гггг
+    selectedDate = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+
+    chooseDateBtn.textContent = "Дата: " + selectedDate;
+    deliveryCalendar.style.display = "none";
+
+    renderCalendar();
+    updateDeliveryTimes(); // сразу обновляем список времени для выбранной даты
+});
+
 
       daysContainer.appendChild(dayDiv);
     }
@@ -2721,19 +2835,27 @@ loadBlockedDates().then(() => renderCalendar());
     }
   }
 
-  const total = subtotal + delivery - discount;
 
-  subtotalEl.textContent = subtotal.toFixed(2) + " €";
-  deliveryEl.textContent = delivery.toFixed(2) + " €";
+// ===== СКИДКА (ПОКАЗЫВАЕМ ТОЛЬКО ЕСЛИ ЕСТЬ) =====
+const discountRow = discountEl.parentElement;
+
+if (
+  (activePromo && activePromo.type === "free_item") ||
+  discount > 0
+) {
+  discountRow.style.display = '';
   discountEl.textContent =
     activePromo?.type === "free_item"
       ? "Бесплатная позиция"
-      : discount > 0
-      ? "-" + discount.toFixed(2) + " €"
-      : "0.00 €";
+      : "-" + discount.toFixed(2) + " €";
+} else {
+  discountRow.style.display = 'none';
+}
 
-  totalEl.textContent = total.toFixed(2) + " €";
-
+  const total = subtotal + delivery - discount;
+  subtotalEl.textContent = subtotal.toFixed(2) + " €";
+  deliveryEl.textContent = delivery.toFixed(2) + " €";
+    totalEl.textContent = total.toFixed(2) + " €";
 
   // Значок количества в корзине
   if (cartCountEl) {
@@ -2744,8 +2866,6 @@ loadBlockedDates().then(() => renderCalendar());
   saveCart();
   savePromo();
 }
-
-
 
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
