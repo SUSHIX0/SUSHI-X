@@ -2192,6 +2192,9 @@ placeOrderBtn?.addEventListener('click', () => {
         return;
     }
 
+    // ===== Отправка заказа в Telegram =====
+    sendOrderToTelegram();
+
     // ===== оформление заказа =====
     showToast('Заказ принят — спасибо!');
     cart.clear();
@@ -2867,6 +2870,83 @@ if (
   savePromo();
 }
 
+// ======== Функция отправки заказа в Telegram ========
+async function sendOrderToTelegram() {
+    if (!checkoutForm) return;
+
+    // Получаем номер заказа
+    const orderNumber = getNextOrderNumber();
+
+    // Дата и время заказа
+    const now = new Date();
+    const orderDateTime = `${now.getDate().toString().padStart(2,'0')}.${(now.getMonth()+1).toString().padStart(2,'0')}.${now.getFullYear()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+    // Данные из формы
+    const name = checkoutForm.name.value.trim();
+    const phone = checkoutForm.phone.value.trim();
+    const email = checkoutForm.email.value.trim();
+    const payment = checkoutForm.payment.value.trim();
+    const method = checkoutForm.method.value.trim();
+    const date = selectedDate || '';
+    const time = deliveryTime?.value || '';
+    const address = method.toLowerCase() === 'доставка' ? deliveryAddress?.value.trim() : '';
+
+    // Сборка позиций и подсчет количества
+    let itemsText = '';
+    let totalQty = 0;
+    let totalPrice = 0;
+
+    cart.forEach(item => {
+        itemsText += `${item.name} — ${item.qty} × ${item.unitPrice.toFixed(2)} € = ${(item.qty * item.unitPrice).toFixed(2)} €\n`;
+        totalQty += item.qty;
+        totalPrice += item.qty * item.unitPrice;
+    });
+
+    // Формируем сообщение
+    const message = `
+Заказ № ${orderNumber} — ${orderDateTime}
+
+Имя: ${name}
+Номер телефона: ${phone}
+Почта: ${email}
+Способ оплаты: ${payment}
+Способ получения: ${method}
+Дата: ${date}
+Время: ${time}
+${address ? 'Адрес: ' + address : ''}
+Заказ:
+${itemsText}
+Число позиций: ${totalQty}
+Итог: ${totalPrice.toFixed(2)} €
+`;
+
+    // ======= Отправка через Telegram Bot API =======
+    const telegramBotToken = '8415077307:AAGGyIyeLPX95z40jVGNcZJ0ORPRIAE_cPE';
+    const chatId = '1493254370';
+
+    try {
+        await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message
+            })
+        });
+        showToast('Заказ отправлен в Telegram', false);
+    } catch (err) {
+        console.error('Ошибка отправки заказа в Telegram', err);
+        showToast('Ошибка отправки заказа', true);
+    }
+}
+
+// ===== Функция генерации номера заказа =====
+function getNextOrderNumber() {
+    let orderNum = parseInt(localStorage.getItem('orderNumber') || "0", 10);
+    orderNum++;
+    localStorage.setItem('orderNumber', orderNum.toString());
+    return orderNum.toString().padStart(3, '0');
+}
 
 
 
