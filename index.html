@@ -2519,20 +2519,23 @@ async function loadDeliveryTimes() {
 }
 
 function updateDeliveryTimes() {
-    if (!deliveryTime || !selectedDate) return;
+    if (!deliveryTime) return; // оставляем только проверку на элемент
 
     const method = methodSelect?.value?.toLowerCase();
     if (!method) return;
 
     deliveryTime.innerHTML = ""; // очищаем
 
-    // placeholder
+    // placeholder — всегда показываем
     const placeholderOption = document.createElement('option');
     placeholderOption.value = "";
     placeholderOption.textContent = "Выбрать время *";
     placeholderOption.disabled = true;
     placeholderOption.selected = true;
     deliveryTime.appendChild(placeholderOption);
+
+    // Если дата ещё не выбрана, пока не добавляем реальные слоты
+    if (!selectedDate) return;
 
     const key = `${selectedDate}|${method}`;
     const times = deliveryTimesByDate[key] || [];
@@ -2553,6 +2556,7 @@ function updateDeliveryTimes() {
         deliveryTime.appendChild(optionEl);
     });
 }
+
 
 // обновление времени при смене метода
 methodSelect?.addEventListener('change', updateDeliveryTimes);
