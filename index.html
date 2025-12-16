@@ -2504,12 +2504,36 @@ async function loadDeliveryTimes() {
 
         for (let i = 1; i < lines.length; i++) {
             if (!lines[i]) continue;
-            const [date, method, time, active] = lines[i].split(",");
+            const [dateStr, method, time, active] = lines[i].split(",");
             if (!active || active.trim().toUpperCase() !== "YES") continue;
+            if (!dateStr || !method || !time) continue;
 
-            const key = `${date.trim()}|${method.trim().toLowerCase()}`;
-            if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
-            deliveryTimesByDate[key].push(time.trim());
+            // Проверяем, есть ли диапазон дат
+            if (dateStr.includes("-")) {
+                const [startStr, endStr] = dateStr.split("-").map(s => s.trim());
+                const [startDay, startMonth, startYear] = startStr.split(".").map(Number);
+                const [endDay, endMonth, endYear] = endStr.split(".").map(Number);
+
+                let current = new Date(startYear, startMonth - 1, startDay);
+                const end = new Date(endYear, endMonth - 1, endDay);
+
+                while (current <= end) {
+                    const day = current.getDate().toString().padStart(2, "0");
+                    const month = (current.getMonth() + 1).toString().padStart(2, "0");
+                    const year = current.getFullYear();
+                    const formatted = `${day}.${month}.${year}`;
+
+                    const key = `${formatted}|${method.trim().toLowerCase()}`;
+                    if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
+                    deliveryTimesByDate[key].push(time.trim());
+
+                    current.setDate(current.getDate() + 1);
+                }
+            } else {
+                const key = `${dateStr.trim()}|${method.trim().toLowerCase()}`;
+                if (!deliveryTimesByDate[key]) deliveryTimesByDate[key] = [];
+                deliveryTimesByDate[key].push(time.trim());
+            }
         }
 
         updateDeliveryTimes(); // первый рендер
@@ -2519,7 +2543,7 @@ async function loadDeliveryTimes() {
 }
 
 function updateDeliveryTimes() {
-    if (!deliveryTime) return; // оставляем только проверку на элемент
+    if (!deliveryTime) return;
 
     const method = methodSelect?.value?.toLowerCase();
     if (!method) return;
@@ -2556,6 +2580,13 @@ function updateDeliveryTimes() {
         deliveryTime.appendChild(optionEl);
     });
 }
+
+// Обновляем при смене способа доставки
+methodSelect?.addEventListener('change', updateDeliveryTimes);
+
+// Загружаем сразу при старте
+loadDeliveryTimes();
+
 
 
 // обновление времени при смене метода
