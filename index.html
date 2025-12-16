@@ -2725,14 +2725,22 @@ loadBlockedDates().then(() => renderCalendar());
 
   subtotalEl.textContent = subtotal.toFixed(2) + " €";
   deliveryEl.textContent = delivery.toFixed(2) + " €";
+// ===== СКИДКА (ПОКАЗЫВАЕМ ТОЛЬКО ЕСЛИ ЕСТЬ) =====
+const discountRow = discountEl.parentElement;
+
+if (
+  (activePromo && activePromo.type === "free_item") ||
+  discount > 0
+) {
+  discountRow.style.display = '';
   discountEl.textContent =
     activePromo?.type === "free_item"
       ? "Бесплатная позиция"
-      : discount > 0
-      ? "-" + discount.toFixed(2) + " €"
-      : "0.00 €";
+      : "-" + discount.toFixed(2) + " €";
+} else {
+  discountRow.style.display = 'none';
+}
 
-  totalEl.textContent = total.toFixed(2) + " €";
 
 
   // Значок количества в корзине
