@@ -2443,10 +2443,16 @@ if (FREE_DELIVERY_LIMIT > 0) {
 
     // + кнопка
     incr.addEventListener('click', () => {
-      if (item.unitPrice === 0) {
+
+    if (item.unitPrice === 0) {
         showToast('Бесплатную позицию можно добавить только один раз', true);
         return;
-      }
+    }
+
+    if (item.qty >= ITEM_LIMIT) {
+        showToast(`Максимум ${ITEM_LIMIT} штук`, true);
+        return;
+    }
       if (item.qty < ITEM_LIMIT) item.qty++;
       cart.set(id, item);
       renderCart();
@@ -2721,10 +2727,7 @@ loadBlockedDates().then(() => renderCalendar());
     }
   }
 
-  const total = subtotal + delivery - discount;
 
-  subtotalEl.textContent = subtotal.toFixed(2) + " €";
-  deliveryEl.textContent = delivery.toFixed(2) + " €";
 // ===== СКИДКА (ПОКАЗЫВАЕМ ТОЛЬКО ЕСЛИ ЕСТЬ) =====
 const discountRow = discountEl.parentElement;
 
@@ -2741,7 +2744,10 @@ if (
   discountRow.style.display = 'none';
 }
 
-
+  const total = subtotal + delivery - discount;
+  subtotalEl.textContent = subtotal.toFixed(2) + " €";
+  deliveryEl.textContent = delivery.toFixed(2) + " €";
+    totalEl.textContent = total.toFixed(2) + " €";
 
   // Значок количества в корзине
   if (cartCountEl) {
