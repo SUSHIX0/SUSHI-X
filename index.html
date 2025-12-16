@@ -2562,7 +2562,31 @@ function updateDeliveryTimes() {
     if (!selectedDate) return;
 
     const key = `${selectedDate}|${method}`;
-    const times = deliveryTimesByDate[key] || [];
+    let times = deliveryTimesByDate[key] || [];
+
+// ===== фильтрация слотов по прошедшему времени и минимальному времени до заказа =====
+const now = new Date();
+
+// Считаем количество товаров в корзине
+let totalItems = 0;
+cart.forEach(i => totalItems += i.qty);
+
+// Определяем минимальное время до слота
+let minHours = 16; // маленький заказ
+if(totalItems > 5 && totalItems <= 15) minHours = 24; // средний заказ
+if(totalItems > 15) minHours = 40; // большой заказ
+
+times = times.filter(t => {
+    // формат слота "12:00–14:00"
+    const [startTime] = t.split("–");
+    const [hours, minutes] = startTime.split(":").map(Number);
+    const [day, month, year] = selectedDate.split(".").map(Number);
+    const slotDate = new Date(year, month - 1, day, hours, minutes);
+
+    const diffHours = (slotDate - now) / (1000 * 60 * 60); // разница в часах
+    return diffHours >= minHours;
+});
+
 
     if (times.length === 0) {
         const option = document.createElement('option');
@@ -2580,6 +2604,7 @@ function updateDeliveryTimes() {
         deliveryTime.appendChild(optionEl);
     });
 }
+
 
 // Обновляем при смене способа доставки
 methodSelect?.addEventListener('change', updateDeliveryTimes);
