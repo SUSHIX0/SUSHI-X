@@ -1142,6 +1142,9 @@ body {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 }
 
+input.error, select.error, textarea.error, button.error {
+  border-color: #ff0000;
+}
 
 
 </style>
@@ -2204,11 +2207,35 @@ placeOrderBtn?.addEventListener('click', () => {
         showToast('В корзине нет товаров', true);
         return;
     }
-    // ===== проверка основных полей =====
-    if (!name || !phone || !email || !payment || !method) {
-        showToast('Заполните все обязательные поля', true);
-        return;
-    }
+ // ===== проверка основных полей с подсветкой =====
+let hasError = false;
+
+const fields = [
+  {el: checkoutForm.name, required: true},
+  {el: checkoutForm.phone, required: true},
+  {el: checkoutForm.email, required: true},
+  {el: checkoutForm.payment, required: true},
+  {el: checkoutForm.method, required: true},
+  {el: document.getElementById('deliveryTime'), required: true},
+  {el: document.getElementById('chooseDateBtn'), required: true, isBtn: true},
+  {el: document.getElementById('deliveryAddress'), required: method === 'доставка'}
+];
+
+fields.forEach(f => {
+  const value = f.isBtn ? f.el.textContent : f.el.value;
+  if (f.required && (!value || (f.isBtn && !value.includes('Дата')))) {
+    f.el.classList.add('error');
+    hasError = true;
+  } else {
+    f.el.classList.remove('error');
+  }
+});
+
+if (hasError) {
+  showToast('Заполните все обязательные поля', true);
+  return;
+}
+
 
     const isDelivery = method === 'доставка';
     const isPickup = method === 'самовывоз';
