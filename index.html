@@ -1100,6 +1100,47 @@ body {
   background: #fff6f6 !important;
 }
 
+.comment-group {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-group label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #eee;
+  font-size: 14px;
+}
+
+.comment-group .optional {
+  font-weight: 400;
+  font-size: 12px;
+  color: #aaa;
+  margin-left: 4px;
+}
+
+.comment-group textarea {
+  resize: vertical;
+  min-height: 60px;
+  padding: 10px;
+  border-color: #0b0b0b;
+  border-radius: 12px;
+  background-color: #0b0b0b;
+  color: #fff;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.comment-group textarea::placeholder {
+  color: #888;
+}
+
+.comment-group textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0);
+}
 
 
 
@@ -1522,7 +1563,12 @@ body {
 
 <select id="deliveryTime"></select>
 
-<input type="text" id="deliveryAddress" placeholder="Адрес доставки *" class="checkout-form">
+<div class="form-group comment-group">
+  <textarea id="orderComment" name="comment" placeholder="Комментарий (необязательно)" rows="3"></textarea>
+</div>
+
+
+
 
 
 </div>
@@ -2148,6 +2194,8 @@ placeOrderBtn?.addEventListener('click', () => {
     const email = checkoutForm.email.value.trim();
     const payment = checkoutForm.payment.value;
     const method = checkoutForm.method.value.toLowerCase();
+    const comment = checkoutForm.comment?.value.trim() || '';
+
 
     // ===== проверка корзины =====
     if (cart.size === 0) {
