@@ -2811,8 +2811,44 @@ function updateDeliveryFields() {
   }
 }
 
-methodSelect?.addEventListener('change', updateDeliveryFields);
+
+function updateDeliveryFields() {
+  const method = methodSelect.value?.toLowerCase();
+
+  if(method === "доставка" || method === "самовывоз"){
+    deliveryFields.style.display = "block";
+
+    if(method === "доставка"){
+      deliveryNote.style.display = "block";        
+      deliveryAddress.style.display = "block";     
+    } else { 
+      deliveryNote.style.display = "none";         
+      deliveryAddress.style.display = "none";      
+    }
+
+    // Сбрасываем дату и время при смене метода
+    selectedDate = null;
+    chooseDateBtn.textContent = method === "доставка" ? "Выбрать дату *" : "Выбрать дату *";
+    deliveryTime.innerHTML = "";
+  } else {
+    deliveryFields.style.display = "none";
+    deliveryCalendar.style.display = "none";
+    selectedDate = null;
+    chooseDateBtn.textContent = "Выбрать дату";
+    deliveryTime.innerHTML = "";
+  }
+}
+
+// Навешиваем обработчик на select
+methodSelect?.addEventListener('change', () => {
+  updateDeliveryFields();
+  renderCalendar();       // обновляем календарь
+  updateDeliveryTimes();  // обновляем список времени
+});
+
+// вызовем один раз при старте, чтобы корректно отобразить поля при перезагрузке
 updateDeliveryFields();
+
 
 // ===== ОТКРЫТИЕ КАЛЕНДАРЯ =====
 chooseDateBtn?.addEventListener('click', () => {
