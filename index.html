@@ -1100,7 +1100,51 @@ body {
   background: #fff6f6 !important;
 }
 
+.comment-group {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
 
+.comment-group label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #eee;
+  font-size: 14px;
+}
+
+.comment-group .optional {
+  font-weight: 400;
+  font-size: 12px;
+  color: #aaa;
+  margin-left: 4px;
+}
+
+.comment-group textarea {
+  resize: vertical;
+  min-height: 60px;
+  padding: 10px;
+  border-color: #0b0b0b;
+  border-radius: 12px;
+  background-color: #0b0b0b;
+  color: #fff;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.comment-group textarea::placeholder {
+  color: #888;
+}
+
+.comment-group textarea:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0);
+}
+
+input.error, select.error, textarea.error, button.error {
+  border-color: #ff0000;
+}
 
 
 </style>
@@ -1523,6 +1567,13 @@ body {
 <select id="deliveryTime"></select>
 
 <input type="text" id="deliveryAddress" placeholder="Адрес доставки *" class="checkout-form">
+
+<div class="form-group comment-group">
+  <textarea id="orderComment" name="comment" placeholder="Комментарий (необязательно)" rows="3"></textarea>
+</div>
+
+
+
 
 
 </div>
@@ -2148,17 +2199,43 @@ placeOrderBtn?.addEventListener('click', () => {
     const email = checkoutForm.email.value.trim();
     const payment = checkoutForm.payment.value;
     const method = checkoutForm.method.value.toLowerCase();
+    const comment = checkoutForm.comment?.value.trim() || '';
+
 
     // ===== проверка корзины =====
     if (cart.size === 0) {
         showToast('В корзине нет товаров', true);
         return;
     }
-    // ===== проверка основных полей =====
-    if (!name || !phone || !email || !payment || !method) {
-        showToast('Заполните все обязательные поля', true);
-        return;
-    }
+ // ===== проверка основных полей с подсветкой =====
+let hasError = false;
+
+const fields = [
+  {el: checkoutForm.name, required: true},
+  {el: checkoutForm.phone, required: true},
+  {el: checkoutForm.email, required: true},
+  {el: checkoutForm.payment, required: true},
+  {el: checkoutForm.method, required: true},
+  {el: document.getElementById('deliveryTime'), required: true},
+  {el: document.getElementById('chooseDateBtn'), required: true, isBtn: true},
+  {el: document.getElementById('deliveryAddress'), required: method === 'доставка'}
+];
+
+fields.forEach(f => {
+  const value = f.isBtn ? f.el.textContent : f.el.value;
+  if (f.required && (!value || (f.isBtn && !value.includes('Дата')))) {
+    f.el.classList.add('error');
+    hasError = true;
+  } else {
+    f.el.classList.remove('error');
+  }
+});
+
+if (hasError) {
+  showToast('Заполните все обязательные поля', true);
+  return;
+}
+
 
     const isDelivery = method === 'доставка';
     const isPickup = method === 'самовывоз';
