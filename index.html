@@ -1734,6 +1734,7 @@ document.querySelectorAll('.cart-icon').forEach(icon => {
     updateSpecialOffersSection();
 
 renderCart();
+updateDeliveryTimes();
 
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
@@ -2036,6 +2037,7 @@ function addToCart(card){
 
     saveCart();
     renderCart();
+    updateDeliveryTimes();
 }
 
 // ===== РЕНДЕР КОРЗИНЫ =====
@@ -2090,6 +2092,7 @@ cart.forEach((item, id) => {
             cart.set(id, item);
             saveCart();
             renderCart();
+            updateDeliveryTimes();
         });
 
         decr.addEventListener('click', () => {
@@ -2101,12 +2104,14 @@ cart.forEach((item, id) => {
             }
             saveCart();
             renderCart();
+            updateDeliveryTimes();
         });
 
         removeBtn.addEventListener('click', () => {
             cart.delete(id);
             saveCart();
             renderCart();
+            updateDeliveryTimes();
         });
 
         cartItemsContainer.appendChild(el);
@@ -2145,6 +2150,7 @@ cart.forEach((item, id) => {
 
     // Сохраняем корзину в localStorage
     saveCart();
+    updateDeliveryTimes();
 }
 
 // ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
@@ -2164,6 +2170,7 @@ clearCartBtn?.addEventListener('click',()=>{
     saveCart();
     renderCart();
     showToast('Корзина очищена');
+    updateDeliveryTimes();
 });
 
 // ====== Сохранение данных формы ======
@@ -2312,6 +2319,7 @@ function updateOrderButtonText() {
     cart.clear();
     saveCart();
     renderCart();
+    updateDeliveryTimes();
 
     checkoutForm.reset();
     if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
@@ -2435,6 +2443,7 @@ if (activePromo && activePromo.type === 'free_item') {
     if (cart.has(oldId)) {
         cart.delete(oldId);
         saveCart();
+        updateDeliveryTimes();
     }
 }
 
@@ -2457,6 +2466,7 @@ if (activePromo && activePromo.type === 'free_item') {
   }
 
   renderCart();
+  updateDeliveryTimes();
 });
 
 
@@ -2476,6 +2486,7 @@ cancelPromoBtn.addEventListener('click', () => {
   promoMessage.textContent = '';
 
   renderCart();
+  updateDeliveryTimes();
 });
 
 
@@ -2571,6 +2582,7 @@ if (FREE_DELIVERY_LIMIT > 0) {
       if (item.qty < ITEM_LIMIT) item.qty++;
       cart.set(id, item);
       renderCart();
+      updateDeliveryTimes();
     });
 
     // - кнопка
@@ -2578,12 +2590,14 @@ if (FREE_DELIVERY_LIMIT > 0) {
       if (item.qty > 1) item.qty--;
       else cart.delete(id);
       renderCart();
+      updateDeliveryTimes();
     });
 
     // Удаление
     removeBtn.addEventListener('click', () => {
       cart.delete(id);
       renderCart();
+      updateDeliveryTimes();
     });
 
     cartItemsContainer.appendChild(el);
@@ -2741,6 +2755,9 @@ function updateDeliveryTimes() {
         option.textContent = "Нет доступного времени";
         option.disabled = true;
         deliveryTime.appendChild(option);
+
+        showToast('На выбранную дату нет доступного времени', true);
+
         return;
     }
 
@@ -3016,6 +3033,7 @@ if (
   }
   saveCart();
   savePromo();
+  updateDeliveryTimes();
 }
 
 
@@ -3053,6 +3071,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 renderCart();
+updateDeliveryTimes();
 
 </script>
 </body>
