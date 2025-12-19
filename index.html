@@ -1953,6 +1953,20 @@ const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
 const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
 
+
+const paymentSelect = checkoutForm?.payment;
+
+paymentSelect?.addEventListener('change', () => {
+    if (paymentSelect.value.toLowerCase() === 'карта онлайн') {
+        placeOrderBtn.textContent = 'Перейти к оплате';
+    } else {
+        placeOrderBtn.textContent = 'Оформить заказ';
+    }
+});
+
+
+
+
 if(phoneInput){
     phoneInput.addEventListener('input', () => {
         phoneInput.value = phoneInput.value.replace(/[^+\d]/g,'');
@@ -2268,6 +2282,30 @@ if (hasError) {
         showToast('Сумма заказа должна быть больше 0 €', true);
         return;
     }
+
+
+
+// ===== Логика для оплаты картой =====
+    if (payment.toLowerCase() === 'карта онлайн') {
+        showToast('Перенаправление к оплате...');
+        // Здесь можно вставить редирект на платёжную систему
+        // window.location.href = 'https://example-payment.com';
+        return;
+    }
+
+function updateOrderButtonText() {
+    if (!checkoutForm || !placeOrderBtn) return;
+
+    const payment = checkoutForm.payment.value;
+
+    if (payment === 'Карта онлайн') {
+        placeOrderBtn.textContent = 'Перейти к оплате';
+    } else {
+        placeOrderBtn.textContent = 'Оформить заказ';
+    }
+}
+
+
 
     // ===== оформление заказа =====
     showToast('Заказ принят — спасибо!');
@@ -2954,6 +2992,28 @@ if (localStorage.getItem('activePromo')) {
     promoBox.style.display = 'block';
     showPromoBtn.style.display = 'none';
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const checkoutForm = document.getElementById('checkoutForm');
+  const placeOrderBtn = document.getElementById('placeOrder');
+  const paymentSelect = checkoutForm?.querySelector('[name="payment"]');
+
+  if (!checkoutForm || !placeOrderBtn || !paymentSelect) return;
+
+  function updateButton() {
+    if (paymentSelect.value === 'Карта онлайн') {
+      placeOrderBtn.textContent = 'Перейти к оплате';
+    } else {
+      placeOrderBtn.textContent = 'Оформить заказ';
+    }
+  }
+
+  paymentSelect.addEventListener('change', updateButton);
+  updateButton(); // при загрузке
+});
+
+
 
 
 renderCart();
