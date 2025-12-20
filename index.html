@@ -2052,6 +2052,35 @@ function renderCart() {
     if (!cartItemsContainer) return;
     cartItemsContainer.innerHTML = '';
 
+    // ===== Обновляем цены товаров по текущим карточкам =====
+cart.forEach((item, id) => {
+    // Пропускаем бесплатные позиции по промокоду
+    if (item.unitPrice === 0 && item.promoFree) return;
+
+    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
+    if (!cardEl) return;
+
+    const priceEl = cardEl.querySelector('.price');
+    const newPriceEl = priceEl?.querySelector('.new-price');
+    const oldPriceEl = priceEl?.querySelector('.old-price');
+
+    const currentUnitPrice = newPriceEl
+        ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0
+        : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+
+    const currentOriginalPrice = oldPriceEl
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || currentUnitPrice
+        : currentUnitPrice;
+
+    // Обновляем только если цена изменилась
+    if(item.unitPrice !== currentUnitPrice || item.originalPrice !== currentOriginalPrice) {
+        item.unitPrice = currentUnitPrice;
+        item.originalPrice = currentOriginalPrice;
+        cart.set(id, item);
+    }
+});
+
+
     const freeInfo = document.getElementById('free-delivery-info');
     if (FREE_DELIVERY_LIMIT > 0) {
         freeInfo.style.display = 'block';
@@ -2517,6 +2546,34 @@ cancelPromoBtn.addEventListener('click', () => {
 function renderCart() {
   if (!cartItemsContainer) return;
   cartItemsContainer.innerHTML = '';
+
+// ===== Обновляем цены товаров по текущим карточкам =====
+cart.forEach((item, id) => {
+    // Пропускаем бесплатные позиции по промокоду
+    if (item.unitPrice === 0 && item.promoFree) return;
+
+    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
+    if (!cardEl) return;
+
+    const priceEl = cardEl.querySelector('.price');
+    const newPriceEl = priceEl?.querySelector('.new-price');
+    const oldPriceEl = priceEl?.querySelector('.old-price');
+
+    const currentUnitPrice = newPriceEl
+        ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0
+        : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+
+    const currentOriginalPrice = oldPriceEl
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || currentUnitPrice
+        : currentUnitPrice;
+
+    // Обновляем только если цена изменилась
+    if(item.unitPrice !== currentUnitPrice || item.originalPrice !== currentOriginalPrice) {
+        item.unitPrice = currentUnitPrice;
+        item.originalPrice = currentOriginalPrice;
+        cart.set(id, item);
+    }
+});
 
 
 const freeInfo = document.getElementById('free-delivery-info');
