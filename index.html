@@ -1499,6 +1499,9 @@ input.error, select.error, textarea.error, button.error {
   <span>Корзина</span>
 </div>
 
+<div id="toast" class="toast">
+  <div class="toast-text"></div>
+</div>
 
 
 
@@ -1602,13 +1605,7 @@ input.error, select.error, textarea.error, button.error {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
 
-// ===== Toast =====
-function showToast(message, isRed = false) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = 'toast show ' + (isRed ? 'red' : 'white');
-  setTimeout(() => { toast.classList.remove('show'); }, 2500);
-}
+
 
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
@@ -1994,13 +1991,23 @@ function loadCart(){
 }
 
 // ===== TOAST =====
-function showToast(msg, isRed=false){
+function showToast(msg, isRed = false, duration = 2500) {
     const toast = document.getElementById('toast');
-    if(!toast) return;
-    toast.textContent = msg;
-    toast.className = 'toast show ' + (isRed?'red':'white');
-    setTimeout(()=>toast.classList.remove('show'),2500);
+    if (!toast) return;
+
+    toast.innerHTML = msg;
+    toast.className = 'toast show ' + (isRed ? 'red' : 'white');
+
+    // очищаем предыдущий таймер, если был
+    if (toast._timer) {
+        clearTimeout(toast._timer);
+    }
+
+    toast._timer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
 }
+
 
 // ===== ESCAPE HTML =====
 function escapeHtml(str){ return String(str).replace(/[&<>"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
@@ -2044,6 +2051,35 @@ function addToCart(card){
 function renderCart() {
     if (!cartItemsContainer) return;
     cartItemsContainer.innerHTML = '';
+
+    // ===== Обновляем цены товаров по текущим карточкам =====
+cart.forEach((item, id) => {
+    // Пропускаем бесплатные позиции по промокоду
+    if (item.unitPrice === 0 && item.promoFree) return;
+
+    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
+    if (!cardEl) return;
+
+    const priceEl = cardEl.querySelector('.price');
+    const newPriceEl = priceEl?.querySelector('.new-price');
+    const oldPriceEl = priceEl?.querySelector('.old-price');
+
+    const currentUnitPrice = newPriceEl
+        ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0
+        : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+
+    const currentOriginalPrice = oldPriceEl
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || currentUnitPrice
+        : currentUnitPrice;
+
+    // Обновляем только если цена изменилась
+    if(item.unitPrice !== currentUnitPrice || item.originalPrice !== currentOriginalPrice) {
+        item.unitPrice = currentUnitPrice;
+        item.originalPrice = currentOriginalPrice;
+        cart.set(id, item);
+    }
+});
+
 
     const freeInfo = document.getElementById('free-delivery-info');
     if (FREE_DELIVERY_LIMIT > 0) {
@@ -2294,9 +2330,23 @@ if (hasError) {
 
 // ===== Логика для оплаты картой =====
     if (payment.toLowerCase() === 'карта онлайн') {
-        showToast('Перенаправление к оплате...');
-        // Здесь можно вставить редирект на платёжную систему
-        // window.location.href = 'https://example-payment.com';
+        showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000); // 2 минуты
+
+const total = parseFloat(totalEl.textContent); // сумма к оплате
+    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: total })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            window.location.href = data.url; // редирект на Stripe
+        } else {
+            alert("Ошибка создания платежа");
+        }
+    })
+    .catch(err => alert("Ошибка запроса к серверу: " + err.message));
         return;
     }
 
@@ -2496,6 +2546,34 @@ cancelPromoBtn.addEventListener('click', () => {
 function renderCart() {
   if (!cartItemsContainer) return;
   cartItemsContainer.innerHTML = '';
+
+// ===== Обновляем цены товаров по текущим карточкам =====
+cart.forEach((item, id) => {
+    // Пропускаем бесплатные позиции по промокоду
+    if (item.unitPrice === 0 && item.promoFree) return;
+
+    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
+    if (!cardEl) return;
+
+    const priceEl = cardEl.querySelector('.price');
+    const newPriceEl = priceEl?.querySelector('.new-price');
+    const oldPriceEl = priceEl?.querySelector('.old-price');
+
+    const currentUnitPrice = newPriceEl
+        ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0
+        : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+
+    const currentOriginalPrice = oldPriceEl
+        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || currentUnitPrice
+        : currentUnitPrice;
+
+    // Обновляем только если цена изменилась
+    if(item.unitPrice !== currentUnitPrice || item.originalPrice !== currentOriginalPrice) {
+        item.unitPrice = currentUnitPrice;
+        item.originalPrice = currentOriginalPrice;
+        cart.set(id, item);
+    }
+});
 
 
 const freeInfo = document.getElementById('free-delivery-info');
@@ -2756,7 +2834,7 @@ function updateDeliveryTimes() {
         option.disabled = true;
         deliveryTime.appendChild(option);
 
-        showToast('На выбранную дату нет доступного времени', true);
+        
 
         return;
     }
