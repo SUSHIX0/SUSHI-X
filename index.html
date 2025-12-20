@@ -2297,6 +2297,22 @@ if (hasError) {
         showToast('Перенаправление к оплате...');
         // Здесь можно вставить редирект на платёжную систему
         // window.location.href = 'https://example-payment.com';
+
+const total = parseFloat(totalEl.textContent); // сумма к оплате
+    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: total })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.url) {
+            window.location.href = data.url; // редирект на Stripe
+        } else {
+            alert("Ошибка создания платежа");
+        }
+    })
+    .catch(err => alert("Ошибка запроса к серверу: " + err.message));
         return;
     }
 
@@ -2756,7 +2772,7 @@ function updateDeliveryTimes() {
         option.disabled = true;
         deliveryTime.appendChild(option);
 
-        showToast('На выбранную дату нет доступного времени', true);
+        
 
         return;
     }
