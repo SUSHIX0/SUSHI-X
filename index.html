@@ -12,8 +12,14 @@
   --bg:#0f0f10;
   --muted:#b9b9b9;
   --accent:#ff2d2d;
-  --maxw:1600px;
 }
+
+main {
+  max-width: 2050px;
+  padding: 36px 20px;
+  margin: 0 auto;  /* <-- центрирует main по горизонтали */
+}
+
 *{box-sizing:border-box;}
 body{
   margin:0;
@@ -22,7 +28,6 @@ body{
     linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
   color:#eaeaea;
   -webkit-font-smoothing:antialiased;
-  padding:36px 20px;
   display:flex;
   justify-content:center;
 }
@@ -372,13 +377,8 @@ body {
 }
 
 .menu-section .grid > .card {
-  max-width: 615px; /* сохраняем */
+  max-width: 600px; /* сохраняем */
   flex: 1 1 320px;  /* карточка растет до доступного места, но не меньше 320px */
-}
-
-.menu-bottom-space {
-  height: 70px; /* регулируй под нужное пространство */
-  width: 100%;
 }
 
 /* Исходное состояние всех элементов */
@@ -1146,6 +1146,91 @@ input.error, select.error, textarea.error, button.error {
   border-color: #ff0000;
 }
 
+/* ===== FOOTER ===== */
+
+.site-footer {
+  width: 100%;
+  box-sizing: border-box;
+  color: #ffffff;
+  font-family: "Montserrat", "Noto Sans JP", Arial, sans-serif;
+  font-weight: 300;
+}
+
+/* верхняя разделительная линия */
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ff2d2d;
+}
+
+/* основной контейнер */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--maxw, 1800px);
+  margin: 0 auto;
+  padding: 20px 30px;
+  box-sizing: border-box;
+}
+
+/* колонки */
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* SushiX OÜ */
+.footer-left p {
+  margin: 0;
+  font-weight: 600;
+  color: #ff2d2d;
+}
+
+/* списки */
+.contacts-list,
+.social-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ВАЖНО: без лишнего отступа снизу */
+}
+
+/* заголовки Телефон / Email */
+.contacts-list li strong {
+  color: #ffffff;
+  font-weight: 300;
+}
+
+/* ссылки и данные */
+.contacts-list a,
+.social-list a {
+  color: #ff2d2d;
+  text-decoration: none;
+}
+
+.contacts-list a:hover,
+.social-list a:hover {
+  text-decoration: underline;
+}
+
+/* нижняя строка */
+.footer-bottom {
+  border-top: 1px solid #ff2d2d;
+  text-align: center;
+  padding: 10px 30px;
+  font-size: 0.9rem;
+  color: #b9b9b9;
+}
+
+
 
 </style>
 
@@ -1228,6 +1313,18 @@ input.error, select.error, textarea.error, button.error {
       </article>
 
       <article class="card" data-id="снежный_краб">
+        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+          <p class="ingredients">Снежный краб · Philadelphia · Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+            <article class="card" data-id="снежный_краб">
         <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
@@ -1491,6 +1588,37 @@ input.error, select.error, textarea.error, button.error {
 
   <div class="menu-bottom-space"></div>
 </main>
+
+<footer class="site-footer">
+  <div class="footer-divider"></div>
+
+  <div class="footer-content">
+    <div class="footer-left">
+      <p><strong>SushiX OÜ</strong></p>
+    </div>
+
+    <div class="footer-center">
+      <ul class="contacts-list">
+        <li>Телефон: <a href="tel:+1234567890">+1 234 567 890</a></li>
+        <li>Email: <a href="mailto:info@sushix.ee">info@sushix.ee</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-right">
+      <ul class="social-list">
+        <li><a href="https://instagram.com/yourprofile" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/yourpage" target="_blank">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 SushiX OÜ. Все права защищены.</p>
+  </div>
+</footer>
+
+
+
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
@@ -1605,7 +1733,10 @@ input.error, select.error, textarea.error, button.error {
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
 
-
+function updateCartUI() {
+  renderCart();
+  updateDeliveryTimes();
+}
 
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
@@ -1649,8 +1780,12 @@ async function updateMenuFromSheet() {
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
         ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
-        continue;
-      }
+        if (placeOrderBtn) {
+        placeOrderBtn.style.display = ordersEnabled ? 'inline-block' : 'none';
+    }
+
+    continue;
+}
 
 
 // НАСТРОЙКИ ДОСТАВКИ ИЗ ТАБЛИЦЫ
@@ -1730,8 +1865,8 @@ document.querySelectorAll('.cart-icon').forEach(icon => {
     // Специальные предложения
     updateSpecialOffersSection();
 
-renderCart();
-updateDeliveryTimes();
+updateCartUI();
+
 
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
@@ -2043,150 +2178,7 @@ function addToCart(card){
     }
 
     saveCart();
-    renderCart();
-    updateDeliveryTimes();
-}
-
-// ===== РЕНДЕР КОРЗИНЫ =====
-function renderCart() {
-    if (!cartItemsContainer) return;
-    cartItemsContainer.innerHTML = '';
-
-    // ===== Обновляем цены товаров по текущим карточкам =====
-cart.forEach((item, id) => {
-    // Пропускаем бесплатные позиции по промокоду
-    if (item.unitPrice === 0 && item.promoFree) return;
-
-    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
-    if (!cardEl) return;
-
-    const priceEl = cardEl.querySelector('.price');
-    const newPriceEl = priceEl?.querySelector('.new-price');
-    const oldPriceEl = priceEl?.querySelector('.old-price');
-
-    const currentUnitPrice = newPriceEl
-        ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0
-        : parseFloat(priceEl?.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
-
-    const currentOriginalPrice = oldPriceEl
-        ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || currentUnitPrice
-        : currentUnitPrice;
-
-    // Обновляем только если цена изменилась
-    if(item.unitPrice !== currentUnitPrice || item.originalPrice !== currentOriginalPrice) {
-        item.unitPrice = currentUnitPrice;
-        item.originalPrice = currentOriginalPrice;
-        cart.set(id, item);
-    }
-});
-
-
-    const freeInfo = document.getElementById('free-delivery-info');
-    if (FREE_DELIVERY_LIMIT > 0) {
-        freeInfo.style.display = 'block';
-        freeInfo.textContent = `Бесплатная доставка при покупке на сумму ${FREE_DELIVERY_LIMIT} €`;
-    } else {
-        freeInfo.style.display = 'none';
-    }
-
-    let subtotal = 0;
-    cart.forEach((item, id) => subtotal += item.unitPrice * item.qty);
-
-
-cart.forEach((item, id) => {
-        const lineTotal = item.unitPrice * item.qty;
-
-        const el = document.createElement('div');
-        el.className = 'cart-item';
-        el.dataset.id = id;
-
-        el.innerHTML = `
-            <div class="name">${escapeHtml(item.name)}</div>
-            <div class="unit">
-                ${item.unitPrice.toFixed(2)} €
-                ${item.originalPrice && item.originalPrice > item.unitPrice ? `<span class="old-price">${item.originalPrice.toFixed(2)} €</span>` : ''}
-            </div>
-            <div class="qty-wrap">
-                <button class="qty-btn btn-decr">−</button>
-                <div class="qty-value">${item.qty}</div>
-                <button class="qty-btn btn-incr">+</button>
-            </div>
-            <div class="line-total">${lineTotal.toFixed(2)} €</div>
-            <button class="remove-btn">×</button>
-        `;
-
-                const incr = el.querySelector('.btn-incr');
-        const decr = el.querySelector('.btn-decr');
-        const removeBtn = el.querySelector('.remove-btn');
-
-        incr.addEventListener('click', () => {
-            if(item.unitPrice === 0) {
-                showToast('Бесплатную позицию можно добавить только один раз', true);
-                return;
-            }
-            if(item.qty < ITEM_LIMIT) item.qty++;
-            cart.set(id, item);
-            saveCart();
-            renderCart();
-            updateDeliveryTimes();
-        });
-
-        decr.addEventListener('click', () => {
-            if(item.qty > 1) {
-                item.qty--;
-                cart.set(id, item);
-            } else {
-                cart.delete(id);
-            }
-            saveCart();
-            renderCart();
-            updateDeliveryTimes();
-        });
-
-        removeBtn.addEventListener('click', () => {
-            cart.delete(id);
-            saveCart();
-            renderCart();
-            updateDeliveryTimes();
-        });
-
-        cartItemsContainer.appendChild(el);
-    });
-
-    let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
-      const method = checkoutForm?.method?.value?.toLowerCase();
-    if (method === "самовывоз") delivery = 0;
-
-    let discount = 0;
-
-    if(activePromo) {
-        switch(activePromo.type) {
-            case 'cart_discount': discount = subtotal * (activePromo.value/100); break;
-            case 'flat_discount': discount = activePromo.value; break;
-            case 'min_total_discount': if(subtotal >= activePromo.min) discount = activePromo.value; break;
-            case 'free_delivery': delivery = 0; break;
-        }
-    }
-
-    const total = subtotal + delivery - discount;
-
-    subtotalEl.textContent = subtotal.toFixed(2) + " €";
-    deliveryEl.textContent = delivery.toFixed(2) + " €";
-    discountEl.textContent =
-        activePromo?.type === 'free_item'
-        ? 'Бесплатная позиция'
-        : discount > 0 ? '-' + discount.toFixed(2) + ' €' : '0.00 €';
-    totalEl.textContent = total.toFixed(2) + " €";
-
-    if(cartCountEl) {
-        let cnt = 0;
-        cart.forEach(i => cnt += i.qty);
-        cartCountEl.textContent = cnt;
-    }
-
-    // Сохраняем корзину в localStorage
-    saveCart();
-    updateDeliveryTimes();
+    updateCartUI();
 }
 
 // ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
@@ -2204,9 +2196,8 @@ cartBackdrop?.addEventListener('click',closeCart);
 clearCartBtn?.addEventListener('click',()=>{
     cart.clear();
     saveCart();
-    renderCart();
     showToast('Корзина очищена');
-    updateDeliveryTimes();
+    updateCartUI();
 });
 
 // ====== Сохранение данных формы ======
@@ -2258,12 +2249,9 @@ placeOrderBtn?.addEventListener('click', () => {
     const method = checkoutForm.method.value.toLowerCase();
     const comment = checkoutForm.comment?.value.trim() || '';
 
-
+    
     // ===== проверка корзины =====
-    if (cart.size === 0) {
-        showToast('В корзине нет товаров', true);
-        return;
-    }
+    
  // ===== проверка основных полей с подсветкой =====
 let hasError = false;
 
@@ -2287,6 +2275,11 @@ fields.forEach(f => {
     f.el.classList.remove('error');
   }
 });
+
+if (cart.size === 0) {
+        showToast('В корзине нет товаров', true);
+        return;
+    }
 
 if (hasError) {
   showToast('Заполните все обязательные поля', true);
@@ -2368,8 +2361,7 @@ function updateOrderButtonText() {
     showToast('Заказ принят — спасибо!');
     cart.clear();
     saveCart();
-    renderCart();
-    updateDeliveryTimes();
+    updateCartUI();
 
     checkoutForm.reset();
     if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
@@ -2515,8 +2507,7 @@ if (activePromo && activePromo.type === 'free_item') {
     activePromo = null;
   }
 
-  renderCart();
-  updateDeliveryTimes();
+  updateCartUI();
 });
 
 
@@ -2535,8 +2526,7 @@ cancelPromoBtn.addEventListener('click', () => {
   promoInput.value = '';
   promoMessage.textContent = '';
 
-  renderCart();
-  updateDeliveryTimes();
+  updateCartUI();
 });
 
 
@@ -2659,27 +2649,28 @@ if (FREE_DELIVERY_LIMIT > 0) {
     }
       if (item.qty < ITEM_LIMIT) item.qty++;
       cart.set(id, item);
-      renderCart();
-      updateDeliveryTimes();
+      updateCartUI();
     });
 
     // - кнопка
     decr.addEventListener('click', () => {
       if (item.qty > 1) item.qty--;
       else cart.delete(id);
-      renderCart();
-      updateDeliveryTimes();
+      updateCartUI();
     });
 
     // Удаление
     removeBtn.addEventListener('click', () => {
-      cart.delete(id);
-      renderCart();
-      updateDeliveryTimes();
-    });
+  if (item.promoFree) {
+    return;
+  }
+  cart.delete(id);
+            saveCart();
+            updateCartUI();
+        });
 
-    cartItemsContainer.appendChild(el);
-  });
+        cartItemsContainer.appendChild(el);
+    });
 
 
   // ========================================================
@@ -2881,28 +2872,6 @@ async function loadBlockedDates() {
     }
   } catch(err) {
     console.error("Ошибка загрузки Google Sheet", err);
-  }
-}
-
-// ===== ОБНОВЛЕНИЕ ПОЛЕЙ ДЛЯ ДОСТАВКИ =====
-function updateDeliveryFields() {
-  const method = methodSelect.value?.toLowerCase();
-
-  if(method === "доставка" || method === "самовывоз"){
-    deliveryFields.style.display = "block";
-
-    if(method === "доставка"){
-      deliveryNote.style.display = "block";        
-      deliveryAddress.style.display = "block";     
-    } else { 
-      deliveryNote.style.display = "none";         
-      deliveryAddress.style.display = "none";      
-    }
-  } else {
-    deliveryFields.style.display = "none";
-    deliveryCalendar.style.display = "none";
-    selectedDate = null;
-    chooseDateBtn.textContent = "Выбрать дату доставки";
   }
 }
 
@@ -3147,9 +3116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-renderCart();
-updateDeliveryTimes();
+updateCartUI();
 
 </script>
 </body>
