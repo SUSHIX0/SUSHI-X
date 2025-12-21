@@ -12,8 +12,14 @@
   --bg:#0f0f10;
   --muted:#b9b9b9;
   --accent:#ff2d2d;
-  --maxw:1600px;
 }
+
+main {
+  max-width: 2050px;
+  padding: 36px 20px;
+  margin: 0 auto;  /* <-- центрирует main по горизонтали */
+}
+
 *{box-sizing:border-box;}
 body{
   margin:0;
@@ -22,7 +28,6 @@ body{
     linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
   color:#eaeaea;
   -webkit-font-smoothing:antialiased;
-  padding:36px 20px;
   display:flex;
   justify-content:center;
 }
@@ -372,13 +377,8 @@ body {
 }
 
 .menu-section .grid > .card {
-  max-width: 615px; /* сохраняем */
+  max-width: 600px; /* сохраняем */
   flex: 1 1 320px;  /* карточка растет до доступного места, но не меньше 320px */
-}
-
-.menu-bottom-space {
-  height: 70px; /* регулируй под нужное пространство */
-  width: 100%;
 }
 
 /* Исходное состояние всех элементов */
@@ -1146,6 +1146,91 @@ input.error, select.error, textarea.error, button.error {
   border-color: #ff0000;
 }
 
+/* ===== FOOTER ===== */
+
+.site-footer {
+  width: 100%;
+  box-sizing: border-box;
+  color: #ffffff;
+  font-family: "Montserrat", "Noto Sans JP", Arial, sans-serif;
+  font-weight: 300;
+}
+
+/* верхняя разделительная линия */
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ff2d2d;
+}
+
+/* основной контейнер */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--maxw, 1800px);
+  margin: 0 auto;
+  padding: 20px 30px;
+  box-sizing: border-box;
+}
+
+/* колонки */
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* SushiX OÜ */
+.footer-left p {
+  margin: 0;
+  font-weight: 600;
+  color: #ff2d2d;
+}
+
+/* списки */
+.contacts-list,
+.social-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ВАЖНО: без лишнего отступа снизу */
+}
+
+/* заголовки Телефон / Email */
+.contacts-list li strong {
+  color: #ffffff;
+  font-weight: 300;
+}
+
+/* ссылки и данные */
+.contacts-list a,
+.social-list a {
+  color: #ff2d2d;
+  text-decoration: none;
+}
+
+.contacts-list a:hover,
+.social-list a:hover {
+  text-decoration: underline;
+}
+
+/* нижняя строка */
+.footer-bottom {
+  border-top: 1px solid #ff2d2d;
+  text-align: center;
+  padding: 10px 30px;
+  font-size: 0.9rem;
+  color: #b9b9b9;
+}
+
+
 
 </style>
 
@@ -1228,6 +1313,18 @@ input.error, select.error, textarea.error, button.error {
       </article>
 
       <article class="card" data-id="снежный_краб">
+        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
+          <p class="ingredients">Снежный краб · Philadelphia · Огурец</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+            <article class="card" data-id="снежный_краб">
         <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
@@ -1491,6 +1588,37 @@ input.error, select.error, textarea.error, button.error {
 
   <div class="menu-bottom-space"></div>
 </main>
+
+<footer class="site-footer">
+  <div class="footer-divider"></div>
+
+  <div class="footer-content">
+    <div class="footer-left">
+      <p><strong>SushiX OÜ</strong></p>
+    </div>
+
+    <div class="footer-center">
+      <ul class="contacts-list">
+        <li>Телефон: <a href="tel:+1234567890">+1 234 567 890</a></li>
+        <li>Email: <a href="mailto:info@sushix.ee">info@sushix.ee</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-right">
+      <ul class="social-list">
+        <li><a href="https://instagram.com/yourprofile" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/yourpage" target="_blank">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 SushiX OÜ. Все права защищены.</p>
+  </div>
+</footer>
+
+
+
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
@@ -1652,8 +1780,12 @@ async function updateMenuFromSheet() {
       if(item['id'] && item['id'].toLowerCase() === 'orders_enabled') {
         ordersEnabled = (item['Доступно'] || item['Цена'] || item['Цена_со_скидкой'] || item['Скидка'] || item['Скрыто'] || 'yes').toLowerCase() === 'yes';
         document.getElementById('orders-disabled-note').style.display = ordersEnabled ? 'none' : 'block';
-        continue;
-      }
+        if (placeOrderBtn) {
+        placeOrderBtn.style.display = ordersEnabled ? 'inline-block' : 'none';
+    }
+
+    continue;
+}
 
 
 // НАСТРОЙКИ ДОСТАВКИ ИЗ ТАБЛИЦЫ
@@ -2117,12 +2249,9 @@ placeOrderBtn?.addEventListener('click', () => {
     const method = checkoutForm.method.value.toLowerCase();
     const comment = checkoutForm.comment?.value.trim() || '';
 
-
+    
     // ===== проверка корзины =====
-    if (cart.size === 0) {
-        showToast('В корзине нет товаров', true);
-        return;
-    }
+    
  // ===== проверка основных полей с подсветкой =====
 let hasError = false;
 
@@ -2146,6 +2275,11 @@ fields.forEach(f => {
     f.el.classList.remove('error');
   }
 });
+
+if (cart.size === 0) {
+        showToast('В корзине нет товаров', true);
+        return;
+    }
 
 if (hasError) {
   showToast('Заполните все обязательные поля', true);
