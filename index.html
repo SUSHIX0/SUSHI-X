@@ -2353,7 +2353,7 @@ if (payment.toLowerCase() === 'карта онлайн') {
         ? Math.abs(parseFloat(discountEl.textContent))
         : 0;
 
-    fetch("http://localhost:4242/create-checkout-session", {
+    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
