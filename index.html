@@ -2333,14 +2333,34 @@ if (hasError) {
 
 
 // ===== Логика для оплаты картой =====
-    if (payment.toLowerCase() === 'карта онлайн') {
-        showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000); // 2 минуты
+if (payment.toLowerCase() === 'карта онлайн') {
+    showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000); // 2 минуты
 
-const total = parseFloat(totalEl.textContent); // сумма к оплате
-    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
+    // Формируем данные корзины
+    const cartData = [];
+    cart.forEach((item, id) => {
+        cartData.push({
+            id,
+            name: item.name,
+            unitPrice: item.unitPrice,
+            qty: item.qty,
+            promoFree: item.promoFree || false
+        });
+    });
+
+    const delivery = parseFloat(deliveryEl.textContent) || 0;
+    const discount = discountEl.textContent.startsWith("-")
+        ? Math.abs(parseFloat(discountEl.textContent))
+        : 0;
+
+    fetch("http://localhost:4242/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total })
+        body: JSON.stringify({
+            cart: cartData,
+            delivery,
+            discount
+        })
     })
     .then(res => res.json())
     .then(data => {
@@ -2351,8 +2371,10 @@ const total = parseFloat(totalEl.textContent); // сумма к оплате
         }
     })
     .catch(err => alert("Ошибка запроса к серверу: " + err.message));
-        return;
-    }
+
+    return;
+}
+
 
 function updateOrderButtonText() {
     if (!checkoutForm || !placeOrderBtn) return;
