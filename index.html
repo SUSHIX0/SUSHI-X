@@ -2349,28 +2349,31 @@ if (payment.toLowerCase() === 'карта онлайн') {
     });
 
     const delivery = parseFloat(deliveryEl.textContent) || 0;
-    const discount = discountEl.textContent.startsWith("-")
-        ? Math.abs(parseFloat(discountEl.textContent))
-        : 0;
 
     // ===== Промокод =====
+// ===== Промокод (ТОЛЬКО бизнес-данные) =====
 let promoForStripe = null;
 
 if (activePromo) {
-  // Скидка в процентах
-  if (activePromo.type === 'cart_discount') {
+  // Проверка минимальной суммы для промокодов min_total_discount
+  const subtotalValue = parseFloat(subtotalEl.textContent.replace(/[^\d.]/g, "")) || 0;
+  
+  if (activePromo.type === 'min_total_discount' && subtotalValue < activePromo.min) {
+    promoForStripe = null; // минимальная сумма не достигнута — не отправляем промокод
+  } else if (activePromo.type === 'cart_discount') {
     promoForStripe = {
-      percent_off: activePromo.value // значение в процентах 1–100
+      type: 'cart_discount',
+      value: activePromo.value
     };
-  }
-  // Скидка фиксированной суммой
-  else if (activePromo.type === 'flat_discount' || activePromo.type === 'min_total_discount') {
+  } else if (activePromo.type === 'flat_discount' || activePromo.type === 'min_total_discount') {
     promoForStripe = {
-      amount_off: Math.round(activePromo.value * 100), // сумма в центах
-      currency: 'eur'
+      type: activePromo.type,
+      value: activePromo.value
     };
   }
 }
+
+
 
 // Теперь отправляем на сервер
 fetch("http://localhost:4242/create-checkout-session", {
@@ -2379,20 +2382,18 @@ fetch("http://localhost:4242/create-checkout-session", {
   body: JSON.stringify({
     cart: cartData,
     delivery,
-    discount,
-    promo: promoForStripe
+    promo: promoForStripe   // ← ТОЛЬКО ЭТО
   })
 })
 .then(res => res.json())
 .then(data => {
   if (data.url) {
-    window.location.href = data.url; // редирект на Stripe
+    window.location.href = data.url;
   } else {
-    alert("Ошибка создания платежа");
+    alert(data.error || "Ошибка создания платежа");
   }
 })
 .catch(err => alert("Ошибка запроса к серверу: " + err.message));
-
 
     return;
 }
