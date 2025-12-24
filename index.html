@@ -2334,11 +2334,11 @@ if (hasError) {
 
 // ===== Логика для оплаты картой =====
 if (payment.toLowerCase() === 'карта онлайн') {
-    showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000); // 2 минуты
+    showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000);
 
-    // Формируем данные корзины
     const cartData = [];
     cart.forEach((item, id) => {
+        if (item.unitPrice <= 0) return; // отсекаем бесплатные или отрицательные позиции
         cartData.push({
             id,
             name: item.name,
@@ -2353,27 +2353,50 @@ if (payment.toLowerCase() === 'карта онлайн') {
         ? Math.abs(parseFloat(discountEl.textContent))
         : 0;
 
-    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            cart: cartData,
-            delivery,
-            discount
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.url) {
-            window.location.href = data.url; // редирект на Stripe
-        } else {
-            alert("Ошибка создания платежа");
-        }
-    })
-    .catch(err => alert("Ошибка запроса к серверу: " + err.message));
+    // ===== Промокод =====
+let promoForStripe = null;
+
+if (activePromo) {
+  // Скидка в процентах
+  if (activePromo.type === 'cart_discount') {
+    promoForStripe = {
+      percent_off: activePromo.value // значение в процентах 1–100
+    };
+  }
+  // Скидка фиксированной суммой
+  else if (activePromo.type === 'flat_discount' || activePromo.type === 'min_total_discount') {
+    promoForStripe = {
+      amount_off: Math.round(activePromo.value * 100), // сумма в центах
+      currency: 'eur'
+    };
+  }
+}
+
+// Теперь отправляем на сервер
+fetch("http://localhost:4242/create-checkout-session", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    cart: cartData,
+    delivery,
+    discount,
+    promo: promoForStripe
+  })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.url) {
+    window.location.href = data.url; // редирект на Stripe
+  } else {
+    alert("Ошибка создания платежа");
+  }
+})
+.catch(err => alert("Ошибка запроса к серверу: " + err.message));
+
 
     return;
 }
+
 
 
 function updateOrderButtonText() {
