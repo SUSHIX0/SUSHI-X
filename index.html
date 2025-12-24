@@ -1347,18 +1347,6 @@ input.error, select.error, textarea.error, button.error {
         </div>
       </article>
 
-            <article class="card" data-id="снежный_краб">
-        <div class="photo" style="background-image:url('Foto/Shushi-10.jpg');">
-          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
-          <div class="overlay-unavailable"></div>
-        </div>
-        <div class="body">
-          <h3 class="title"><span class="name">Снежный краб</span><span class="label-jp"><span class="scroll-text">スノークラブ</span></span></h3>
-          <p class="ingredients">Снежный краб · Philadelphia · Огурец</p>
-          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
-        </div>
-      </article>
-
       <article class="card" data-id="калифорния">
         <div class="photo" style="background-image:url('Foto/Shushi-11.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
@@ -2345,26 +2333,72 @@ if (hasError) {
 
 
 // ===== Логика для оплаты картой =====
-    if (payment.toLowerCase() === 'карта онлайн') {
-        showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000); // 2 минуты
+if (payment.toLowerCase() === 'карта онлайн') {
+    showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000);
 
-const total = parseFloat(totalEl.textContent); // сумма к оплате
-    fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.url) {
-            window.location.href = data.url; // редирект на Stripe
-        } else {
-            alert("Ошибка создания платежа");
-        }
-    })
-    .catch(err => alert("Ошибка запроса к серверу: " + err.message));
-        return;
-    }
+const cartData = [];
+cart.forEach((item, id) => {
+    // Отправляем все товары, включая бесплатные
+    cartData.push({
+        id,
+        name: item.name,
+        unitPrice: item.unitPrice > 0 ? item.unitPrice : 0.01, // 1 цент вместо 0
+        qty: item.qty,
+        promoFree: item.promoFree || false
+    });
+});
+
+
+    const delivery = parseFloat(deliveryEl.textContent) || 0;
+
+    // ===== Промокод =====
+// ===== Промокод (ТОЛЬКО бизнес-данные) =====
+let promoForStripe = null;
+
+if (activePromo) {
+  // Проверка минимальной суммы для промокодов min_total_discount
+  const subtotalValue = parseFloat(subtotalEl.textContent.replace(/[^\d.]/g, "")) || 0;
+  
+  if (activePromo.type === 'min_total_discount' && subtotalValue < activePromo.min) {
+    promoForStripe = null; // минимальная сумма не достигнута — не отправляем промокод
+  } else if (activePromo.type === 'cart_discount') {
+    promoForStripe = {
+      type: 'cart_discount',
+      value: activePromo.value
+    };
+  } else if (activePromo.type === 'flat_discount' || activePromo.type === 'min_total_discount') {
+    promoForStripe = {
+      type: activePromo.type,
+      value: activePromo.value
+    };
+  }
+}
+
+
+// Теперь отправляем на сервер
+fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    cart: cartData,
+    delivery,
+    promo: promoForStripe   // ← ТОЛЬКО ЭТО
+  })
+})
+.then(res => res.json())
+.then(data => {
+  if (data.url) {
+    window.location.href = data.url;
+  } else {
+    alert(data.error || "Ошибка создания платежа");
+  }
+})
+.catch(err => alert("Ошибка запроса к серверу: " + err.message));
+
+    return;
+}
+
+
 
 function updateOrderButtonText() {
     if (!checkoutForm || !placeOrderBtn) return;
@@ -3056,7 +3090,7 @@ loadBlockedDates().then(() => renderCalendar());
   if (activePromo) {
     switch (activePromo.type) {
       case 'cart_discount':
-        discount = subtotal * (activePromo.value / 100);
+        discount = (subtotal + delivery) * (activePromo.value / 100);
         break;
 
       case 'flat_discount':
