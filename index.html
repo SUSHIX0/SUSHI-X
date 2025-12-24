@@ -2336,17 +2336,18 @@ if (hasError) {
 if (payment.toLowerCase() === 'карта онлайн') {
     showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000);
 
-    const cartData = [];
-    cart.forEach((item, id) => {
-        if (item.unitPrice <= 0) return; // отсекаем бесплатные или отрицательные позиции
-        cartData.push({
-            id,
-            name: item.name,
-            unitPrice: item.unitPrice,
-            qty: item.qty,
-            promoFree: item.promoFree || false
-        });
+const cartData = [];
+cart.forEach((item, id) => {
+    // Отправляем все товары, включая бесплатные
+    cartData.push({
+        id,
+        name: item.name,
+        unitPrice: item.unitPrice > 0 ? item.unitPrice : 0.01, // 1 цент вместо 0
+        qty: item.qty,
+        promoFree: item.promoFree || false
     });
+});
+
 
     const delivery = parseFloat(deliveryEl.textContent) || 0;
 
@@ -2372,7 +2373,6 @@ if (activePromo) {
     };
   }
 }
-
 
 
 // Теперь отправляем на сервер
@@ -3090,7 +3090,7 @@ loadBlockedDates().then(() => renderCalendar());
   if (activePromo) {
     switch (activePromo.type) {
       case 'cart_discount':
-        discount = subtotal * (activePromo.value / 100);
+        discount = (subtotal + delivery) * (activePromo.value / 100);
         break;
 
       case 'flat_discount':
