@@ -38,14 +38,14 @@ header.brand{
   margin-bottom:50px; 
 }
 header.brand h1{
-  font-size:3rem;
+  font-size:4rem;
   gap:8px;
   justify-content:center;
 }
 header.brand h1 .jp{
   font-family:"Noto Sans JP"; 
   font-weight:700; 
-  font-size:3.2rem; 
+  font-size:4.3rem; 
   color: #ff0000;
 }
 .note-orders-disabled {
@@ -170,7 +170,7 @@ header.brand h1 .jp{
   left:6px;
   height:36px;
   background: rgba(0,0,0,0.65);
-  color: #ff2d2d;
+  color: #ff0000;
   font-weight: 700;
   font-size: 0.85rem;
   border-radius: 50px;
@@ -1255,6 +1255,82 @@ input.error, select.error, textarea.error, button.error {
   }
 }
 
+header.brand {
+  position: relative;
+  height: 100px;
+  display: flex;
+  justify-content: center; /* логотип по центру */
+  align-items: center;
+}
+
+/* Логотип остаётся по центру */
+header.brand .logo {
+  z-index: 1;
+}
+
+/* Кнопки языков справа */
+.lang-switcher {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  background: #333;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 36px;
+}
+
+.lang-btn {
+  color: #fff;
+  background: none;
+  border: none;
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.lang-btn:hover {
+  background: #555;
+}
+
+.lang-btn.active {
+  background: #ff2d2d;
+  border-radius: 10px;
+}
+
+/* Мобильная адаптация: кнопки под логотипом */
+@media (max-width: 560px) {
+  header.brand {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 12px 0;
+  }
+
+  .lang-switcher {
+    position: static;
+    transform: none;
+    margin-bottom: -10px;
+    display: flex;
+    justify-content: center;
+    background: #333;
+    border-radius: 16px;
+    overflow: hidden;
+
+    /* Масштабируем блок и кнопки пропорционально */
+    transform: scale(1.15);
+    transform-origin: top center; /* чтобы масштабирование шло из центра */
+  }
+
+  .lang-btn {
+    padding: 0 12px; /* оставляем оригинальные пропорции */
+    font-weight: bold;
+  }
+}
+
+
 </style>
 
 
@@ -1262,8 +1338,6 @@ input.error, select.error, textarea.error, button.error {
 <meta property="og:title" content="SUSHI メ" />
 <meta property="og:image" content="https://sushix0.github.io/SUSHI-X/Foto/Logo.png" />
 <meta property="og:type" content="website" />
-
-
 </head>
 
 <!-- Google tag (gtag.js) -->
@@ -1281,9 +1355,20 @@ input.error, select.error, textarea.error, button.error {
 
 <div class="wrap">
   <header class="brand">
-    <h1><span>SUSHI</span> <span class="jp">メ</span></h1>
+    <!-- Центрированный логотип -->
+    <h1 class="logo"><span>SUSHI</span> <span class="jp">メ</span></h1>
+
+    <!-- Кнопки языков -->
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="et">ET</button>
+      <button class="lang-btn active" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
   </header>
   <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
+
+
+
 
 <!-- Основной фиксированный бар -->
 <div class="menu-filters" id="menuFilters">
@@ -3169,6 +3254,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   paymentSelect.addEventListener('change', updateButton);
   updateButton(); // при загрузке
+});
+
+const langBtns = document.querySelectorAll('.lang-switcher .lang-btn');
+let currentLang = 'ru';
+
+langBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    langBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateTexts(); // функция смены текста на выбранный язык
+  });
 });
 
 
