@@ -114,7 +114,7 @@ header.brand h1 .jp{
 .label-jp {
   font-family: "Noto Sans JP";
   font-size: 0.9rem;
-  color: var(--accent);
+  color: red;
   background: rgba(255,43,43,0.12);
   padding: 3px 8px;
   border-radius: 6px;
@@ -137,9 +137,9 @@ header.brand h1 .jp{
 }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
-.price{font-weight:800; color:var(--accent); font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.price{font-weight:800; color:red; font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .old-price{ color: var(--muted); text-decoration: line-through; font-weight:500; font-size:0.95rem; display:block; }
-.discount{ color: #ff2d2d; font-weight:700; font-size:1rem; display:block; padding:0; background:none; }
+.discount{ color: #ff0000; font-weight:700; font-size:1rem; display:block; padding:0; background:none; }
 .card.unavailable .price,
 .card.unavailable .discount,
 .card.unavailable .old-price { color: #aaa; }
@@ -677,7 +677,7 @@ body {
   background:transparent;
   border: none;
   font-size:28px;
-  color:#ff4c4c;
+  color:#ff0000;
   cursor:pointer;
   line-height:1;
 }
@@ -714,7 +714,7 @@ body {
 }
 .cart-item .name { flex:1; font-weight:600; color:#fff; font-size:1.02rem; }
 .cart-item .unit { width:84px; color: #d7d7d7f1; text-align:center; }
-.cart-item .line-total { width:84px; text-align:right; font-weight:600; color:#ff2d2d; }
+.cart-item .line-total { width:84px; text-align:right; font-weight:600; color:#ff0000; }
 .cart-item .qty-wrap {
   display:flex;
   align-items:center;
@@ -818,7 +818,7 @@ body {
 
 .free-delivery-info {
     text-align: center;
-    color: #ff2d2d;
+    color: #ff0000;
     font-weight: 600;
     margin-bottom: -20px;
     display: none; /* скрыто до загрузки таблицы */
