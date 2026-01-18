@@ -794,6 +794,11 @@ buttons.forEach(btn => {
 // ===== Выбор шапочки =====
 const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
 
+rollSelectWrappers.forEach(wrapper => {
+  const btn = wrapper.querySelector('.select-btn');
+  const dropdown = wrapper.querySelector('.select-dropdown');
+  const arrow = wrapper.querySelector('.arrow');
+
   // Проверяем, есть ли "Сырная шапочка" в списке
   let defaultTopping = 'Сырная шапочка';
   let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
@@ -1167,6 +1172,19 @@ function updateOrderButtonText() {
         placeOrderBtn.textContent = 'Оформить заказ';
     }
 }
+
+
+
+    // ===== оформление заказа =====
+    showToast('Заказ принят — спасибо!');
+    cart.clear();
+    saveCart();
+    updateCartUI();
+
+    checkoutForm.reset();
+    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+    if (timeSelect) timeSelect.value = '';
+    if (addressInput) addressInput.value = '';
 
     localStorage.removeItem('checkoutFormData');
     localStorage.removeItem('deliveryAddress');
