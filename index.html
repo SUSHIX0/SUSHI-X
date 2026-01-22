@@ -1261,17 +1261,17 @@ fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
     // ===== оформление заказа =====
     showToast('Заказ принят — спасибо!');
     cart.clear();
-    saveCart();
-    updateCartUI();
-
+resetPromo(); // 🔥 ВОТ ЭТА СТРОКА
+resetCheckoutExtras();
     checkoutForm.reset();
     if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
     if (timeSelect) timeSelect.value = '';
     if (addressInput) addressInput.value = '';
 
-    localStorage.removeItem('checkoutFormData');
-    localStorage.removeItem('deliveryAddress');
     setTimeout(closeCart, 900);
+
+    saveCart();
+    updateCartUI();
 });
 
 
@@ -1295,17 +1295,32 @@ function savePromo() {
 
 function loadPromo() {
   const data = localStorage.getItem('activePromo');
-  if (data) {
-    activePromo = JSON.parse(data);
-    promoInput.value = activePromo.code || '';
-    if (activePromo.type === 'free_item' && activePromo.min > 0) {
-      promoMessage.textContent = `Промокод "${activePromo.code}" активен при покупке от ${activePromo.min} €`;
+  const appliedAt = localStorage.getItem('promoAppliedAt');
+
+  if (data && appliedAt) {
+    const now = Date.now();
+    const elapsed = now - Number(appliedAt);
+
+    if (elapsed < 1800000) { // 15 минут
+      activePromo = JSON.parse(data);
+      promoInput.value = activePromo.code || '';
+      if (activePromo.type === 'free_item' && activePromo.min > 0) {
+        promoMessage.textContent = `Промокод "${activePromo.code}" активен при покупке от ${activePromo.min} €`;
+      } else {
+        promoMessage.textContent = `Промокод "${activePromo.code}" применён`;
+      }
+      promoMessage.style.color = 'green';
     } else {
-      promoMessage.textContent = `Промокод "${activePromo.code}" применён`;
+      // Сбрасываем промокод, если прошло > 15 мин
+      activePromo = null;
+      promoInput.value = '';
+      promoMessage.textContent = '';
+      localStorage.removeItem('activePromo');
+      localStorage.removeItem('promoAppliedAt');
     }
-    promoMessage.style.color = 'green';
   }
 }
+
 
 
 async function loadPromoCodes() {
@@ -1396,6 +1411,9 @@ if (activePromo && activePromo.type === 'free_item') {
     activePromo.code = code;
     savePromo();
 
+    localStorage.setItem('promoAppliedAt', Date.now());
+
+
     if (activePromo.type === 'free_item', 'min_total_discount' && activePromo.min > 0) {
       promoMessage.textContent = `Промокод "${code}" активен при покупке от ${activePromo.min} €`;
     } else {      
@@ -1429,6 +1447,55 @@ cancelPromoBtn.addEventListener('click', () => {
 
   updateCartUI();
 });
+
+function resetPromo() {
+    // удалить бесплатный товар, если есть
+    if (activePromo && activePromo.type === 'free_item') {
+        const promoId = activePromo.itemId + '_promo';
+        if (cart.has(promoId)) {
+            cart.delete(promoId);
+        }
+    }
+
+    activePromo = null;
+
+    localStorage.removeItem('activePromo');
+
+    if (promoInput) promoInput.value = '';
+    if (promoMessage) promoMessage.textContent = '';
+    
+    // свернуть UI промокода
+    if (promoBox && showPromoBtn) {
+        promoBox.style.display = 'none';
+        showPromoBtn.style.display = 'block';
+    }
+}
+
+function resetCheckoutExtras() {
+    // ===== комментарий =====
+    const commentField = checkoutForm?.querySelector('[name="comment"]');
+    if (commentField) commentField.value = '';
+
+    // ===== способ получения =====
+    const methodField = checkoutForm?.querySelector('[name="method"]');
+    if (methodField) methodField.value = '';
+
+    // ===== способ оплаты =====
+    const paymentField = checkoutForm?.querySelector('[name="payment"]');
+    if (paymentField) paymentField.value = '';
+
+    // ===== чистим localStorage =====
+    localStorage.removeItem('checkoutComment');
+
+    const savedForm = localStorage.getItem('checkoutFormData');
+    if (savedForm) {
+        const data = JSON.parse(savedForm);
+        delete data.comment;
+        delete data.method;
+        delete data.payment;
+        localStorage.setItem('checkoutFormData', JSON.stringify(data));
+    }
+}
 
 
 // ========================================================
