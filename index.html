@@ -1173,6 +1173,89 @@ function updateOrderButtonText() {
     }
 }
 
+// ===== ОТПРАВКА ЗАКАЗА В TELEGRAM =====
+const telegramToken = '8415077307:AAEODWTHVFEdbvDEtFgbwmpsWQUJLzVpiJ4';
+const chatId = '1493254370';
+
+// ===== Номер заказа (увеличивается автоматически) =====
+let orderNumber = Number(localStorage.getItem('orderNumber') || 0) + 1;
+localStorage.setItem('orderNumber', orderNumber);
+
+// ===== Дата и время оформления заказа =====
+const now = new Date();
+const orderDateStr = now.getHours().toString().padStart(2,'0') + ':' +
+                     now.getMinutes().toString().padStart(2,'0') + ', ' +
+                     now.getDate().toString().padStart(2,'0') + '.' +
+                     (now.getMonth()+1).toString().padStart(2,'0') + '.' +
+                     now.getFullYear();
+
+// ===== Формируем текст заказа =====
+let orderText = `Заказ № ${orderNumber}\n\n`;
+orderText += `Заказано: ${orderDateStr}\n`;
+orderText += `Язык: ${currentLang}\n`;
+orderText += `Имя: ${checkoutForm.name.value}\n`;
+orderText += `Телефон: ${checkoutForm.phone.value}\n`;
+orderText += `Email: ${checkoutForm.email.value}\n`;
+orderText += `Способ оплаты: ${checkoutForm.payment.value}\n`;
+orderText += `Метод получения: ${checkoutForm.method.value}\n`;
+orderText += `Дата: ${chooseDateBtn.textContent || '-'}\n`;
+orderText += `Время: ${deliveryTime.value || '-'}\n`;
+orderText += `Адрес: ${deliveryAddress.value || '-'}\n`;
+orderText += `Промокод: ${activePromo?.code || '-'}\n`;
+orderText += `Комментарий: ${checkoutForm.comment?.value || '-'}\n\n`;
+
+// ===== Товары =====
+orderText += `Товары:\n`;
+let subtotal = 0;
+cart.forEach((item, id) => {
+    const lineTotal = item.unitPrice * item.qty;
+    subtotal += lineTotal;
+    orderText += `- ${item.name} x${item.qty} = ${lineTotal.toFixed(2)} €\n`;
+});
+
+// ===== Итоги =====
+const delivery = parseFloat(deliveryEl.textContent) || 0;
+let discount = 0;
+
+if(activePromo){
+    switch(activePromo.type){
+        case 'cart_discount':
+            discount = (subtotal + delivery) * (activePromo.value / 100);
+            break;
+        case 'flat_discount':
+            discount = activePromo.value;
+            break;
+        case 'min_total_discount':
+            if(subtotal >= activePromo.min) discount = activePromo.value;
+            break;
+        case 'free_delivery':
+            discount = 0;
+            break;
+    }
+}
+
+orderText += `\nПодытог: ${subtotal.toFixed(2)} €\n`;
+orderText += `Доставка: ${delivery.toFixed(2)} €\n`;
+orderText += `Скидка: ${discount.toFixed(2)} €\n\n`;
+
+const total2 = subtotal + delivery - discount;
+orderText += `Итог: ${total2.toFixed(2)} €`;
+
+// ===== Отправка в Telegram =====
+fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        chat_id: chatId,
+        text: orderText
+    })
+})
+.then(res => res.json())
+.then(data => {
+    if(!data.ok) console.error('Ошибка отправки в Telegram:', data);
+})
+.catch(err => console.error('Ошибка запроса к Telegram:', err));
+
 
 
     // ===== оформление заказа =====
