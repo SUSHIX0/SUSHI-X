@@ -1328,3 +1328,38 @@ header.brand .logo {
     font-weight: bold;
   }
 }
+
+@media (max-width: 767px) {
+  /* Контейнер календаря */
+  #deliveryCalendar {
+    max-width: 102%;         /* чтобы влезал по ширине экрана */
+    width: 350px;            /* оптимальная ширина */
+    padding: 8px;
+    margin: 10px auto;
+  }
+
+  /* Шапка месяца */
+  .custom-calendar .month-label {
+    font-size: 1.5rem;       /* крупнее название месяца */
+    margin-bottom: 12px;
+  }
+
+  /* Сетка дней */
+  .custom-calendar .days {
+    gap: 6px;                /* немного больше расстояние между кругляшками */
+    grid-template-columns: repeat(7, 1fr); /* 7 дней недели */
+  }
+
+  /* Кругляшки с датами */
+  .custom-calendar .day {
+    width: 40px;             /* увеличиваем размер */
+    height: 40px;
+    line-height: 40px;       /* центрируем цифру */
+    font-size: 1.15rem;       /* крупнее цифры */
+  }
+
+  /* Выбранный день */
+  .custom-calendar .day.selected {
+    font-weight: 700;
+  }
+}
