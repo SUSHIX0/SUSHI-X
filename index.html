@@ -1137,13 +1137,14 @@ if (activePromo) {
 
 
 // Теперь отправляем на сервер
-fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
+fetch("http://localhost:4242/create-checkout-session", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     cart: cartData,
     delivery,
-    promo: promoForStripe   // ← ТОЛЬКО ЭТО
+    promo: promoForStripe,   // ← ТОЛЬКО ЭТО
+    lang: currentLang  // ← передаем язык
   })
 })
 .then(res => res.json())
