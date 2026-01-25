@@ -57,6 +57,7 @@
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
+  <button data-action="contacts">Информация</button>
 </div>
 
 <!-- Плавающий бар -->
@@ -70,6 +71,7 @@
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
+  <button data-action="contacts">Информация</button>
 </div>
 
 
@@ -361,7 +363,7 @@
   <div class="menu-bottom-space"></div>
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer" id="contacts">
   <div class="footer-divider"></div>
 
   <div class="footer-content">
@@ -779,6 +781,20 @@ buttons.forEach(btn => {
     }
   });
 });
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action="contacts"]');
+  if (!btn) return;
+
+  const footer = document.getElementById('contacts');
+  if (!footer) return;
+
+  footer.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+});
+
 
 // ===== Инициализация =====
 (async () => {
