@@ -1151,6 +1151,25 @@ if (activePromo) {
   }
 }
 
+const orderData = {
+    checkout: {
+        name: checkoutForm.name.value,
+        phone: checkoutForm.phone.value,
+        email: checkoutForm.email.value,
+        payment: checkoutForm.payment.value,
+        method: checkoutForm.method.value,
+        date: chooseDateBtn?.textContent || '',
+        time: deliveryTime?.value || '',
+        address: deliveryAddress?.value || '',
+        comment: checkoutForm.comment?.value || '',
+        promo: activePromo?.code || ''
+    },
+    total: parseFloat(totalEl.textContent) || 0,
+    delivery: parseFloat(deliveryEl.textContent) || 0,
+    discount: parseFloat(discountEl.textContent) || 0,
+    lang: currentLang
+};
+
 
 // Теперь отправляем на сервер
 fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
@@ -1160,7 +1179,8 @@ fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
     cart: cartData,
     delivery,
     promo: promoForStripe,   // ← ТОЛЬКО ЭТО
-    lang: currentLang  // ← передаем язык
+    lang: currentLang,  // ← передаем язык
+    orderData
   })
 })
 .then(res => res.json())
