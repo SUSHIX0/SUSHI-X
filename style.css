@@ -307,6 +307,17 @@ body {
   box-shadow: 0 4px 10px rgba(255,45,45,0.3);
 }
 
+@media (max-width: 767px) {
+ .menu-filters button:hover,
+.menu-filters-floating button:hover {
+  background: rgba(255, 45, 45, 0.12);
+  color: #fff;
+  transform: translateY(0px);
+  box-shadow: 0 0px 0px rgba(255,45,45,0.3);
+} 
+}
+
+
 .menu-filters {
   display: flex;
   flex-wrap: wrap;
