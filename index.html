@@ -512,6 +512,56 @@ function updateCartUI() {
   updateDeliveryTimes();
 }
 
+function applyJPScrollSync() {
+  const scrollTexts = document.querySelectorAll('.label-jp .scroll-text');
+  if (!scrollTexts.length) return;
+
+  // Сбрасываем анимацию
+  scrollTexts.forEach(el => el.style.animation = '');
+
+  // Считаем максимальное смещение с запасом
+  let maxDistance = 0;
+  scrollTexts.forEach(el => {
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 17;
+    if (distance > maxDistance) maxDistance = distance;
+  });
+
+  if (maxDistance <= 0) return; // Все тексты помещаются
+
+  // Общая продолжительность анимации
+  const totalDuration = maxDistance * 0.08; // можно регулировать скорость
+
+  scrollTexts.forEach(el => {
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 17;
+    if (distance <= 0) return;
+
+    const styleSheet = document.styleSheets[0];
+    const animationName = `marquee-${Math.random().toString(36).substr(2,5)}`;
+
+    // Ключевые кадры движения туда-сюда
+    const keyframes = `
+      @keyframes ${animationName} {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-${distance}px); }
+      }
+    `;
+    styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+
+    // Синхронная анимация для всех
+    el.style.animation = `${animationName} ${totalDuration}s cubic-bezier(0.31, 0.02, 0.76, 1.02) 0s infinite alternate`;
+  });
+}
+
+// Запуск после загрузки страницы
+window.addEventListener('load', () => {
+  requestAnimationFrame(applyJPScrollSync);
+});
+
+// Пересчет при ресайзе
+window.addEventListener('resize', () => {
+  requestAnimationFrame(applyJPScrollSync);
+});
+
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');
@@ -2078,7 +2128,6 @@ langBtns.forEach(btn => {
     updateTexts(); // функция смены текста на выбранный язык
   });
 });
-
 
 updateCartUI();
 
