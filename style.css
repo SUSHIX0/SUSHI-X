@@ -115,16 +115,11 @@ header.brand h1 .jp{
   position: relative;
   display: inline-block;
 }
-.card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
 .label-jp .scroll-text {
   display: inline-block;
-  animation: scroll-marquee 5s cubic-bezier(0.3, 0.07, 0.66, 0.93) infinite alternate;
+  will-change: transform;
 }
-@keyframes scroll-marquee {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
+.card.unavailable .label-jp { background: rgba(150,150,150,0.3); color: #aaa; }
 .ingredients{margin:0; color:var(--muted); font-size:0.95rem; line-height:1.35;}
 .bottom{display:flex; justify-content:space-between; align-items:center; margin-top:auto;}
 .price{font-weight:800; color:red; font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
