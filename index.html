@@ -74,6 +74,7 @@
   <button data-action="contacts">Информация</button>
 </div>
 
+<button id="toggleCompact" class="btn-ghost">Компактный вид</button>
 
   <main>
 
@@ -522,7 +523,7 @@ function applyJPScrollSync() {
   // Считаем максимальное смещение с запасом
   let maxDistance = 0;
   scrollTexts.forEach(el => {
-    const distance = el.scrollWidth - el.parentElement.offsetWidth + 17;
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 16;
     if (distance > maxDistance) maxDistance = distance;
   });
 
@@ -532,7 +533,7 @@ function applyJPScrollSync() {
   const totalDuration = maxDistance * 0.08; // можно регулировать скорость
 
   scrollTexts.forEach(el => {
-    const distance = el.scrollWidth - el.parentElement.offsetWidth + 17;
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 16;
     if (distance <= 0) return;
 
     const styleSheet = document.styleSheets[0];
@@ -2128,6 +2129,20 @@ langBtns.forEach(btn => {
     updateTexts(); // функция смены текста на выбранный язык
   });
 });
+
+const toggleCompactBtn = document.getElementById('toggleCompact');
+const grids = document.querySelectorAll('.grid');
+
+toggleCompactBtn.addEventListener('click', () => {
+  grids.forEach(grid => grid.classList.toggle('compact'));
+
+  if (grids[0].classList.contains('compact')) {
+    toggleCompactBtn.textContent = "Обычный вид";
+  } else {
+    toggleCompactBtn.textContent = "Компактный вид";
+  }
+});
+
 
 updateCartUI();
 

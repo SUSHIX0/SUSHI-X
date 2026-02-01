@@ -1369,3 +1369,98 @@ header.brand .logo {
     font-weight: 700;
   }
 }
+/* ===============================
+   КОМПАКТНЫЙ РЕЖИМ — ЖЁСТКИЙ RESET
+   =============================== */
+
+.grid.compact {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px;
+}
+
+/* карточка = компактная строка */
+.grid.compact .card {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  width: 100% !important;
+  max-width: none !important;
+  min-height: unset !important;
+  height: auto !important;
+
+  padding: 6px 8px !important;
+  margin: 0 !important;
+}
+
+/* убираем ВСЕ плашки, скидки, бейджи */
+.grid.compact .badge,
+.grid.compact .discount,
+.grid.compact .sale,
+.grid.compact [class*="discount"],
+.grid.compact [class*="badge"] {
+  display: none !important;
+}
+
+/* картинка слева */
+.grid.compact .photo {
+  width: 40px !important;
+  height: 40px !important;
+
+  margin: 0 8px 0 0 !important;
+  flex-shrink: 0;
+
+  align-self: center !important;
+}
+
+/* тело */
+.grid.compact .body {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  flex: 1;
+  min-width: 0;
+}
+
+/* название */
+.grid.compact .title {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  font-size: 0.9em;
+  line-height: 1.2;
+  text-align: left !important;
+}
+
+/* цена */
+.grid.compact .price {
+  margin: 2px 0 0 0 !important;
+  padding: 0 !important;
+
+  font-size: 0.85em;
+}
+
+/* правая часть (шт) */
+.grid.compact .bottom {
+  display: flex !important;
+  align-items: center !important;
+
+  margin-left: 8px !important;
+  padding: 0 !important;
+}
+
+/* ===============================
+   СКРЫВАЕМ ВСЁ ЛИШНЕЕ
+   =============================== */
+
+.grid.compact .label-jp,
+.grid.compact .ingredients,
+.grid.compact .cart-icon,
+.grid.compact .overlay-unavailable {
+  display: none !important;
+}
