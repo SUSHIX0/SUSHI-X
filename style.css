@@ -1514,4 +1514,9 @@ body.compact {
     height: 30px;
     width: 70px;
   }
+  @media (max-width: 445px) {
+  .discount {
+    display: none !important;
+  }
+  }
 }
