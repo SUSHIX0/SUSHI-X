@@ -2130,18 +2130,18 @@ langBtns.forEach(btn => {
   });
 });
 
-const toggleCompactBtn = document.getElementById('toggleCompact');
-const grids = document.querySelectorAll('.grid');
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggleCompact');
 
-toggleCompactBtn.addEventListener('click', () => {
-  grids.forEach(grid => grid.classList.toggle('compact'));
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('compact');
 
-  if (grids[0].classList.contains('compact')) {
-    toggleCompactBtn.textContent = "Обычный вид";
-  } else {
-    toggleCompactBtn.textContent = "Компактный вид";
-  }
+    toggleBtn.textContent = document.body.classList.contains('compact')
+      ? 'Обычный вид'
+      : 'Компактный вид';
+  });
 });
+
 
 
 updateCartUI();
