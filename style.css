@@ -74,6 +74,9 @@ header.brand h1 .jp{
   position: relative;
   border-radius:12px 12px 0 0; 
 }
+.card.unavailable .photo {
+    filter: grayscale(0.27) brightness(1);
+  }
 .overlay-unavailable{
   position:absolute;
   top:0; left:0; right:0; bottom:0;
@@ -189,7 +192,7 @@ header.brand h1 .jp{
   text-align:center;
   opacity:0;
   transition: opacity 0.5s ease;
-  z-index:9999;
+  z-index:10001;
   pointer-events:none;
 }
 .toast.show { opacity:1; }
@@ -1305,7 +1308,7 @@ header.brand .logo {
 }
 
 /* Мобильная адаптация: кнопки под логотипом */
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   header.brand {
     flex-direction: column;
     align-items: center;
@@ -1326,7 +1329,7 @@ header.brand .logo {
 
     /* Масштабируем блок и кнопки пропорционально */
     transform: scale(1.15);
-    transform-origin: top center; /* чтобы масштабирование шло из центра */
+
   }
 
   .lang-switcher .lang-btn {
@@ -1368,4 +1371,360 @@ header.brand .logo {
   .custom-calendar .day.selected {
     font-weight: 700;
   }
+}
+/* ===============================
+   КОМПАКТНЫЙ РЕЖИМ
+   =============================== */
+body.compact {
+
+  /* Сетка карточек */
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* карточка */
+  .card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    width: auto;
+    max-width: none;
+    height: 72px;
+
+    padding: 0;
+    border-radius: 14px;
+
+    overflow: hidden;
+    background: inherit;
+
+    flex: 1 1 140px;
+    position: relative;
+  }
+
+  /* картинка слева */
+  .card .photo {
+    width: 180px;
+    height: 100%;
+    flex-shrink: 0;
+
+    border-radius: 14px 0 0 14px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  /* скрываем лишнее */
+  .label-jp,
+  .cart-icon {
+    display: none !important;
+  }
+
+  /* тело карточки */
+  .card .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    padding: 0;
+    flex: 1;
+    text-align: center;
+  }
+
+  /* ===== НАЗВАНИЕ ===== */
+  .card .title {
+    font-size: 1rem;
+    line-height: 1.2;
+    margin: 0;
+    margin-top: 6px;
+
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* перенос названия */
+  .card .title .name {
+    display: block;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-word;
+  }
+
+  /* ===== ОПИСАНИЕ (2 СТРОКИ + …) ===== */
+  .card .ingredients {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 0.8rem;
+    line-height: 1.2;
+    max-height: calc(1.2em * 2);
+
+    margin: 2px 6px 0;
+    text-align: center;
+  }
+
+  /* нижняя строка */
+  .card .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: auto;
+    padding: 0 6px 6px 6px;
+  }
+
+  /* цена */
+  .card .price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+
+  /* количество */
+  .card .note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 0.9rem;
+    line-height: 1;
+    flex-wrap: wrap;
+  }
+
+  /* НЕ ОГРАНИЧИВАЕМ ШИРИНУ */
+  .menu-section .grid > .card {
+    max-width: none;
+    flex: 1 1 130px;
+  }
+
+  /* скидки */
+  .card .discount,
+  .card .old-price {
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .discount-badge {
+    font-size: 0.8rem;
+    padding: 0 16px;
+    height: 30px;
+    width: 70px;
+  }
+
+  @media (max-width: 450px) {
+    .discount {
+      display: none !important;
+    }
+  }
+
+  /* ===============================
+     ВРЕМЕННО НЕДОСТУПЕН
+     =============================== */
+
+  /* тонируем фото */
+  .card.unavailable .photo {
+    filter: grayscale(0.27) brightness(1);
+  }
+
+  /* затемняющий слой */
+  .card.unavailable .photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 14px 0 0 14px;
+  }
+
+  /* надпись поверх фото */
+  .card.unavailable .overlay-unavailable {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    width: 180px;
+    height: 100%;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+
+    color: #fff;
+    background: transparent;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* цена серым */
+  .card.unavailable .price {
+    opacity: 0.5;
+  }
+}
+/* ===============================
+   МОДАЛКА КАРТОЧКИ — ЦЕНТР ЭКРАНА
+   =============================== */
+.card-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: none;
+  align-items: center;     /* ВЕРТИКАЛЬНЫЙ ЦЕНТР */
+  justify-content: center; /* ГОРИЗОНТАЛЬНЫЙ ЦЕНТР */
+}
+.card-modal.active {
+  display: flex;
+  padding: 8px;
+}
+/* затемнение фона */
+.card-modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(2px);
+}
+/* окно карточки */
+.card-modal-window {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 570px;
+
+  background: #0f0f10;
+  border-radius: 18px;
+
+  overflow-y: auto;
+}
+/* кнопка закрытия */
+.card-modal-close {
+  position: sticky;
+  top: 0;
+
+  width: 100%;
+  height: 44px;
+
+  border: none;
+  background: #161616;
+  color: #fff;
+
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  z-index: 2;
+}
+/* Новый контейнер */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* расстояние между кнопкой и языками */
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Мобильная версия — центрируем блок */
+@media (max-width: 640px) {
+  .header-controls {
+    position: static;
+    transform: none;
+    margin: 0 auto 8px;
+    justify-content: center;
+    gap: 16px;
+    border-radius: 16px;
+    padding: 8px 14px;
+  }
+}
+
+/* Кнопка вида */
+.view-toggle-btn {
+  background: rgba(255,45,45,0.12);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255,45,45,0.25);
+}
+
+/* GRID */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 10px);
+  grid-template-rows: repeat(2, 10px);
+  gap: 4px;
+}
+.icon-grid span {
+  width: 10px;
+  height: 10px;
+  background: #888;
+  border-radius: 2px;
+}
+
+/* LIST */
+.icon-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 24px;
+}
+.icon-list span {
+  height: 4px;
+  width: 100%;
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Активная кнопка */
+.view-toggle-btn .active span {
+  background: #ff2d2d;
+}
+
+/* Неактивная кнопка */
+.view-toggle-btn .icon-grid:not(.active) span,
+.view-toggle-btn .icon-list:not(.active) span {
+  opacity: 0.5;
+}
+
+/* Языки */
+.lang-btn {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #444;
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.lang-btn.active {
+  background: #ff2d2d;
+}
+.lang-btn:hover {
+  background: #555;
 }
