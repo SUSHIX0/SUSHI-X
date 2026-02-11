@@ -34,16 +34,29 @@
     <!-- Центрированный логотип -->
     <h1 class="logo"><span>SUSHI</span> <span class="jp">メ</span></h1>
 
-<div class="lang-switcher">
-  <a href="" class="lang-btn active">ET</a>
-  <a href="ru/" class="lang-btn">RU</a>
-  <a href="en/" class="lang-btn">EN</a>
+<div class="header-controls">
+  <button id="toggleCompact" class="view-toggle-btn" title="Переключить вид">
+    <span class="icon-grid active" aria-label="Сетка">
+      <span></span><span></span>
+      <span></span><span></span>
+    </span>
+    <span class="icon-list" aria-label="Список">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <div class="lang-switcher">
+    <a href="" class="lang-btn active">ET</a>
+    <a href="ru/" class="lang-btn">RU</a>
+    <a href="en/" class="lang-btn">EN</a>
+  </div>
 </div>
+
 
   </header>
   <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
-
-
 
 
 <!-- Основной фиксированный бар -->
@@ -73,8 +86,6 @@
   <button>Дополнительно</button>
   <button data-action="contacts">Информация</button>
 </div>
-
-<button id="toggleCompact" class="btn-ghost">Компактный вид</button>
 
   <main>
 
@@ -2134,14 +2145,27 @@ langBtns.forEach(btn => {
 document.addEventListener('DOMContentLoaded', () => {
   const toggleBtn = document.getElementById('toggleCompact');
 
-  toggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('compact');
+  function updateViewForMobile() {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      toggleBtn.style.display = "flex"; // показываем кнопку только на мобилках
 
-    toggleBtn.textContent = document.body.classList.contains('compact')
-      ? 'Обычный вид'
-      : 'Компактный вид';
-  });
+      toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('compact');
+
+        const isCompact = document.body.classList.contains('compact');
+        toggleBtn.querySelector('.icon-grid').classList.toggle('active', !isCompact);
+        toggleBtn.querySelector('.icon-list').classList.toggle('active', isCompact);
+      });
+    } else {
+      toggleBtn.style.display = "none"; // скрываем на десктопе
+      document.body.classList.remove('compact'); // сбрасываем режим
+    }
+  }
+
+  updateViewForMobile();
+  window.addEventListener('resize', updateViewForMobile); // обновляем при изменении ширины
 });
+
 
 
 document.addEventListener("click", (e) => {
