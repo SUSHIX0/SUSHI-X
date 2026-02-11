@@ -681,12 +681,15 @@ if (item['id'] && item['id'].toLowerCase() === 'free_delivery_limit') {
     }
 
     // Корзина
-document.querySelectorAll('.cart-icon').forEach(icon => {
-  icon.addEventListener('click', () => {
+// Делегирование кликов по кнопкам корзины
+document.body.addEventListener('click', function(e) {
+  const icon = e.target.closest('.cart-icon');
+  if (icon) {
     const card = icon.closest('.card');
     addToCart(card);
-  });
+  }
 });
+
 
     document.querySelector('.floating-cart').onclick = () => {
   if(!ordersEnabled) showToast('Заказы временно не принимаются', true);
@@ -726,15 +729,6 @@ function updateSpecialOffersSection() {
     buttons.forEach(btn => { 
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
-
-    // Навешиваем корзину на клонированные карточки
-specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
-  icon.onclick = () => {
-    const card = icon.closest('.card');
-    addToCart(card); // теперь товары добавляются в корзину с учётом количества
-  }
-});
-
 
   } else {
     specialSection.style.display = 'none';

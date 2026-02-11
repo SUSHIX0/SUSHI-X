@@ -192,7 +192,7 @@ header.brand h1 .jp{
   text-align:center;
   opacity:0;
   transition: opacity 0.5s ease;
-  z-index:9999;
+  z-index:10001;
   pointer-events:none;
 }
 .toast.show { opacity:1; }
@@ -1622,7 +1622,7 @@ body.compact {
   height: 44px;
 
   border: none;
-  background: #1a1a1c;
+  background: #161616;
   color: #fff;
 
   font-size: 1.1rem;
