@@ -576,11 +576,6 @@ window.addEventListener('load', () => {
   requestAnimationFrame(applyJPScrollSync);
 });
 
-// Пересчет при ресайзе
-window.addEventListener('resize', () => {
-  requestAnimationFrame(applyJPScrollSync);
-});
-
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
 const floatingBar = document.getElementById('menuFiltersFloating');

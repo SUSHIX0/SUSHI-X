@@ -1649,7 +1649,7 @@ body.compact {
     transform: none;
     margin: 0 auto 8px;
     justify-content: center;
-    gap: 16px;
+    gap: 50px;
     border-radius: 16px;
     padding: 8px 14px;
   }
