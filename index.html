@@ -543,7 +543,7 @@ function applyJPScrollSync() {
   if (maxDistance <= 0) return; // Все тексты помещаются
 
   // Общая продолжительность анимации
-  const totalDuration = maxDistance * 0.072; // можно регулировать скорость
+  const totalDuration = maxDistance * 0.065; // можно регулировать скорость
 
   scrollTexts.forEach(el => {
     const distance = el.scrollWidth - el.parentElement.offsetWidth + 16;
