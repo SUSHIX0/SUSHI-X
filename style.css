@@ -94,7 +94,7 @@ header.brand h1 .jp{
 }
 .card.unavailable .overlay-unavailable{ opacity:1; }
 
-.body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1; position:relative;}
+.body{padding:16px; display:flex; flex-direction:column; gap:8px; flex:1; margin-bottom: -5px; position:relative;}
 .title{font-weight:700; margin:0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;}
 .title .name{
   display:flex;
@@ -223,7 +223,8 @@ header.brand h1 .jp{
 /* Адаптив для телефонов */
 @media (max-width: 767px) {
   .card .body {
-    padding-bottom: 6px; /* было 16px, уменьшаем, чтобы нижняя граница ближе */
+    padding-bottom: 6px;
+    margin-bottom: 0px;
   }
 
   .card .bottom {
@@ -968,7 +969,7 @@ body {
   .floating-cart,
   #showPromoBtn {    /* кнопка "ввести промокод" */
     font-size: 18px;
-
+    margin-bottom: -15px;
     box-sizing: border-box;
   }
 
@@ -1065,6 +1066,7 @@ body {
   background-color: #ff2d2d;
   color: #fff;
   font-weight: bold;
+  font-weight: 700;
 }
 
 
@@ -1367,10 +1369,6 @@ header.brand .logo {
     font-size: 1.15rem;       /* крупнее цифры */
   }
 
-  /* Выбранный день */
-  .custom-calendar .day.selected {
-    font-weight: 700;
-  }
 }
 /* ===============================
    КОМПАКТНЫЙ РЕЖИМ
@@ -1382,6 +1380,7 @@ body.compact {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    transition: all 0.3s ease;
   }
 
   /* карточка */
@@ -1389,19 +1388,16 @@ body.compact {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-
     width: auto;
     max-width: none;
     height: 72px;
-
     padding: 0;
     border-radius: 14px;
-
     overflow: hidden;
     background: inherit;
-
     flex: 1 1 140px;
     position: relative;
+    transition: all 0.3s ease;
   }
 
   /* картинка слева */
@@ -1409,7 +1405,6 @@ body.compact {
     width: 180px;
     height: 129px;
     flex-shrink: 0;
-
     border-radius: 14px 0 0 14px;
     background-size: cover;
     background-position: center;
@@ -1427,7 +1422,6 @@ body.compact {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-
     padding: 0;
     flex: 1;
     text-align: center;
@@ -1439,7 +1433,6 @@ body.compact {
     line-height: 1.2;
     margin: 0;
     margin-top: 6px;
-
     display: flex;
     justify-content: center;
     text-align: center;
@@ -1459,14 +1452,11 @@ body.compact {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-
     overflow: hidden;
     text-overflow: ellipsis;
-
     font-size: 0.8rem;
     line-height: 1.2;
     max-height: calc(1.2em * 2);
-
     margin: 2px 6px 0;
     text-align: center;
   }
@@ -1476,7 +1466,6 @@ body.compact {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin-top: auto;
     padding: 0 6px 6px 6px;
   }
@@ -1486,7 +1475,6 @@ body.compact {
     display: flex;
     align-items: center;
     gap: 6px;
-
     font-size: 0.95rem;
     font-weight: 600;
     flex-wrap: wrap;
@@ -1497,7 +1485,6 @@ body.compact {
     display: flex;
     align-items: center;
     gap: 6px;
-
     font-size: 0.9rem;
     line-height: 1;
     flex-wrap: wrap;
@@ -1584,7 +1571,6 @@ body.compact {
   position: fixed;
   inset: 0;
   z-index: 9999;
-
   display: none;
   align-items: center;     /* ВЕРТИКАЛЬНЫЙ ЦЕНТР */
   justify-content: center; /* ГОРИЗОНТАЛЬНЫЙ ЦЕНТР */
@@ -1604,55 +1590,25 @@ body.compact {
 .card-modal-window {
   position: relative;
   z-index: 1;
-
   width: 100%;
   max-width: 570px;
-
   background: #0f0f10;
-  border-radius: 18px;
-
+  border-radius: 10px;
   overflow-y: auto;
 }
 /* кнопка закрытия */
 .card-modal-close {
   position: sticky;
   top: 0;
-
   width: 100%;
   height: 44px;
-
   border: none;
   background: #161616;
-  color: #fff;
-
-  font-size: 1.1rem;
+  color: #ff0000;
+  font-size: 1.4rem;
   font-weight: 600;
   cursor: pointer;
-
   z-index: 2;
-}
-/* Новый контейнер */
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px; /* расстояние между кнопкой и языками */
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Мобильная версия — центрируем блок */
-@media (max-width: 640px) {
-  .header-controls {
-    position: static;
-    transform: none;
-    margin: 0 auto 8px;
-    justify-content: center;
-    gap: 50px;
-    border-radius: 16px;
-    padding: 8px 14px;
-  }
 }
 
 /* Кнопка вида */
@@ -1663,6 +1619,8 @@ body.compact {
   border-radius: 10px;
   cursor: pointer;
   display: flex;
+  margin-bottom: -55px;
+  margin-top: 65px;
   gap: 12px;
   align-items: center;
   transition: background 0.2s;
@@ -1710,21 +1668,4 @@ body.compact {
 .view-toggle-btn .icon-grid:not(.active) span,
 .view-toggle-btn .icon-list:not(.active) span {
   opacity: 0.5;
-}
-
-/* Языки */
-.lang-btn {
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: #444;
-  color: #fff;
-  font-weight: bold;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-.lang-btn.active {
-  background: #ff2d2d;
-}
-.lang-btn:hover {
-  background: #555;
 }

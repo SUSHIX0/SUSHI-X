@@ -28,36 +28,19 @@
 
 <body>
 
-
 <div class="wrap">
   <header class="brand">
     <!-- Центрированный логотип -->
     <h1 class="logo"><span>SUSHI</span> <span class="jp">メ</span></h1>
 
-<div class="header-controls">
-  <button id="toggleCompact" class="view-toggle-btn" title="Переключить вид">
-    <span class="icon-grid active" aria-label="Сетка">
-      <span></span><span></span>
-      <span></span><span></span>
-    </span>
-    <span class="icon-list" aria-label="Список">
-      <span></span>
-      <span></span>
-      <span></span>
-    </span>
-  </button>
-
   <div class="lang-switcher">
     <a href="" class="lang-btn active">ET</a>
     <a href="ru/" class="lang-btn">RU</a>
     <a href="en/" class="lang-btn">EN</a>
-  </div>
 </div>
-
 
   </header>
   <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
-
 
 <!-- Основной фиксированный бар -->
 <div class="menu-filters" id="menuFilters">
@@ -87,8 +70,20 @@
   <button data-action="contacts">Информация</button>
 </div>
 
-  <main>
+  <button id="toggleCompact" class="view-toggle-btn" title="Переключить вид">
+    <span class="icon-grid active" aria-label="Сетка">
+      <span></span><span></span>
+      <span></span><span></span>
+    </span>
+    <span class="icon-list" aria-label="Список">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
 
+  <main>
+  
 <section class="menu-section" id="specialOffers">
   <h2 class="section-title">Предложения</h2>
   <div class="grid"></div>
@@ -702,13 +697,10 @@ document.body.addEventListener('click', function(e) {
   // иначе ничего не делаем, чтобы надпись не появлялась
 };
 
-
     // Специальные предложения
     updateSpecialOffersSection();
 
 updateCartUI();
-
-
 
   } catch (e) { console.error('Ошибка загрузки меню', e); }
 }
@@ -865,56 +857,6 @@ document.addEventListener('click', (e) => {
 })();
 
 
-// ===== Выбор шапочки =====
-const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
-
-rollSelectWrappers.forEach(wrapper => {
-  const btn = wrapper.querySelector('.select-btn');
-  const dropdown = wrapper.querySelector('.select-dropdown');
-  const arrow = wrapper.querySelector('.arrow');
-
-  // Проверяем, есть ли "Сырная шапочка" в списке
-  let defaultTopping = 'Сырная шапочка';
-  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
-  if (!exists) {
-    const li = document.createElement('li');
-    li.textContent = defaultTopping;
-    dropdown.prepend(li);
-  }
-
-  // Устанавливаем значение по умолчанию
-  btn.firstChild.textContent = defaultTopping + ' ';
-
-  // Открытие/закрытие списка
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    dropdown.classList.toggle('show');
-    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-  });
-
-  // Выбор элемента из списка
-  dropdown.querySelectorAll('li').forEach(item => {
-    item.addEventListener('click', () => {
-      btn.firstChild.textContent = item.textContent + ' ';
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    });
-  });
-
-  // Закрытие при клике вне области
-  document.addEventListener('click', (e) => {
-    if (!wrapper.contains(e.target)) {
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    }
-  });
-});
-
-
-
-
-
-
 
 
 // ===== НАСТРОЙКИ =====
@@ -944,16 +886,12 @@ paymentSelect?.addEventListener('change', () => {
 });
 
 
-
-
 if(phoneInput){
     phoneInput.addEventListener('input', () => {
         phoneInput.value = phoneInput.value.replace(/[^+\d]/g,'');
     });
 }
 
-let DELIVERY_COST = 5.00;
-let FREE_DELIVERY_LIMIT = 50.00;
 const ITEM_LIMIT = 20;
 const cart = new Map();
 
@@ -1294,7 +1232,6 @@ const orderData = {
         lang: currentLang
     };
 
-
         const res = await fetch('https://telegram-server-fcgc.onrender.com/order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1363,8 +1300,6 @@ function loadPromo() {
     }
   }
 }
-
-
 
 async function loadPromoCodes() {
   try {
@@ -1996,25 +1931,33 @@ function renderCalendar() {
         dayDiv.classList.add('unavailable');
       }
 
-      if(selectedDate === isoDate){
-        dayDiv.classList.add('selected');
-      }
+      const dayStr = day.toString().padStart(2, '0');
+const monthStr = (date.getMonth()+1).toString().padStart(2, '0');
+const yearStr = date.getFullYear();
 
-      dayDiv.addEventListener('click', () => {
+const fullDate = `${dayStr}.${monthStr}.${yearStr}`;
+
+if(fullDate === selectedDate){
+    dayDiv.classList.add('selected'); // красим выбранный день
+}
+
+dayDiv.addEventListener('click', () => {
     if(dayDiv.classList.contains('unavailable')) return;
 
-    const [year, month, day] = isoDate.split('-').map(Number);
+    // Форматируем день и месяц с ведущим нулём
+    const dayStr = day.toString().padStart(2, '0');
+    const monthStr = (date.getMonth()+1).toString().padStart(2, '0');
+    const yearStr = date.getFullYear();
 
     // selectedDate в формате дд.мм.гггг
-    selectedDate = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+    selectedDate = `${dayStr}.${monthStr}.${yearStr}`;
 
     chooseDateBtn.textContent = "Дата: " + selectedDate;
     deliveryCalendar.style.display = "none";
 
     renderCalendar();
-    updateDeliveryTimes(); // сразу обновляем список времени для выбранной даты
+    updateDeliveryTimes(); // обновляем список времени
 });
-
 
       daysContainer.appendChild(dayDiv);
     }
@@ -2025,14 +1968,6 @@ function renderCalendar() {
 
 // ===== ЗАГРУЗКА БЛОКИРОВОК И СТАРТОВЫЙ РЕНДЕР =====
 loadBlockedDates().then(() => renderCalendar());
-
-
-
-
-
-
-
-
 
 
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
@@ -2139,63 +2074,91 @@ langBtns.forEach(btn => {
 
 document.addEventListener('DOMContentLoaded', () => {
   const toggleBtn = document.getElementById('toggleCompact');
+  const STORAGE_KEY = 'compactMode';
+  const EXPIRY_KEY = 'compactModeExpiry';
+  const TTL = 1800000
 
-  function updateViewForMobile() {
-    if (window.matchMedia("(max-width: 767px)").matches) {
-      toggleBtn.style.display = "flex"; // показываем кнопку только на мобилках
-
-      toggleBtn.addEventListener('click', () => {
-        document.body.classList.toggle('compact');
-
-        const isCompact = document.body.classList.contains('compact');
-        toggleBtn.querySelector('.icon-grid').classList.toggle('active', !isCompact);
-        toggleBtn.querySelector('.icon-list').classList.toggle('active', isCompact);
-      });
-    } else {
-      toggleBtn.style.display = "none"; // скрываем на десктопе
-      document.body.classList.remove('compact'); // сбрасываем режим
+  // ===== Восстанавливаем состояние при загрузке =====
+  const now = Date.now();
+  const expiry = localStorage.getItem(EXPIRY_KEY);
+  if (expiry && now < +expiry) {
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      document.body.classList.add('compact');
+      toggleBtn.querySelector('.icon-grid').classList.remove('active');
+      toggleBtn.querySelector('.icon-list').classList.add('active');
     }
+  } else {
+    // срок истек — сбрасываем
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
   }
 
+  // ===== Клик по кнопке =====
+  toggleBtn.addEventListener('click', () => {
+    if (!window.matchMedia("(max-width: 767px)").matches) return; // только на мобилках
+
+    const isCompact = document.body.classList.toggle('compact');
+    toggleBtn.querySelector('.icon-grid').classList.toggle('active', !isCompact);
+    toggleBtn.querySelector('.icon-list').classList.toggle('active', isCompact);
+
+    // Сохраняем состояние в localStorage и обновляем таймер
+    localStorage.setItem(STORAGE_KEY, isCompact);
+    localStorage.setItem(EXPIRY_KEY, Date.now() + TTL);
+  });
+
+  // ===== Показ/скрытие кнопки при ресайзе =====
+  function updateViewForMobile() {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      toggleBtn.style.display = "flex";
+    } else {
+      toggleBtn.style.display = "none";
+      document.body.classList.remove('compact');
+      toggleBtn.querySelector('.icon-grid').classList.add('active');
+      toggleBtn.querySelector('.icon-list').classList.remove('active');
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
+    }
+  }
   updateViewForMobile();
-  window.addEventListener('resize', updateViewForMobile); // обновляем при изменении ширины
+  window.addEventListener('resize', updateViewForMobile);
+
+  // ================== МОДАЛКА ==================
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest("body.compact .card");
+    if (!card) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+
+    e.preventDefault();
+
+    const modal = document.querySelector(".card-modal");
+    const content = modal.querySelector(".card-modal-content");
+
+    content.innerHTML = "";
+    content.appendChild(card.cloneNode(true));
+
+    // Временно выключаем компактный режим
+    document.body.classList.remove("compact");
+
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  });
+
+  function closeModal() {
+    const modal = document.querySelector(".card-modal");
+    modal.classList.remove("active");
+
+    // Возвращаем компактный режим, если он был включен
+    const expiry = localStorage.getItem(EXPIRY_KEY);
+    if (window.matchMedia("(max-width: 767px)").matches && expiry && Date.now() < +expiry) {
+      document.body.classList.add("compact");
+    }
+
+    document.body.style.overflow = "";
+  }
+
+  document.querySelector(".card-modal-bg").onclick = closeModal;
+  document.querySelector(".card-modal-close").onclick = closeModal;
 });
-
-
-
-document.addEventListener("click", (e) => {
-  const card = e.target.closest("body.compact .card");
-  if (!card) return;
-
-  if (!window.matchMedia("(max-width: 767px)").matches) return;
-
-  e.preventDefault();
-
-  const modal = document.querySelector(".card-modal");
-  const content = modal.querySelector(".card-modal-content");
-
-  content.innerHTML = "";
-  content.appendChild(card.cloneNode(true));
-
-  // ❗ временно выключаем компакт
-  document.body.classList.remove("compact");
-
-  modal.classList.add("active");
-  document.body.style.overflow = "hidden";
-});
-
-function closeModal() {
-  document.querySelector(".card-modal").classList.remove("active");
-
-  // ❗ возвращаем компакт
-  document.body.classList.add("compact");
-
-  document.body.style.overflow = "";
-}
-
-document.querySelector(".card-modal-bg").onclick = closeModal;
-document.querySelector(".card-modal-close").onclick = closeModal;
-
 
 updateCartUI();
 
