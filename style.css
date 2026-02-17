@@ -357,7 +357,7 @@ body {
 }
 
 .menu-section {
-  margin-bottom: 60px;
+  margin-bottom: 30px;
 }
 
 .section-title {
@@ -839,9 +839,10 @@ body {
     margin-top: 4px;
     margin-bottom: 12px;
   }
+  .menu-section {
+  margin-bottom: -10px;
 }
-
-
+}
 
 @media (max-width: 599px) {
 .cart-item {
@@ -1273,7 +1274,7 @@ header.brand .logo {
 .lang-switcher {
   position: absolute;
   right: 20px;
-  top: 50%;
+  top: 25%;
   transform: translateY(-50%);
   display: flex;
   background: #333;
@@ -1509,6 +1510,7 @@ body.compact {
     padding: 0 16px;
     height: 30px;
     width: 70px;
+    margin: -5px -3px;
   }
 
   @media (max-width: 450px) {
@@ -1620,11 +1622,17 @@ body.compact {
   cursor: pointer;
   display: flex;
   margin-bottom: -55px;
-  margin-top: 65px;
+  margin-top: 55px;
+  margin-left: 20px;
   gap: 12px;
   align-items: center;
   transition: background 0.2s;
 }
+
+@media (max-width: 767px) {
+.card-modal-close {
+  font-size: 1.6rem;
+  }}
 
 .view-toggle-btn:hover {
   background: rgba(255,45,45,0.25);
@@ -1668,4 +1676,17 @@ body.compact {
 .view-toggle-btn .icon-grid:not(.active) span,
 .view-toggle-btn .icon-list:not(.active) span {
   opacity: 0.5;
+}
+
+/* ===== Плавное появление элементов ===== */
+.fade-slide {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Класс активного состояния */
+.fade-slide.show {
+  opacity: 1;
+  transform: translateY(0);
 }

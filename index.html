@@ -2086,24 +2086,29 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.add('compact');
       toggleBtn.querySelector('.icon-grid').classList.remove('active');
       toggleBtn.querySelector('.icon-list').classList.add('active');
+
+      // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПОСЛЕ ВОССТАНОВЛЕНИЯ =====
+      requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
     }
   } else {
-    // срок истек — сбрасываем
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(EXPIRY_KEY);
   }
 
   // ===== Клик по кнопке =====
   toggleBtn.addEventListener('click', () => {
-    if (!window.matchMedia("(max-width: 767px)").matches) return; // только на мобилках
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
 
     const isCompact = document.body.classList.toggle('compact');
     toggleBtn.querySelector('.icon-grid').classList.toggle('active', !isCompact);
     toggleBtn.querySelector('.icon-list').classList.toggle('active', isCompact);
 
-    // Сохраняем состояние в localStorage и обновляем таймер
+    // Сохраняем состояние
     localStorage.setItem(STORAGE_KEY, isCompact);
     localStorage.setItem(EXPIRY_KEY, Date.now() + TTL);
+
+    // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПРИ ПЕРЕКЛЮЧЕНИИ =====
+    requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
   });
 
   // ===== Показ/скрытие кнопки при ресайзе =====
@@ -2141,16 +2146,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
+
+    // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА В МОДАЛКЕ =====
+    requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
   });
 
   function closeModal() {
     const modal = document.querySelector(".card-modal");
     modal.classList.remove("active");
 
-    // Возвращаем компактный режим, если он был включен
+    // Возвращаем компактный режим, если был
     const expiry = localStorage.getItem(EXPIRY_KEY);
     if (window.matchMedia("(max-width: 767px)").matches && expiry && Date.now() < +expiry) {
       document.body.classList.add("compact");
+
+      // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПОСЛЕ ВОЗВРАТА В COMPACT =====
+      requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
     }
 
     document.body.style.overflow = "";
@@ -2159,6 +2170,33 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector(".card-modal-bg").onclick = closeModal;
   document.querySelector(".card-modal-close").onclick = closeModal;
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Выбираем элементы
+  const logo = document.querySelector('header.brand .logo');
+  const langSwitcher = document.querySelector('.lang-switcher');
+  const toggleCompactBtn = document.getElementById('toggleCompact');
+
+  // Добавляем класс fade-slide
+  [logo, langSwitcher, toggleCompactBtn].forEach(el => {
+    if (!el) return;
+    el.classList.add('fade-slide');
+  });
+
+  // Плавное появление с небольшой задержкой для красивого эффекта
+  setTimeout(() => {
+    logo?.classList.add('show');
+  }, 200); // логотип чуть позже
+
+  setTimeout(() => {
+    langSwitcher?.classList.add('show');
+  }, 400); // кнопки языка
+
+  setTimeout(() => {
+    toggleCompactBtn?.classList.add('show');
+  }, 600); // кнопка переключения режима
+});
+
 
 updateCartUI();
 
