@@ -387,7 +387,7 @@ body {
 .menu-content {
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.6s ease;
+  transition: all 0.85s ease;
 }
 
 /* Состояние "видимые" */
@@ -1669,7 +1669,7 @@ body.compact {
 
 /* Активная кнопка */
 .view-toggle-btn .active span {
-  background: #6f00ff;
+  background: #ff2d2d;
 }
 
 /* Неактивная кнопка */
