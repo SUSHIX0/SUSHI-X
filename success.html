@@ -9,12 +9,13 @@
 :root {
   --bg: #0f0f10;
   --card: #161616;
-  --accent: #2ecc71; /* зеленый для успеха */
+  --accent: #2ecc71; /* зелёный для успеха */
   --text: #ffffff;
   --muted: #999;
   --radius: 16px;
 }
 
+/* reset */
 * { box-sizing: border-box; margin:0; padding:0; }
 
 body {
@@ -28,6 +29,7 @@ body {
   padding: 20px;
 }
 
+/* контейнер */
 .success-container {
   background: var(--card);
   padding: 40px 30px;
@@ -36,30 +38,59 @@ body {
   max-width: 480px;
   width: 100%;
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-  animation: fadeIn 0.5s ease;
+  overflow: hidden;
+  position: relative;
 }
 
+/* Иконка с кругом */
 .success-icon {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto 20px;
   border-radius: 50%;
-  background: #0f2f1f; /* тёмно-зеленый фон вместо прозрачного */
+  background: #0f2f1f;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 64px;
-  font-weight: bold;
-  color: #2ecc71 !important;
+  position: relative;
+  animation: circle-pop 0.6s ease forwards;
 }
 
+/* Световой halo вокруг галочки */
+.success-icon::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  box-shadow: 0 0 0 0 rgba(46,204,113,0.4);
+  animation: halo 1s ease-out forwards;
+}
+
+/* SVG галочка */
+.success-icon svg {
+  width: 60px;
+  height: 60px;
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw-check 0.6s 0.4s forwards;
+}
+
+/* Заголовок и текст */
 h1 { margin-bottom:10px; font-size:1.6rem; }
 p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
 
+/* Кнопки */
 .button-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  animation: button-pop 0.8s 1s ease forwards;
+  opacity:0;
 }
 
 .btn {
@@ -69,44 +100,82 @@ p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: 0.2s ease;
-}
-
-.checkmark {
-  transform: translateX(-1px) translateY(1px);
+  transition: 0.2s ease, transform 0.2s ease;
 }
 
 .btn-secondary {
   background: rgba(46,204,113,0.08);
   color: var(--accent);
 }
+
 .btn-secondary:hover {
   background: rgba(46,204,113,0.15);
+  transform: translateY(-2px);
 }
 
+/* адаптив */
 @media (max-width: 480px) {
   .success-container { padding: 30px 20px; }
+  .success-icon { width: 80px; height: 80px; }
+  .success-icon svg { width: 52px; height: 52px; }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ====== Анимации ====== */
+
+/* Круг вырастает */
+@keyframes circle-pop {
+  0% { transform: scale(0); opacity:0; }
+  60% { transform: scale(1.2); opacity:1; }
+  100% { transform: scale(1); }
 }
+
+/* Световой halo */
+@keyframes halo {
+  0% { box-shadow: 0 0 0 0 rgba(46,204,113,0.4); }
+  50% { box-shadow: 0 0 20px 20px rgba(46,204,113,0.3); }
+  100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+}
+
+/* Галочка рисуется */
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Кнопка появление */
+@keyframes button-pop {
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* ===== Конфетти ===== */
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  opacity:0.9;
+  top:50%;
+  left:50%;
+  border-radius:2px;
+  pointer-events:none;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translate(0,0) rotate(0deg); opacity:1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity:0; }
+}
+
 </style>
 </head>
 
 <body>
 <div class="success-container">
-<div class="success-icon">
-  <svg viewBox="0 0 24 24" width="52" height="52" class="checkmark">
-    <path d="M20 6L9 17l-5-5"
-      fill="none"
-      stroke="#2ecc71"
-      stroke-width="3.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"/>
-  </svg>
-</div>
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 6L9 17l-5-5"/>
+    </svg>
+  </div>
+
   <h1 id="successTitle">Оплата успешна</h1>
   <p id="successMessage">Спасибо! Ваш заказ успешно оплачен.</p>
 
@@ -122,21 +191,9 @@ const lang = urlParams.get('lang') || 'ru';
 
 // Тексты на разных языках
 const translations = {
-  ru: {
-    title: "Оплата успешна",
-    message: "Спасибо! Ваш заказ успешно оплачен.",
-    home: "Вернуться в меню"
-  },
-  en: {
-    title: "Payment Successful",
-    message: "Thank you! Your order has been successfully paid.",
-    home: "Back to Menu"
-  },
-  et: {
-    title: "Makse edukalt sooritatud",
-    message: "Aitäh! Teie tellimus on edukalt tasutud.",
-    home: "Tagasi menüüsse"
-  }
+  ru: { title: "Оплата успешна", message: "Спасибо! Ваш заказ успешно оплачен.", home: "Вернуться в меню" },
+  en: { title: "Payment Successful", message: "Thank you! Your order has been successfully paid.", home: "Back to Menu" },
+  et: { title: "Makse edukalt sooritatud", message: "Aitäh! Teie tellimus on edukalt tasutud.", home: "Tagasi menüüsse" }
 };
 
 // Меняем тексты на странице
@@ -155,6 +212,22 @@ const menuUrls = {
 document.getElementById('goHomeBtn').addEventListener('click', () => {
   window.location.href = menuUrls[lang] || menuUrls['ru'];
 });
+
+// ====== Конфетти ======
+function createConfetti(num){
+  for(let i=0;i<num;i++){
+    const c = document.createElement('div');
+    c.classList.add('confetti-piece');
+    const tx = (Math.random()*300-150)+'px';
+    const ty = (Math.random()*300-150)+'px';
+    c.style.setProperty('--tx', tx);
+    c.style.setProperty('--ty', ty);
+    c.style.animationDuration = (0.6+Math.random()*0.6)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1000);
+  }
+}
+createConfetti(25);
 </script>
 </body>
 </html>
