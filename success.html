@@ -229,10 +229,22 @@ function createConfetti(num){
 }
 createConfetti(25);
 
-// ======== ОЧИСТКА КОРЗИНЫ И ФЛАГ УСПЕШНОГО ЗАКАЗА =======
-localStorage.removeItem('cart');       // очистка корзины
-if (window.updateCartUI) updateCartUI(); // обновление UI корзины
-localStorage.setItem('lastOrderStatus', 'paid'); // флаг для главной страницы
+// ======== ОЧИСТКА КОРЗИНЫ И СБРОС ФОРМ, КАК ПРИ НАЛИЧКЕ =======
+if (typeof cart !== 'undefined' && cart.clear) cart.clear();
+if (typeof resetPromo === 'function') resetPromo();
+if (typeof resetCheckoutExtras === 'function') resetCheckoutExtras();
+if (typeof checkoutForm !== 'undefined') checkoutForm.reset();
+
+if (typeof dateBtn !== 'undefined') dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+if (typeof timeSelect !== 'undefined') timeSelect.value = '';
+if (typeof addressInput !== 'undefined') addressInput.value = '';
+
+setTimeout(() => {
+  if (typeof closeCart === 'function') closeCart();
+}, 900);
+
+if (typeof saveCart === 'function') saveCart();
+if (typeof updateCartUI === 'function') updateCartUI();
 
 </script>
 </body>

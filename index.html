@@ -529,12 +529,6 @@ function updateCartUI() {
 // ===== Проверяем успешный заказ =====
 if (localStorage.getItem('lastOrderStatus') === 'paid') {
   localStorage.removeItem('lastOrderStatus'); // сбросим флаг
-  resetPromo(); // 🔥 ВОТ ЭТА СТРОКА
-resetCheckoutExtras();
-    checkoutForm.reset();
-    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
-    if (timeSelect) timeSelect.value = '';
-    if (addressInput) addressInput.value = '';
   localStorage.removeItem('cart'); // ещё раз очищаем корзину на всякий
   if (window.updateCartUI) updateCartUI(); // обновляем UI
   // Можно показать уведомление:
