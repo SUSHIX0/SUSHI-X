@@ -1690,3 +1690,15 @@ body.compact {
   opacity: 1;
   transform: translateY(0);
 }
+
+@media (max-width: 485px) {
+  #checkoutForm button,
+  #applyPromo,
+  #cancelPromo,
+  .floating-cart,
+  #showPromoBtn {    /* кнопка "ввести промокод" */
+    font-size: 18px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  }
