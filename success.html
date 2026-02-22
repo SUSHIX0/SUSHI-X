@@ -48,8 +48,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
-  color: #2ecc71;
+  font-size: 44px;
+
+  color: #2ecc71 !important; /* 🔥 фикс */
+  -webkit-text-fill-color: #2ecc71; /* 🔥 фикс для iOS */
 }
 
 h1 { margin-bottom:10px; font-size:1.6rem; }
