@@ -44,14 +44,16 @@ body {
   height: 80px;
   margin: 0 auto 20px;
   border-radius: 50%;
-  background: rgba(46,204,113,0.1);
+  background: #0f2f1f; /* тёмно-зеленый фон вместо прозрачного */
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 44px;
-
-  color: #2ecc71 !important; /* 🔥 фикс */
-  -webkit-text-fill-color: #2ecc71; /* 🔥 фикс для iOS */
+  font-weight: bold;
+  color: #2ecc71 !important;
+  -webkit-text-fill-color: #2ecc71 !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
 h1 { margin-bottom:10px; font-size:1.6rem; }
