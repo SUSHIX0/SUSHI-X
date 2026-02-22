@@ -526,6 +526,15 @@ function updateCartUI() {
   updateDeliveryTimes();
 }
 
+// ===== Проверяем успешный заказ =====
+if (localStorage.getItem('lastOrderStatus') === 'paid') {
+  localStorage.removeItem('lastOrderStatus'); // сбросим флаг
+  localStorage.removeItem('cart'); // ещё раз очищаем корзину на всякий
+  if (window.updateCartUI) updateCartUI(); // обновляем UI
+  // Можно показать уведомление:
+  alert('Спасибо! Ваш заказ успешно оплачен.');
+}
+
 function applyJPScrollSync() {
   const scrollTexts = document.querySelectorAll('.label-jp .scroll-text');
   if (!scrollTexts.length) return;
