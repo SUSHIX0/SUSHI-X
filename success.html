@@ -228,6 +228,12 @@ function createConfetti(num){
   }
 }
 createConfetti(25);
+
+// ======== ОЧИСТКА КОРЗИНЫ И ФЛАГ УСПЕШНОГО ЗАКАЗА =======
+localStorage.removeItem('cart');       // очистка корзины
+if (window.updateCartUI) updateCartUI(); // обновление UI корзины
+localStorage.setItem('lastOrderStatus', 'paid'); // флаг для главной страницы
+
 </script>
 </body>
 </html>
