@@ -1702,3 +1702,14 @@ body.compact {
     box-sizing: border-box;
   }
   }
+
+  .select-dropdown li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topping-price {
+  color: #888;
+  font-size: 13px;
+}
