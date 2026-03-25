@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Оплата успешна</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -21,12 +22,55 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
+  overflow-x: hidden;
+}
+
+/* ===== ЛОГО ===== */
+.brand {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: logo-pop 0.6s ease forwards;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  gap: 8px;
+  margin: 0;
+}
+
+.logo .jp {
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-size: 4.3rem;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255,0,0,0.4);
+}
+
+.logo a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}
+
+@keyframes logo-pop {
+  0% { transform: translateX(-50%) scale(0); opacity:0; }
+  60% { transform: translateX(-50%) scale(1.2); opacity:1; }
+  100% { transform: translateX(-50%) scale(1); }
 }
 
 /* контейнер */
@@ -40,6 +84,7 @@ body {
   box-shadow: 0 20px 50px rgba(0,0,0,0.6);
   overflow: hidden;
   position: relative;
+  margin-top: 120px; /* чтобы логотип не налезал */
 }
 
 /* Иконка с кругом */
@@ -169,6 +214,16 @@ p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
 </head>
 
 <body>
+
+<!-- ЛОГО -->
+<div class="brand">
+  <h1 class="logo">
+    <a href="/" id="logoLink">
+      <span>SUSHI</span> <span class="jp">メ</span>
+    </a>
+  </h1>
+</div>
+
 <div class="success-container">
   <div class="success-icon">
     <svg viewBox="0 0 24 24">
@@ -208,10 +263,13 @@ const menuUrls = {
   et: "https://sushix0.github.io/SUSHI-X"
 };
 
-// Кнопка
+// Кнопка "Вернуться в меню"
 document.getElementById('goHomeBtn').addEventListener('click', () => {
   window.location.href = menuUrls[lang] || menuUrls['ru'];
 });
+
+// Логотип переходит на главную в том же языке
+document.getElementById('logoLink').href = menuUrls[lang] || menuUrls['ru'];
 
 // ====== Конфетти ======
 function createConfetti(num){
@@ -229,9 +287,8 @@ function createConfetti(num){
 }
 createConfetti(25);
 
-// 🔥 Устанавливаем флаг, что заказ оплачен
-  localStorage.setItem('orderPaid', 'true');
-
+// 🔥 Флаг, что заказ оплачен
+localStorage.setItem('orderPaid', 'true');
 </script>
 </body>
 </html>
