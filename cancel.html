@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Оплата отменена</title>
 
+<!-- Шрифты -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
 :root {
   --bg: #0f0f10;
@@ -20,7 +23,7 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Montserrat","Noto Sans JP",system-ui,-apple-system,Roboto,"Segoe UI",Arial;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +31,50 @@ body {
   padding: 20px;
 }
 
+/* Логотип */
+.brand {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: logoFadeIn 1s ease forwards;
+  animation-delay: 0.2s;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  gap: 8px;
+  margin: 0;
+}
+
+/* Японский символ */
+.logo .jp {
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  font-size: 4.3rem;
+  color: #ff0000;
+  text-shadow: 0 0 10px rgba(255,0,0,0.4);
+}
+
+/* Ссылка */
+.logo a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* hover эффект */
+.logo:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}
+
+/* Контейнер */
 .cancel-container {
+  margin-top: 120px;
   background: var(--card);
   padding: 40px 30px;
   border-radius: var(--radius);
@@ -39,6 +85,7 @@ body {
   animation: fadeIn 0.5s ease;
 }
 
+/* Иконка */
 .cancel-icon {
   width: 80px;
   height: 80px;
@@ -52,9 +99,11 @@ body {
   color: var(--accent);
 }
 
-h1 { margin-bottom:10px; font-size:1.6rem; }
-p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
+/* Текст */
+h1 { margin-bottom: 10px; font-size: 1.6rem; }
+p { color: var(--muted); margin-bottom: 30px; line-height: 1.5; }
 
+/* Кнопки */
 .button-group {
   display: flex;
   flex-direction: column;
@@ -75,22 +124,44 @@ p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
   background: rgba(255,45,45,0.08);
   color: var(--accent);
 }
+
 .btn-secondary:hover {
   background: rgba(255,45,45,0.15);
 }
 
+/* Адаптив */
 @media (max-width: 480px) {
   .cancel-container { padding: 30px 20px; }
+  .logo { font-size: 2.5rem; }
+  .logo .jp { font-size: 2.7rem; }
 }
 
+/* Анимации */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes logoFadeIn {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+  60% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1); }
 }
 </style>
 </head>
 
 <body>
+
+<!-- Логотип -->
+<div class="brand">
+  <h1 class="logo">
+    <a href="/" id="logoLink">
+      <span>SUSHI</span> <span class="jp">メ</span>
+    </a>
+  </h1>
+</div>
+
+<!-- Контент -->
 <div class="cancel-container">
   <div class="cancel-icon">✕</div>
   <h1 id="cancelTitle">Оплата отменена</h1>
@@ -106,41 +177,33 @@ p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
 const urlParams = new URLSearchParams(window.location.search);
 const lang = urlParams.get('lang') || 'ru';
 
-// Тексты на разных языках
+// Переводы
 const translations = {
-  ru: {
-    title: "Оплата отменена",
-    message: "Вы отменили оплату заказа.",
-    home: "Вернуться в меню"
-  },
-  en: {
-    title: "Payment Cancelled",
-    message: "You cancelled your order payment.",
-    home: "Back to Menu"
-  },
-  et: {
-    title: "Makse tühistatud",
-    message: "Olete tellimuse makse tühistanud.",
-    home: "Tagasi menüüsse"
-  }
+  ru: { title: "Оплата отменена", message: "Вы отменили оплату заказа.", home: "Вернуться в меню" },
+  en: { title: "Payment Cancelled", message: "You cancelled your order payment.", home: "Back to Menu" },
+  et: { title: "Makse tühistatud", message: "Olete tellimuse makse tühistanud.", home: "Tagasi menüüsse" }
 };
 
-// Меняем тексты на странице
+// Обновляем тексты
 document.getElementById('cancelTitle').textContent = translations[lang].title;
 document.getElementById('cancelMessage').textContent = translations[lang].message;
 document.getElementById('goHomeBtn').textContent = translations[lang].home;
 
-// Ссылки на меню по языку
+// Ссылки на меню
 const menuUrls = {
   ru: "https://sushix0.github.io/SUSHI-X/ru",
   en: "https://sushix0.github.io/SUSHI-X/en",
   et: "https://sushix0.github.io/SUSHI-X"
 };
 
-// Кнопка
+// Кнопка “назад в меню”
 document.getElementById('goHomeBtn').addEventListener('click', () => {
   window.location.href = menuUrls[lang] || menuUrls['ru'];
 });
+
+// Логотип → ссылка на соответствующий язык
+document.getElementById('logoLink').href = menuUrls[lang] || menuUrls['ru'];
 </script>
+
 </body>
 </html>

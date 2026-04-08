@@ -30,8 +30,11 @@
 
 <div class="wrap">
   <header class="brand">
-    <!-- Центрированный логотип -->
-    <h1 class="logo"><span>SUSHI</span> <span class="jp">メ</span></h1>
+  <h1 class="logo">
+    <a href="https://sushix0.github.io/SUSHI-X" id="logoLink">
+      <span>SUSHI</span> <span class="jp">メ</span>
+    </a>
+  </h1>
 
   <div class="lang-switcher">
     <a href="" class="lang-btn active">ET</a>
@@ -241,6 +244,17 @@
         <div class="photo" style="background-image:url('Foto/Shushi-19.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
+    <!-- Шапочки -->
+    <div class="roll-select-wrapper">
+      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
+      <ul class="select-dropdown">
+  <li data-id="cheese-top" data-price="0">Сырная шапочка</li>
+  <li data-id="fish-top" data-price="1.5">Рыбная шапочка</li>
+  <li data-id="spicy-top" data-price="1.2">Спайси шапочка</li>
+  <li data-id="crab-top" data-price="1.4">Шапочка с крабом</li>
+  <li data-id="shrimp-top" data-price="1.64">Шапочка с креветкой</li>
+</ul>
+    </div>
           </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Нико»</span><span class="label-jp"><span class="scroll-text">ニコ焼きロール</span></span></h3>
@@ -971,15 +985,34 @@ function addToCart(card){
         ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||unitPrice
         : unitPrice;
 
-    if(cart.has(id)){
-        const item = cart.get(id);
+const toppingBtn = card.querySelector('.select-btn');
+
+let toppingPrice = 0;
+let toppingName = '';
+
+if (toppingBtn) {
+  toppingPrice = parseFloat(toppingBtn.dataset.price || 0);
+  toppingName = toppingBtn.dataset.name || '';
+}
+
+    const finalId = id + (toppingName ? '_' + toppingName : '');
+
+if(cart.has(finalId)){
+        const item = cart.get(finalId);
         if(item.qty<ITEM_LIMIT){
             item.qty++;
-            cart.set(id,item);
+            cart.set(finalId,item);
             showToast('Товар добавлен в корзину');
         } else showToast(`Максимум ${ITEM_LIMIT} штук`, true);
     } else {
-        cart.set(id,{name,unitPrice,originalPrice,qty:1});
+        const finalPrice = unitPrice;
+
+cart.set(finalId, {
+  name: toppingName ? `${name} (${toppingName})` : name,
+  unitPrice: finalPrice,
+  originalPrice: originalPrice,
+  qty: 1
+});
         showToast('Товар добавлен в корзину');
     }
 
@@ -2132,6 +2165,115 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПРИ ПЕРЕКЛЮЧЕНИИ =====
     requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
   });
+
+
+
+
+
+// ===== Выбор шапочки =====
+const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
+
+rollSelectWrappers.forEach(wrapper => {
+  const btn = wrapper.querySelector('.select-btn');
+  const dropdown = wrapper.querySelector('.select-dropdown');
+  const arrow = wrapper.querySelector('.arrow');
+
+  // Проверяем, есть ли "Сырная шапочка" в списке
+  let defaultTopping = 'Сырная шапочка';
+  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
+  if (!exists) {
+    const li = document.createElement('li');
+    li.textContent = defaultTopping;
+    dropdown.prepend(li);
+  }
+
+  // Устанавливаем значение по умолчанию и корректные data-атрибуты
+btn.firstChild.textContent = defaultTopping + ' ';
+btn.dataset.name = defaultTopping;
+btn.dataset.price = 0; // сырная шапочка без наценки
+
+  // Открытие/закрытие списка
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdown.classList.toggle('show');
+    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+dropdown.querySelectorAll('li').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.childNodes[0].textContent.trim();
+    const price = parseFloat(item.dataset.price || 0);
+
+    // обновляем кнопку
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.price = price;
+    btn.dataset.name = name;
+
+    dropdown.classList.remove('show');
+    arrow.style.transform = 'rotate(0deg)';
+
+    // ===== ВОТ ЭТО НОВОЕ =====
+    const card = wrapper.closest('.card');
+    if (!card) return;
+
+    const priceEl = card.querySelector('.price');
+    if (!priceEl) return;
+
+    const newPriceEl = priceEl.querySelector('.new-price');
+    const oldPriceEl = priceEl.querySelector('.old-price');
+
+    // ===== БАЗОВАЯ ЦЕНА =====
+    let basePrice = parseFloat(card.dataset.basePrice);
+
+    if (!basePrice) {
+      const priceText = (newPriceEl || priceEl).textContent;
+      basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+      card.dataset.basePrice = basePrice;
+    }
+
+    // ===== НОВАЯ ЦЕНА =====
+    const finalPrice = basePrice + price;
+
+    // ===== ОБНОВЛЯЕМ UI =====
+    if (newPriceEl) {
+  newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+} else {
+  priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+}
+
+if (oldPriceEl) {
+  oldPriceEl.textContent = (basePrice + price).toFixed(2).replace('.', ',') + ' €';
+}
+  });
+});
+
+  // Закрытие при клике вне области
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+});
+
+
+document.querySelectorAll('.select-dropdown li').forEach(li => {
+  const price = parseFloat(li.dataset.price || 0);
+  
+  const priceSpan = document.createElement('span');
+  priceSpan.className = 'topping-price';
+  priceSpan.textContent = `+${price.toFixed(2)} €`;
+
+  li.appendChild(priceSpan);
+});
+
+
+
+
+
+
+
+
 
   // ===== Показ/скрытие кнопки при ресайзе =====
   function updateViewForMobile() {
