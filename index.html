@@ -248,11 +248,11 @@
     <div class="roll-select-wrapper">
       <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
       <ul class="select-dropdown">
-  <li data-id="cheese-top" data-price="0">Сырная шапочка</li>
-  <li data-id="fish-top" data-price="1.5">Рыбная шапочка</li>
-  <li data-id="spicy-top" data-price="1.2">Спайси шапочка</li>
-  <li data-id="crab-top" data-price="1.4">Шапочка с крабом</li>
-  <li data-id="shrimp-top" data-price="1.64">Шапочка с креветкой</li>
+  <li data-id="сырная_шапочка" data-price="0">Сырная шапочка</li>
+  <li data-id="рыбная_шапочка" data-price="1.5">Рыбная шапочка</li>
+  <li data-id="спайси_шапочка" data-price="1.2">Спайси шапочка</li>
+  <li data-id="шапочка_с_крабом" data-price="1.4">Шапочка с крабом</li>
+  <li data-id="шапочка_с_креветкой" data-price="1.64">Шапочка с креветкой</li>
 </ul>
     </div>
           </div>
@@ -447,6 +447,10 @@
         <div class="summary-row"><span>Товары</span><span class="subtotal-price">0.00 €</span></div>
         <div class="summary-row"><span>Доставка</span><span class="delivery-price">0.00 €</span></div>
         <div class="summary-row"><span>Скидка</span><span class="discount-price">0.00 €</span></div>
+        <div class="summary-row rounding-row" style="display:none;">
+  <span>Округление</span>
+  <span class="rounding-price">0.00 €</span>
+</div>
 <!-- Кнопка показать поле промокода -->
 <button id="showPromoBtn" class="btn-primary promo-toggle-btn">Ввести промокод</button>
 
@@ -881,15 +885,58 @@ document.addEventListener('click', (e) => {
   });
 });
 
+async function loadToppingPrices() {
+  try {
+    const res = await fetch(sheetUrl);
+    const csv = await res.text();
 
-// ===== Инициализация =====
+    const lines = csv.split('\n').map(l => l.trim()).filter(Boolean);
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+
+    const idIndex = headers.indexOf('id');
+    const priceIndex = headers.indexOf('цена');
+
+    const priceMap = {};
+
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+
+      const id = (cols[idIndex] || '').trim().toLowerCase();
+      const price = parseFloat((cols[priceIndex] || '0').replace(',', '.')) || 0;
+
+      if (!id) continue;
+
+      priceMap[id] = price;
+    }
+
+    // 🔥 применяем напрямую (без маппинга)
+    document.querySelectorAll('li[data-id]').forEach(li => {
+      const id = li.dataset.id.trim().toLowerCase();
+
+      if (priceMap[id] !== undefined) {
+        li.dataset.price = priceMap[id];
+      }
+    });
+
+    console.log('✔ Шапочки обновлены из таблицы');
+
+  } catch (err) {
+    console.error('Ошибка загрузки CSV:', err);
+  }
+}
+
+
 (async () => {
   await updateMenuFromSheet();   // ждем загрузку меню
-  updateActiveFilter();          // обновляем активный фильтр
+
+  await loadToppingPrices(); 
+
+  updateActiveFilter();          
+
   setTimeout(() => {
-    animateCards();              // запускаем анимацию
+    animateCards();              
   }, 250);
-  
 })();
 
 
@@ -909,6 +956,8 @@ const placeOrderBtn = document.getElementById('placeOrder');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
 const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
+const roundingRow = document.querySelector('.rounding-row');
+const roundingEl = document.querySelector('.rounding-price');
 
 
 const paymentSelect = checkoutForm?.payment;
@@ -920,7 +969,7 @@ paymentSelect?.addEventListener('change', () => {
         placeOrderBtn.textContent = 'Оформить заказ';
     }
 });
-
+checkoutForm?.payment?.addEventListener('change', renderCart);
 
 if(phoneInput){
     phoneInput.addEventListener('input', () => {
@@ -966,6 +1015,10 @@ function showToast(msg, isRed = false, duration = 2500) {
 
 // ===== ESCAPE HTML =====
 function escapeHtml(str){ return String(str).replace(/[&<>"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+
+function roundCash(value) {
+  return Math.round(value * 20) / 20;
+}
 
 // ===== ДОБАВЛЕНИЕ В КОРЗИНУ =====
 function addToCart(card){
@@ -1392,6 +1445,56 @@ async function loadPromoCodes() {
 
 loadPromoCodes();
 
+async function loadToppingPrices() {
+  try {
+    const res = await fetch(sheetUrl);
+    const csv = await res.text();
+    const lines = csv.split("\n").map(l => l.trim());
+
+    const priceMap = {};
+
+    // пропускаем заголовок
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i]) continue;
+
+      const cols = lines[i].split(",");
+
+      const id = cols[0]?.trim();
+      const price = parseFloat(cols[1]?.replace(",", "."));
+
+      if (!id || isNaN(price)) continue;
+
+      priceMap[id] = price;
+    }
+
+    // ===== ОБНОВЛЯЕМ DOM =====
+    document.querySelectorAll('.select-dropdown li').forEach(li => {
+      const id = li.dataset.id;
+      if (!id || priceMap[id] === undefined) return;
+
+      const newPrice = priceMap[id];
+
+      // обновляем data-price
+      li.dataset.price = newPrice;
+
+      // обновляем span цены
+      let span = li.querySelector('.topping-price');
+
+      if (!span) {
+        span = document.createElement('span');
+        span.className = 'topping-price';
+        li.appendChild(span);
+      }
+
+      span.textContent = `+${newPrice.toFixed(2)} €`;
+    });
+
+    console.log("✔ topping prices updated from sheet");
+
+  } catch (err) {
+    console.error("Ошибка загрузки цен шапочек:", err);
+  }
+}
 
 // ========================================================
 // 2. ЭЛЕМЕНТЫ И UI
@@ -2068,10 +2171,35 @@ if (
   discountRow.style.display = 'none';
 }
 
-  const total = subtotal + delivery - discount;
-  subtotalEl.textContent = subtotal.toFixed(2) + " €";
-  deliveryEl.textContent = delivery.toFixed(2) + " €";
-    totalEl.textContent = total.toFixed(2) + " €";
+  let total = subtotal + delivery - discount;
+
+let finalTotal = total;
+let roundingDiff = 0;
+
+const paymentMethod = checkoutForm?.payment?.value?.toLowerCase();
+
+// ===== ОКРУГЛЕНИЕ ДЛЯ НАЛИЧНЫХ =====
+if (paymentMethod === 'наличные') {
+  finalTotal = roundCash(total);
+  roundingDiff = finalTotal - total;
+}
+
+// ===== ОБНОВЛЕНИЕ UI =====
+subtotalEl.textContent = subtotal.toFixed(2) + " €";
+deliveryEl.textContent = delivery.toFixed(2) + " €";
+totalEl.textContent = finalTotal.toFixed(2) + " €";
+
+// ===== СТРОКА "ОКРУГЛЕНИЕ" =====
+if (paymentMethod === 'наличные') {
+  roundingRow.style.display = '';
+
+  roundingEl.textContent =
+    (roundingDiff > 0 ? '+' : '') +
+    roundingDiff.toFixed(2) + ' €';
+
+} else {
+  roundingRow.style.display = 'none';
+}
 
   // Значок количества в корзине
   if (cartCountEl) {
@@ -2259,12 +2387,16 @@ if (oldPriceEl) {
 
 document.querySelectorAll('.select-dropdown li').forEach(li => {
   const price = parseFloat(li.dataset.price || 0);
-  
-  const priceSpan = document.createElement('span');
-  priceSpan.className = 'topping-price';
-  priceSpan.textContent = `+${price.toFixed(2)} €`;
 
-  li.appendChild(priceSpan);
+  let priceSpan = li.querySelector('.topping-price');
+
+  if (!priceSpan) {
+    priceSpan = document.createElement('span');
+    priceSpan.className = 'topping-price';
+    li.appendChild(priceSpan);
+  }
+
+  priceSpan.textContent = `+${price.toFixed(2)} €`;
 });
 
 
@@ -2363,6 +2495,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 updateCartUI();
+
 
 </script>
 </body>
