@@ -447,6 +447,10 @@
         <div class="summary-row"><span>Товары</span><span class="subtotal-price">0.00 €</span></div>
         <div class="summary-row"><span>Доставка</span><span class="delivery-price">0.00 €</span></div>
         <div class="summary-row"><span>Скидка</span><span class="discount-price">0.00 €</span></div>
+        <div class="summary-row rounding-row" style="display:none;">
+  <span>Округление</span>
+  <span class="rounding-price">0.00 €</span>
+</div>
 <!-- Кнопка показать поле промокода -->
 <button id="showPromoBtn" class="btn-primary promo-toggle-btn">Ввести промокод</button>
 
@@ -909,6 +913,8 @@ const placeOrderBtn = document.getElementById('placeOrder');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
 const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
+const roundingRow = document.querySelector('.rounding-row');
+const roundingEl = document.querySelector('.rounding-price');
 
 
 const paymentSelect = checkoutForm?.payment;
@@ -920,7 +926,7 @@ paymentSelect?.addEventListener('change', () => {
         placeOrderBtn.textContent = 'Оформить заказ';
     }
 });
-
+checkoutForm?.payment?.addEventListener('change', renderCart);
 
 if(phoneInput){
     phoneInput.addEventListener('input', () => {
@@ -966,6 +972,10 @@ function showToast(msg, isRed = false, duration = 2500) {
 
 // ===== ESCAPE HTML =====
 function escapeHtml(str){ return String(str).replace(/[&<>"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+
+function roundCash(value) {
+  return Math.round(value * 20) / 20;
+}
 
 // ===== ДОБАВЛЕНИЕ В КОРЗИНУ =====
 function addToCart(card){
@@ -2068,10 +2078,35 @@ if (
   discountRow.style.display = 'none';
 }
 
-  const total = subtotal + delivery - discount;
-  subtotalEl.textContent = subtotal.toFixed(2) + " €";
-  deliveryEl.textContent = delivery.toFixed(2) + " €";
-    totalEl.textContent = total.toFixed(2) + " €";
+  let total = subtotal + delivery - discount;
+
+let finalTotal = total;
+let roundingDiff = 0;
+
+const paymentMethod = checkoutForm?.payment?.value?.toLowerCase();
+
+// ===== ОКРУГЛЕНИЕ ДЛЯ НАЛИЧНЫХ =====
+if (paymentMethod === 'наличные') {
+  finalTotal = roundCash(total);
+  roundingDiff = finalTotal - total;
+}
+
+// ===== ОБНОВЛЕНИЕ UI =====
+subtotalEl.textContent = subtotal.toFixed(2) + " €";
+deliveryEl.textContent = delivery.toFixed(2) + " €";
+totalEl.textContent = finalTotal.toFixed(2) + " €";
+
+// ===== СТРОКА "ОКРУГЛЕНИЕ" =====
+if (paymentMethod === 'наличные') {
+  roundingRow.style.display = '';
+
+  roundingEl.textContent =
+    (roundingDiff > 0 ? '+' : '') +
+    roundingDiff.toFixed(2) + ' €';
+
+} else {
+  roundingRow.style.display = 'none';
+}
 
   // Значок количества в корзине
   if (cartCountEl) {
