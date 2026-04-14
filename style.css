@@ -1753,3 +1753,7 @@ body.compact {
   color: #dedede;
   font-size: 13px;
 }
+
+.select-dropdown li.disabled {
+  opacity: 0.5;
+}

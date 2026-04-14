@@ -1422,48 +1422,130 @@ async function loadToppingPrices() {
     const lines = csv.split("\n").map(l => l.trim());
 
     const priceMap = {};
+    const activeMap = {};
+    const hiddenMap = {}; // ✅ ДОБАВИЛИ
 
-    // пропускаем заголовок
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i]) continue;
 
       const cols = lines[i].split(",");
 
-      const id = cols[0]?.trim();
-      const price = parseFloat(cols[1]?.replace(",", "."));
+      const id = (cols[0] || "").trim().toLowerCase();
+      const price = parseFloat((cols[1] || "0").replace(",", ".")) || 0;
 
-      if (!id || isNaN(price)) continue;
+      const activeRaw = (cols[4] || "").trim().toLowerCase();
+      const hiddenRaw = (cols[5] || "").trim().toLowerCase();
+
+      const isActive = activeRaw === "true";
+      const isHidden = hiddenRaw === "true";
+
+      if (!id) continue;
 
       priceMap[id] = price;
+      activeMap[id] = isActive;
+      hiddenMap[id] = isHidden; // ✅ сохраняем
     }
 
-    // ===== ОБНОВЛЯЕМ DOM =====
     document.querySelectorAll('.select-dropdown li').forEach(li => {
-      const id = li.dataset.id;
-      if (!id || priceMap[id] === undefined) return;
+      const id = li.dataset.id?.trim().toLowerCase();
+      if (!id) return;
 
-      const newPrice = priceMap[id];
+      const price = priceMap[id];
+      const isActive = activeMap[id];
+      const isHidden = hiddenMap[id];
 
-      // обновляем data-price
-      li.dataset.price = newPrice;
+      if (price === undefined) return;
 
-      // обновляем span цены
+      // 🚨 ГЛАВНОЕ: СКРЫТИЕ
+      if (isHidden) {
+        li.remove();
+        return;
+      }
+
+      li.dataset.price = price;
+
       let span = li.querySelector('.topping-price');
-
       if (!span) {
         span = document.createElement('span');
         span.className = 'topping-price';
         li.appendChild(span);
       }
 
-      span.textContent = `+${newPrice.toFixed(2)} €`;
+      if (!isActive) {
+        li.classList.add('disabled');
+        span.textContent = "Недоступно";
+      } else {
+        li.classList.remove('disabled');
+        span.textContent = `+${price.toFixed(2)} €`;
+      }
     });
 
-    console.log("✔ topping prices updated from sheet");
+    console.log('✔ toppings updated');
 
   } catch (err) {
-    console.error("Ошибка загрузки цен шапочек:", err);
+    console.error('Ошибка загрузки шапочек:', err);
   }
+}
+
+function setDefaultTopping() {
+  document.querySelectorAll('.roll-select-wrapper').forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const items = wrapper.querySelectorAll('.select-dropdown li');
+    const card = wrapper.closest('.card');
+
+    let found = null;
+
+    items.forEach(li => {
+      if (found) return;
+
+      const isDisabled = li.classList.contains('disabled');
+      const isHidden = li.style.display === 'none';
+
+      if (!isDisabled && !isHidden) {
+        found = li;
+      }
+    });
+
+    if (!found) return;
+
+    const name = found.childNodes[0].textContent.trim();
+    const price = parseFloat(found.dataset.price || 0);
+
+    // ===== обновляем кнопку =====
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.name = name;
+    btn.dataset.price = price;
+
+    // ===== 💥 ВАЖНО: пересчёт цены карточки =====
+    if (card) {
+      const priceEl = card.querySelector('.price');
+      const newPriceEl = priceEl?.querySelector('.new-price');
+      const oldPriceEl = priceEl?.querySelector('.old-price');
+
+      let basePrice = parseFloat(card.dataset.basePrice);
+
+      if (!basePrice) {
+        const priceText = (newPriceEl || priceEl).textContent;
+        basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+        card.dataset.basePrice = basePrice;
+      }
+
+      const finalPrice = basePrice + price;
+
+      if (newPriceEl) {
+        newPriceEl.textContent =
+          finalPrice.toFixed(2).replace('.', ',') + ' €';
+      } else {
+        priceEl.textContent =
+          finalPrice.toFixed(2).replace('.', ',') + ' €';
+      }
+
+      if (oldPriceEl) {
+        oldPriceEl.textContent =
+          (basePrice + price).toFixed(2).replace('.', ',') + ' €';
+      }
+    }
+  });
 }
 
 // ========================================================
@@ -2285,10 +2367,6 @@ rollSelectWrappers.forEach(wrapper => {
     dropdown.prepend(li);
   }
 
-  // Устанавливаем значение по умолчанию и корректные data-атрибуты
-btn.firstChild.textContent = defaultTopping + ' ';
-btn.dataset.name = defaultTopping;
-btn.dataset.price = 0; // сырная шапочка без наценки
 
   // Открытие/закрытие списка
   btn.addEventListener('click', (e) => {
@@ -2301,7 +2379,11 @@ dropdown.querySelectorAll('li').forEach(item => {
   item.addEventListener('click', () => {
     const name = item.childNodes[0].textContent.trim();
     const price = parseFloat(item.dataset.price || 0);
-
+    
+if (item.classList.contains('disabled')) {
+  showToast('Временно недоступно', true);
+  return;
+}
     // обновляем кнопку
     btn.firstChild.textContent = name + ' ';
     btn.dataset.price = price;
@@ -2462,7 +2544,9 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleCompactBtn?.classList.add('show');
   }, 600); // кнопка переключения режима
 });
-
+loadToppingPrices().then(() => {
+  setDefaultTopping();
+});
 
 updateCartUI();
 
