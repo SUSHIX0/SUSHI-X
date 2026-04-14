@@ -501,7 +501,7 @@ body {
 
 .select-dropdown {
   position: absolute;
-  top: 110%;
+  top: 100%;
   left: 0;
   right: 0;
   background: rgba(0,0,0,0.5);
@@ -1361,8 +1361,8 @@ header.brand .logo {
   .lang-switcher {
     position: static;
     transform: none;
-    margin-bottom: -10px;
-    margin-top: -10px;
+    margin-bottom: -30px;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
     background: #333;
@@ -1752,4 +1752,8 @@ body.compact {
 .topping-price {
   color: #dedede;
   font-size: 13px;
+}
+
+.select-dropdown li.disabled {
+  opacity: 0.5;
 }
