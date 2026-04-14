@@ -2487,7 +2487,9 @@ document.querySelectorAll('.select-dropdown li').forEach(li => {
     const content = modal.querySelector(".card-modal-content");
 
     content.innerHTML = "";
-    content.appendChild(card.cloneNode(true));
+content.appendChild(card.cloneNode(true));
+
+initCardEvents(content);
 
     // Временно выключаем компактный режим
     document.body.classList.remove("compact");
@@ -2547,6 +2549,73 @@ document.addEventListener('DOMContentLoaded', () => {
 loadToppingPrices().then(() => {
   setDefaultTopping();
 });
+
+
+function initCardEvents(root = document) {
+  const wrappers = root.querySelectorAll('.roll-select-wrapper');
+
+  wrappers.forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const dropdown = wrapper.querySelector('.select-dropdown');
+    const arrow = wrapper.querySelector('.arrow');
+
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+
+      if (arrow) {
+        arrow.style.transform = dropdown.classList.contains('show')
+          ? 'rotate(180deg)'
+          : 'rotate(0deg)';
+      }
+    });
+
+    dropdown.querySelectorAll('li').forEach(item => {
+      item.onclick = (e) => {
+        e.stopPropagation();
+
+        if (item.classList.contains('disabled')) {
+          showToast('Временно недоступно', true);
+          return;
+        }
+
+        const name = item.childNodes[0].textContent.trim();
+        const price = parseFloat(item.dataset.price || 0);
+
+        btn.firstChild.textContent = name + ' ';
+        btn.dataset.name = name;
+        btn.dataset.price = price;
+
+        dropdown.classList.remove('show');
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+
+        const card = wrapper.closest('.card');
+        if (!card) return;
+
+        const priceEl = card.querySelector('.price');
+        const newPriceEl = priceEl?.querySelector('.new-price');
+
+        let basePrice = parseFloat(card.dataset.basePrice);
+
+        if (!basePrice) {
+          basePrice = parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+          card.dataset.basePrice = basePrice;
+        }
+
+        const finalPrice = basePrice + price;
+
+        if (newPriceEl) {
+          newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        } else {
+          priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        }
+      };
+    });
+  });
+}
+
 
 updateCartUI();
 
