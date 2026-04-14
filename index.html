@@ -896,47 +896,6 @@ document.addEventListener('click', (e) => {
   });
 });
 
-async function loadToppingPrices() {
-  try {
-    const res = await fetch(sheetUrl);
-    const csv = await res.text();
-
-    const lines = csv.split('\n').map(l => l.trim()).filter(Boolean);
-
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-
-    const idIndex = headers.indexOf('id');
-    const priceIndex = headers.indexOf('цена');
-
-    const priceMap = {};
-
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-
-      const id = (cols[idIndex] || '').trim().toLowerCase();
-      const price = parseFloat((cols[priceIndex] || '0').replace(',', '.')) || 0;
-
-      if (!id) continue;
-
-      priceMap[id] = price;
-    }
-
-    // 🔥 применяем напрямую (без маппинга)
-    document.querySelectorAll('li[data-id]').forEach(li => {
-      const id = li.dataset.id.trim().toLowerCase();
-
-      if (priceMap[id] !== undefined) {
-        li.dataset.price = priceMap[id];
-      }
-    });
-
-    console.log('✔ Шапочки обновлены из таблицы');
-
-  } catch (err) {
-    console.error('Ошибка загрузки CSV:', err);
-  }
-}
-
 
 (async () => {
   await updateMenuFromSheet();   // ждем загрузку меню
