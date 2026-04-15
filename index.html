@@ -1484,6 +1484,33 @@ async function loadToppingPrices() {
   }
 }
 
+function applyToppingImage(card, toppingId) {
+  const photo = card.querySelector('.photo');
+  if (!photo || !toppingId) return;
+
+  const rollId = card.dataset.id;
+
+  const map = {
+    "запечённый_ролл_нико": {
+      "сырная_шапочка": "Foto/Shushi-19.jpg",
+      "рыбная_шапочка": "Foto/Shushi-22.jpg",
+      "спайси_шапочка": "Foto/Shushi-31.jpg",
+      "шапочка_с_крабом": "Foto/Shushi-4.jpg",
+      "шапочка_с_креветкой": "Foto/Shushi-1.jpg"
+    },
+    "запечённый_ролл_салмон": {
+      "сырная_шапочка": "Foto/Shushi-18.jpg",
+      "рыбная_шапочка": "Foto/Shushi-19.jpg",
+      "спайси_шапочка": "Foto/Shushi-1.jpg",
+      "шапочка_с_крабом": "Foto/Shushi-3.jpg",
+      "шапочка_с_креветкой": "Foto/Shushi-17.jpg"
+    }
+  };
+
+  const img = map?.[rollId]?.[toppingId];
+  if (img) photo.style.backgroundImage = `url('${img}')`;
+}
+
 function setDefaultTopping() {
   document.querySelectorAll('.roll-select-wrapper').forEach(wrapper => {
     const btn = wrapper.querySelector('.select-btn');
@@ -1507,6 +1534,10 @@ function setDefaultTopping() {
 
     const name = found.childNodes[0].textContent.trim();
     const price = parseFloat(found.dataset.price || 0);
+
+if (card) {
+  applyToppingImage(card, found.dataset.id);
+}
 
     // ===== обновляем кнопку =====
     btn.firstChild.textContent = name + ' ';
@@ -2401,31 +2432,7 @@ dropdown.querySelectorAll('li').forEach(item => {
 
     console.log("CARD:", rollId, toppingId);
 
-    const map = {
-      "запечённый_ролл_нико": {
-        "сырная_шапочка": "Foto/Shushi-19.jpg",
-        "рыбная_шапочка": "Foto/Shushi-22.jpg",
-        "спайси_шапочка": "Foto/Shushi-31.jpg",
-        "шапочка_с_крабом": "Foto/Shushi-4.jpg",
-        "шапочка_с_креветкой": "Foto/Shushi-1.jpg"
-      },
-
-      "запечённый_ролл_салмон": {
-        "сырная_шапочка": "Foto/Shushi-18.jpg",
-        "рыбная_шапочка": "Foto/Shushi-19.jpg",
-        "спайси_шапочка": "Foto/Shushi-1.jpg",
-        "шапочка_с_крабом": "Foto/Shushi-3.jpg",
-        "шапочка_с_креветкой": "Foto/Shushi-17.jpg"
-      }
-    };
-
-    if (map?.[rollId]?.[toppingId]) {
-      console.log("IMAGE:", map[rollId][toppingId]);
-
-      photo.style.backgroundImage = `url('${map[rollId][toppingId]}')`;
-    } else {
-      console.log("NO MATCH IN MAP");
-    }
+applyToppingImage(card, item.dataset.id);
 
     dropdown.classList.remove('show');
     if (arrow) arrow.style.transform = 'rotate(0deg)';
@@ -2607,6 +2614,16 @@ loadToppingPrices().then(() => {
   setDefaultTopping();
 });
 
+window.addEventListener('load', () => {
+  document.querySelectorAll('.roll-select-wrapper').forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const card = wrapper.closest('.card');
+
+    if (!card || !btn?.dataset.id) return;
+
+    applyToppingImage(card, btn.dataset.id);
+  });
+});
 
 function initCardEvents(root = document) {
   const wrappers = root.querySelectorAll('.roll-select-wrapper');
@@ -2641,14 +2658,15 @@ function initCardEvents(root = document) {
         const name = item.childNodes[0].textContent.trim();
         const price = parseFloat(item.dataset.price || 0);
 
+        const card = wrapper.closest('.card');
+applyToppingImage(card, item.dataset.id);
+
         btn.firstChild.textContent = name + ' ';
         btn.dataset.name = name;
         btn.dataset.price = price;
 
         dropdown.classList.remove('show');
         if (arrow) arrow.style.transform = 'rotate(0deg)';
-
-        const card = wrapper.closest('.card');
 
         if (!card) return;
 
