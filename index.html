@@ -1407,7 +1407,6 @@ async function loadPromoCodes() {
       if (itemId) promoCodes[code].itemId = itemId;
     }
 
-    console.log("Промокоды загружены:", promoCodes);
   } catch (err) {
     console.error("Ошибка загрузки промокодов:", err);
   }
@@ -1480,10 +1479,8 @@ async function loadToppingPrices() {
       }
     });
 
-    console.log('✔ toppings updated');
-
   } catch (err) {
-    console.error('Ошибка загрузки шапочек:', err);
+    console.error('Ошибка загрузки шапочек:', err)
   }
 }
 
@@ -2376,6 +2373,66 @@ rollSelectWrappers.forEach(wrapper => {
   });
 
 dropdown.querySelectorAll('li').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    console.log("CLICK:", item.dataset.id);
+
+    if (item.classList.contains('disabled')) {
+      showToast('Временно недоступно', true);
+      return;
+    }
+
+    const name = item.childNodes[0].textContent.trim();
+    const price = parseFloat(item.dataset.price || 0);
+
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.name = name;
+    btn.dataset.price = price;
+
+    const card = wrapper.closest('.card');
+    if (!card) return;
+
+    const photo = card.querySelector('.photo');
+    if (!photo) return;
+
+    const rollId = card.dataset.id;
+    const toppingId = item.dataset.id;
+
+    console.log("CARD:", rollId, toppingId);
+
+    const map = {
+      "запечённый_ролл_нико": {
+        "сырная_шапочка": "Foto/Shushi-19.jpg",
+        "рыбная_шапочка": "Foto/Shushi-22.jpg",
+        "спайси_шапочка": "Foto/Shushi-31.jpg",
+        "шапочка_с_крабом": "Foto/Shushi-4.jpg",
+        "шапочка_с_креветкой": "Foto/Shushi-1.jpg"
+      },
+
+      "запечённый_ролл_салмон": {
+        "сырная_шапочка": "Foto/Shushi-18.jpg",
+        "рыбная_шапочка": "Foto/Shushi-19.jpg",
+        "спайси_шапочка": "Foto/Shushi-1.jpg",
+        "шапочка_с_крабом": "Foto/Shushi-3.jpg",
+        "шапочка_с_креветкой": "Foto/Shushi-17.jpg"
+      }
+    };
+
+    if (map?.[rollId]?.[toppingId]) {
+      console.log("IMAGE:", map[rollId][toppingId]);
+
+      photo.style.backgroundImage = `url('${map[rollId][toppingId]}')`;
+    } else {
+      console.log("NO MATCH IN MAP");
+    }
+
+    dropdown.classList.remove('show');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
+  });
+});
+
+dropdown.querySelectorAll('li').forEach(item => {
   item.addEventListener('click', () => {
     const name = item.childNodes[0].textContent.trim();
     const price = parseFloat(item.dataset.price || 0);
@@ -2592,6 +2649,7 @@ function initCardEvents(root = document) {
         if (arrow) arrow.style.transform = 'rotate(0deg)';
 
         const card = wrapper.closest('.card');
+
         if (!card) return;
 
         const priceEl = card.querySelector('.price');
