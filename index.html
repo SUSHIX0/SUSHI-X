@@ -1508,7 +1508,14 @@ function applyToppingImage(card, toppingId) {
   };
 
   const img = map?.[rollId]?.[toppingId];
-  if (img) photo.style.backgroundImage = `url('${img}')`;
+  if (!img) return;
+
+  photo.classList.add('is-fading');
+
+  setTimeout(() => {
+    photo.style.backgroundImage = `url('${img}')`;
+    photo.classList.remove('is-fading');
+  }, 150);
 }
 
 function setDefaultTopping() {
@@ -2407,8 +2414,6 @@ dropdown.querySelectorAll('li').forEach(item => {
   item.addEventListener('click', (e) => {
     e.stopPropagation();
 
-    console.log("CLICK:", item.dataset.id);
-
     if (item.classList.contains('disabled')) {
       showToast('Временно недоступно', true);
       return;
@@ -2429,8 +2434,6 @@ dropdown.querySelectorAll('li').forEach(item => {
 
     const rollId = card.dataset.id;
     const toppingId = item.dataset.id;
-
-    console.log("CARD:", rollId, toppingId);
 
 applyToppingImage(card, item.dataset.id);
 

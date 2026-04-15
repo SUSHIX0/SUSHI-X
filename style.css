@@ -1757,3 +1757,11 @@ body.compact {
 .select-dropdown li.disabled {
   opacity: 0.5;
 }
+
+.photo {
+  transition: opacity 0.25s ease-out;
+}
+
+.photo.is-fading {
+  opacity: 0;
+}
