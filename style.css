@@ -166,8 +166,8 @@ header.brand h1 a:hover {
   position:absolute;
   top:6px;
   right:6px;
-  width:39px;
-  height:39px;
+  width:45px;
+  height:45px;
   background: rgba(0,0,0,0.6);
   border-radius:50%;
   display:flex;
@@ -178,7 +178,7 @@ header.brand h1 a:hover {
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .cart-icon.hidden { display:none; }
-.cart-icon img{width:26px;height:26px;object-fit:contain;}
+.cart-icon img{width:30px;height:30px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
 /* Новый бейдж "Скидка" */
@@ -449,16 +449,11 @@ body {
   box-shadow: 0 4px 10px rgba(255,45,45,0.3);
 }
 
-
-
-
-
-
-
 .roll-select-wrapper {
   position: relative;
   top: 6px;
   width: 260px; /* можно под карточку */
+  z-index: 10;
   margin: 0 auto;
   font-family: 'Arial', sans-serif;
 }
@@ -1764,4 +1759,56 @@ body.compact {
 
 .photo.is-fading {
   opacity: 0;
+}
+
+.card-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Варианты */
+.card-badge.classic {
+  color: #fff;
+  padding: 5px 11px;
+}
+
+.card-badge.popular {
+  color: #ff2d2d;
+  border: 1px solid #ff2d2d;
+}
+
+.card-badge.new {
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+}
+
+body.compact .card-badge {
+  font-size: 0.6rem;
+  padding: 3px 8px;
+  border-radius: 16px;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 767px) {
+  .card-badge {
+    font-size: 0.9rem;
+    padding: 7px 13px;
+    border-radius: 22px;
+    letter-spacing: 0.6px;
+  }
+  .card-badge.classic {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+    border-radius: 22px;
+    letter-spacing: 0.6px;
+  }
 }
