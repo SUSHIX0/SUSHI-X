@@ -1812,3 +1812,7 @@ body.compact .card-badge {
     letter-spacing: 0.6px;
   }
 }
+
+.card:has(.discount-badge) .card-badge {
+  display: none;
+}
