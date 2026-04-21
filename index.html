@@ -494,6 +494,23 @@
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
   <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
+
+<!-- ===== САМОВЫВОЗ ===== -->
+<div id="pickupInfo" style="display:none; margin-top:10px;">
+Самовывоз: Harku Vald, Tiskre küla, Välja 10
+</div>
+
+<div id="pickupMap" style="display:none; margin-top:10px;">
+  <iframe
+    src="https://www.google.com/maps?q=Välja+10,+Tiskre,+76916+Harju+maakond&output=embed"
+    width="100%"
+    height="250"
+    style="border:0; border-radius:12px;"
+    allowfullscreen=""
+    loading="lazy">
+  </iframe>
+</div>
+
   <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату *</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
@@ -2018,17 +2035,32 @@ async function loadBlockedDates() {
 
 function updateDeliveryFields() {
   const method = methodSelect.value?.toLowerCase();
+  const pickupInfo = document.getElementById('pickupInfo');
+  const pickupMap = document.getElementById('pickupMap');
 
   if(method === "доставка" || method === "самовывоз"){
     deliveryFields.style.display = "block";
 
     if(method === "доставка"){
-      deliveryNote.style.display = "block";        
-      deliveryAddress.style.display = "block";     
-    } else { 
-      deliveryNote.style.display = "none";         
-      deliveryAddress.style.display = "none";      
-    }
+  deliveryNote.style.display = "block";        
+  deliveryAddress.style.display = "block";     
+
+  if (pickupInfo) pickupInfo.style.display = "none";
+  if (pickupMap) pickupMap.style.display = "none";
+
+} else if (method === "самовывоз") {
+
+  deliveryNote.style.display = "none";         
+  deliveryAddress.style.display = "none";      
+
+  if (pickupInfo) pickupInfo.style.display = "block";
+  if (pickupMap) pickupMap.style.display = "block";
+
+} else {
+
+  if (pickupInfo) pickupInfo.style.display = "none";
+  if (pickupMap) pickupMap.style.display = "none";
+}
 
     // Сбрасываем дату и время при смене метода
     selectedDate = null;
