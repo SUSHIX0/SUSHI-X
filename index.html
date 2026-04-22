@@ -1284,6 +1284,8 @@ const orderData = {
         total: parseFloat(totalEl.textContent) || 0,
         delivery: parseFloat(deliveryEl.textContent) || 0,
         discount: parseFloat(discountEl.textContent) || 0,
+        rounding: roundingDiff,
+        finalTotal: finalTotal,
         lang: currentLang
     };
 
