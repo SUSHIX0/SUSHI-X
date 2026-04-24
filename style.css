@@ -1817,3 +1817,42 @@ body.compact .card-badge {
   background-size: var(--zoom, 100%);
   transition: background-size 0.3s ease;
 }
+
+.footer-bottom-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* расстояние между текстом и кнопкой */
+  flex-wrap: wrap;
+}
+
+.footer-copy {
+  color: #b9b9b9;
+  font-size: 0.9rem;
+}
+
+/* кнопка правовой информации */
+.legal-btn {
+  color: #ff2d2d;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,45,45,0.3);
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.legal-btn:hover {
+  background: rgba(255,45,45,0.12);
+}
+
+/* мобильная версия */
+@media (max-width: 767px) {
+  .footer-bottom-inner {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+    text-align: center;
+  }
+}
