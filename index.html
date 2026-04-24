@@ -6,6 +6,7 @@
 <title>SUSHI メ</title>
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.gstatic.com">
+<link rel="icon" type="image/png" href="/Foto/SushiX_Logo_2.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap" rel="stylesheet">
 
@@ -748,7 +749,7 @@ document.body.addEventListener('click', function(e) {
 
 updateCartUI();
 
-  } catch (e) { console.error('Ошибка загрузки меню', e); }
+  } catch (e) { }
 }
 
 // ===== Специальные предложения =====
@@ -1381,7 +1382,7 @@ async function loadPromoCodes() {
     }
 
   } catch (err) {
-    console.error("Ошибка загрузки промокодов:", err);
+    console.error("", err);
   }
 }
 
@@ -1453,7 +1454,7 @@ async function loadToppingPrices() {
     });
 
   } catch (err) {
-    console.error('Ошибка загрузки шапочек:', err)
+    console.error('', err)
   }
 }
 
@@ -1874,7 +1875,7 @@ async function loadMinHours() {
             if (!isNaN(hours)) minHoursRanges.push({ maxItems, hours });
         }
     } catch (err) {
-        console.error("Ошибка загрузки мин. часов из таблицы", err);
+        console.error("", err);
     }
 }
 
@@ -1923,7 +1924,7 @@ async function loadDeliveryTimes() {
 
         updateDeliveryTimes(); // первый рендер
     } catch (err) {
-        console.error("Ошибка загрузки времени доставки", err);
+        console.error("", err);
     }
 }
 
@@ -2029,7 +2030,7 @@ async function loadBlockedDates() {
       if(weekend && weekend.trim().toUpperCase() === "YES") blockedWeekend = true;
     }
   } catch(err) {
-    console.error("Ошибка загрузки Google Sheet", err);
+    console.error("", err);
   }
 }
 

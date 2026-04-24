@@ -633,15 +633,12 @@ document.querySelectorAll('.cart-icon').forEach(icon => {
   // иначе ничего не делаем, чтобы надпись не появлялась
 };
 
-
     // Специальные предложения
     updateSpecialOffersSection();
 
 updateCartUI();
 
-
-
-  } catch (e) { console.error('Ошибка загрузки меню', e); }
+  } catch (e) { }
 }
 
 // ===== Специальные предложения =====
@@ -674,7 +671,6 @@ specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
     addToCart(card); // теперь товары добавляются в корзину с учётом количества
   }
 });
-
 
   } else {
     specialSection.style.display = 'none';

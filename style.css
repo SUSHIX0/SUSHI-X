@@ -167,8 +167,8 @@ header.brand h1 a:hover {
   position:absolute;
   top:6px;
   right:6px;
-  width:45px;
-  height:45px;
+  width:50px;
+  height:50px;
   background: rgba(0,0,0,0.6);
   border-radius:50%;
   display:flex;
@@ -179,7 +179,7 @@ header.brand h1 a:hover {
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .cart-icon.hidden { display:none; }
-.cart-icon img{width:30px;height:30px;object-fit:contain;}
+.cart-icon img{width:38px;height:38px;object-fit:contain;}
 .cart-icon:hover{transform: scale(1.2);}
 
 /* Новый бейдж "Скидка" */
@@ -234,21 +234,21 @@ header.brand h1 a:hover {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: rgba(255,43,43,0.45);
+  background: rgba(255,43,43,0.55);
   color: #fff;
   padding: 14px 20px;
   border-radius: 50px;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 100;
+  font-size: 1.4rem;
   cursor: pointer;
   z-index: 1000;
   box-shadow: 0 6px 16px rgba(0,0,0,0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.floating-cart img { width: 30px; height: 30px; }
+.floating-cart img { width: 36px; height: 36px; margin-left: -5px; }
 .floating-cart:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.5);}
 
 /* Адаптив для телефонов */
@@ -531,29 +531,6 @@ body {
   color: #ff2d2d;
 }
 
-
-
-
-
-/* Плавающая корзина */
-.floating-cart {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(255,43,43,0.55);
-  color: #fff;
-  padding: 14px 20px;
-  border-radius: 50px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  z-index: 1000;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
 .floating-cart:hover { 
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.18); /* эффект поднятия */
@@ -1812,8 +1789,25 @@ body.compact .card-badge {
     border-radius: 22px;
     letter-spacing: 0.6px;
   }
+  .cart-icon img{width:33px;height:33px;object-fit:contain;}
+  .cart-icon{
+  width:45px;
+  height:45px;
+}
+.floating-cart {
+  font-weight: 700;
+  font-size: 1rem;
+  gap: 12px;
+}
+.floating-cart img { width: 30px; height: 30px; margin-left: -7px;}
 }
 
 .card:has(.discount-badge) .card-badge {
   display: none;
+}
+
+.card .title .name {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
