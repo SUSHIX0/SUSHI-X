@@ -2684,6 +2684,56 @@ document.querySelectorAll('.card').forEach(card => {
   });
 });
 
+let maxWidth = 0;
+
+function findMaxWidth() {
+  maxWidth = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const w = card.offsetWidth;
+    if (w > maxWidth) maxWidth = w;
+  });
+}
+
+// 10 уровней до 110%
+function getZoom(width) {
+  const ratio = maxWidth / width;
+
+  let t = (ratio - 1);
+  t = Math.max(0, Math.min(t, 1));
+
+  const step = Math.round(t * 9);
+
+  const zoomLevels = [
+    100, 101, 102, 103, 104,
+    105, 106, 107, 108, 110
+  ];
+
+  return zoomLevels[step];
+}
+
+function updateZoom() {
+  document.querySelectorAll('.card').forEach(card => {
+    const width = card.offsetWidth;
+    const zoom = getZoom(width);
+
+    const photo = card.querySelector('.photo');
+    if (photo) {
+      photo.style.setProperty('--zoom', zoom + '%');
+    }
+  });
+}
+
+function refresh() {
+  findMaxWidth();
+  updateZoom();
+}
+
+window.addEventListener('load', refresh);
+window.addEventListener('resize', updateZoom);
+
+const observer = new ResizeObserver(updateZoom);
+document.querySelectorAll('.card').forEach(card => observer.observe(card));
+
 updateCartUI();
 
 
