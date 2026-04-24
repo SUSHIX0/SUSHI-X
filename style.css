@@ -1811,3 +1811,9 @@ body.compact .card-badge {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
+
+.card .photo {
+  background-position: center;
+  background-size: var(--zoom, 100%);
+  transition: background-size 0.3s ease;
+}

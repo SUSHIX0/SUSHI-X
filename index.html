@@ -98,7 +98,7 @@
     <h2 class="section-title">Урамаки</h2>
     <div class="grid">
       <article class="card" data-badge="classic" data-id="филадельфия">
-        <div class="photo" style="background-image:url('Foto/Shushi-1.jpg');">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-1.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
@@ -110,7 +110,7 @@
       </article>
 
       <article class="card" data-badge="popular" data-id="снежный_краб">
-        <div class="photo" style="background-image:url('Foto/ShushiX-2.jpg');">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-2.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
@@ -122,7 +122,7 @@
       </article>
 
       <article class="card" data-id="калифорния">
-        <div class="photo" style="background-image:url('Foto/SushiX-3.jpg');">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-3.jpg');">
           <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
@@ -2683,6 +2683,56 @@ document.querySelectorAll('.card').forEach(card => {
     card.appendChild(badge);
   });
 });
+
+let maxWidth = 0;
+
+function findMaxWidth() {
+  maxWidth = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const w = card.offsetWidth;
+    if (w > maxWidth) maxWidth = w;
+  });
+}
+
+// 10 уровней до 110%
+function getZoom(width) {
+  const ratio = maxWidth / width;
+
+  let t = (ratio - 1);
+  t = Math.max(0, Math.min(t, 1));
+
+  const step = Math.round(t * 9);
+
+  const zoomLevels = [
+    100, 101, 102, 103, 104,
+    105, 106, 107, 108, 110
+  ];
+
+  return zoomLevels[step];
+}
+
+function updateZoom() {
+  document.querySelectorAll('.card').forEach(card => {
+    const width = card.offsetWidth;
+    const zoom = getZoom(width);
+
+    const photo = card.querySelector('.photo');
+    if (photo) {
+      photo.style.setProperty('--zoom', zoom + '%');
+    }
+  });
+}
+
+function refresh() {
+  findMaxWidth();
+  updateZoom();
+}
+
+window.addEventListener('load', refresh);
+window.addEventListener('resize', updateZoom);
+
+const observer = new ResizeObserver(updateZoom);
+document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
 updateCartUI();
 
