@@ -46,7 +46,7 @@ header.brand h1.logo {
 header.brand h1 .jp {
   font-family: "Noto Sans JP"; /* Японский шрифт */
   font-weight: 700;
-  font-size: 7.525rem;           /* Размер японского символа */
+  font-size: 7.55rem;           /* Размер японского символа */
   color: #ff0000;              /* Цвет акцента */
   text-shadow: 0 0 10px rgba(255,0,0,0.4);
 }
@@ -1855,4 +1855,13 @@ body.compact .card-badge {
     justify-content: center;
     text-align: center;
   }
+}
+
+@media (max-width: 625px) {
+  header.brand h1.logo {
+    font-size: 5.2rem;
+}
+header.brand h1 .jp {
+    font-size: 5.6rem;
+}
 }
