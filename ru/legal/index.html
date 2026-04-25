@@ -29,7 +29,14 @@ body{
 html, body {
   margin: 0;
   padding: 0;
+  min-height: 100dvh;
   background: linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
+}
+
+/* покрываем safe-area */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ===== LOGO ===== */
