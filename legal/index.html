@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Õiguslik teave | SushiX OÜ</title>
+<link rel="icon" type="image/png" href="./SushiX_Logo_2.png">
+
+<style>
+:root{
+  --bg:#0f0f10;
+  --accent:#ff2d2d;
+  --text:#eaeaea;
+}
+
+.muted{
+  color: #b9b9b9;
+}
+
+body{
+  margin:0;
+  font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Arial;
+  background:linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
+  color:var(--text);
+}
+
+/* ===== LOGO ===== */
+header.brand{
+  display:flex;
+  justify-content:center;
+  margin-bottom:40px;
+}
+
+header.brand h1.logo{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:5rem;
+  gap:8px;
+  margin:0;
+}
+
+header.brand h1.logo a{
+  text-decoration:none;
+  color:inherit;
+}
+
+header.brand .jp{
+  font-family:"Noto Sans JP";
+  color:var(--accent);
+}
+
+/* ===== LEGAL BLOCKS ===== */
+.section{
+  margin-bottom:35px;
+  padding:28px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,45,45,0.8);
+  max-width:1100px;
+  margin:0 auto;
+  padding:40px 20px;
+      margin-bottom: 35px;
+    padding: 28px;
+}
+
+/* жирные заголовки пунктов */
+.legal-title{
+  font-weight:800;
+  font-size:1.15rem;
+  color:#ffffff;
+}
+
+.section p, .section li{
+  color:var(--muted);
+  line-height:1.7;
+  font-size:0.98rem;
+}
+
+ul{
+  margin:8px 0 0 20px;
+  color:var(--muted);
+}
+
+/* разделение внутри блока */
+.block{
+  margin-bottom:22px;
+  padding-bottom:18px;
+  border-bottom:1px dashed rgba(255,255,255,0.8);
+}
+
+.block:last-child{
+  border-bottom:none;
+}
+
+/* ===== FOOTER ===== */
+
+.site-footer {
+  width: 100%;
+  box-sizing: border-box;
+  color: #ffffff;
+  font-family: "Montserrat", "Noto Sans JP", Arial, sans-serif;
+  font-weight: 300;
+}
+
+/* верхняя разделительная линия */
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ff2d2d;
+}
+
+/* основной контейнер */
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--maxw, 1800px);
+  margin: 0 auto;
+  padding: 20px 30px;
+  box-sizing: border-box;
+}
+
+/* колонки */
+.footer-left,
+.footer-center,
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer-left {
+  font-weight: 500;
+}
+
+/* SushiX OÜ */
+.footer-left p {
+  margin: 0;
+  color: #ff2d2d;
+}
+
+/* списки */
+.contacts-list,
+.social-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* ВАЖНО: без лишнего отступа снизу */
+}
+
+/* заголовки Телефон / Email */
+.contacts-list li strong {
+  color: #ffffff;
+  font-weight: 300;
+}
+
+/* ссылки и данные */
+.contacts-list a,
+.social-list a {
+  color: #ff2d2d;
+  text-decoration: none;
+}
+
+.contacts-list a:hover,
+.social-list a:hover {
+  text-decoration: underline;
+}
+
+/* нижняя строка */
+.footer-bottom {
+  border-top: 1px solid #ff2d2d;
+  text-align: center;
+  padding: 10px 30px;
+  font-size: 0.9rem;
+  color: #b9b9b9;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .footer-left,
+  .footer-center,
+  .footer-right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .contacts-list li,
+  .social-list li {
+    margin-bottom: 8px;
+  }
+
+  .footer-title {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+  }
+}
+
+/* mobile */
+@media(max-width:600px){
+  header.brand h1.logo{
+    font-size:3.5rem;
+  }
+}
+
+header.brand {
+    position: relative;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header.brand {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+header.brand h1 .jp {
+    font-family: "Noto Sans JP";
+    font-weight: 700;
+    font-size: 7.525rem;
+    color: #ff0000;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
+header.brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+
+.logo-img {
+  height: 110px; /* регулируешь размер */
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
+}
+
+.site-logo {
+  height: 90px;   /* подгони под свой сайт */
+  width: auto;
+  display: block;
+}
+
+.legal-main-title{
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: var(--accent); /* фирменный красный */
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.site-logo{
+  height: 90px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<!-- LOGO -->
+<h1 class="logo">
+  <a href="https://sushix0.github.io/SUSHI-X">
+    <img src="Logo.png" alt="SushiX logo" class="site-logo">
+  </a>
+</h1>
+
+<!-- TERMS -->
+<div class="section">
+
+  <div class="block">
+    <div class="legal-main-title">KASUTUSTINGIMUSED</div>
+    <div class="muted">
+    <p><b>Jõustumise kuupäev: kehtiv versioon on avaldatud SushiX OÜ veebilehel</p>
+      </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">1. Üldsätted</div>
+    <div class="muted">
+      <p>Käesolevad tingimused reguleerivad SushiX OÜ, Eesti Vabariigis registreeritud ettevõtte, poolt pakutavate teenuste kasutamist.</p>
+      <p>Ettevõte tegeleb valmistoidu (sh sushi, rullid ja nendega seotud tooted) müügi ja kohaletoimetamisega.</p>
+      <p>Tellimuse esitamisega kinnitab kasutaja, et on käesolevate tingimustega tutvunud ja nendega nõustub.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">2. Tellimuse vormistamine ja kinnitamine</div>
+    <div class="muted">
+      <p>Tellimus loetakse kinnitatuks pärast elektroonilise kviitungi saatmist kliendi poolt määratud e-posti aadressile.</p>
+      <p>Elektrooniline kviitung saadetakse automaatselt mõne minuti jooksul pärast tellimuse esitamist. Mõnel juhul võib kirja kohaletoimetamine viibida või see võib olla märgitud e-posti teenuse poolt rämpspostiks.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">3. Hinnad ja maksmine</div>
+    <div class="muted">
+    <p>Kõik hinnad on esitatud eurodes (EUR) ja sisaldavad kohaldatavaid makse, kui ei ole märgitud teisiti.</p>
+    <p>Saadaval olevad makseviisid:</p>
+    <ul>
+      <li>veebimakse Stripe’i kaudu</li>
+      <li>sularahas kohaletoimetamisel (kui saadaval)</li>
+    </ul>
+    <p>Stripe’i kaudu maksmisel toimub raha debiteerimine tellimuse kinnitamise hetkel.</p>
+    <p>Ettevõte ei säilita ega töötle pangakaardi andmeid. Kõik maksed töödeldakse sertifitseeritud makseteenuse pakkuja Stripe’i poolt.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">4. Kohaletoimetamine ja järeletulemine</div>
+    <div class="muted">
+      <p>Kohaletoimetamine toimub ainult Harku valla Tiskre küla piires (Eesti).</p>
+      <p>Võimalik on ka järeletulemine.</p>
+      <p>Kliendi poolt valitud kohaletoimetamise või järeletulemise aeg on ligikaudne ajavahemik ning võib muutuda sõltuvalt operatiivsetest, liiklus- või muudest teguritest.</p>
+      <p>Ettevõte ei garanteeri täpset kohaletoimetamise aega.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">5. Tellimuse muutmine</div>
+    <div class="muted">
+      <p>Kui mõned tooted puuduvad, on Ettevõttel õigus:</p>
+      <ul>
+        <li>pakkuda asendust sarnase tootega või</li>
+        <li>tagastada puuduva toote maksumus</li>
+      </ul>
+      <p>Mõnel juhul võidakse pakkuda kompensatsioonikoodi.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">6. Viivitused</div>
+    <div class="muted">
+      <p>Kui kohaletoimetamine või järeletulemine hilineb rohkem kui 10 minutit, võib Ettevõte pakkuda kompensatsioonikoodi.</p>
+      <p>Kompensatsiooni pakkumine ei tähenda vastutuse tunnistamist.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">7. Tellimuse tühistamine</div>
+    <div class="muted">
+      <p>Tellimust saab tühistada ainult enne selle valmistamise algust.</p>
+      <p>Ettevõttel on õigus tühistamisest keelduda.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">8. Vastutus</div>
+    <div class="muted">
+      <p>Kohaldatava õiguse piires ei vastuta Ettevõte kaudsete, juhuslike ega kaudsete kahjude eest, mis on seotud teenuse kasutamisega.</p>
+      <p>Käesolevad sätted ei piira vastutust, mida ei saa välistada Eesti või Euroopa Liidu seaduste alusel.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">9. Tingimuste muutmine</div>
+    <div class="muted">
+      <p>Ettevõttel on õigus igal ajal käesolevaid tingimusi muuta.</p>
+      <p>Kehtiv versioon on alati veebilehel saadaval ja jõustub avaldamise hetkest.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- PRIVACY -->
+<div class="section">
+
+  <div class="legal-main-title">PRIVAATSUSPOLIITIKA (GDPR)</div>
+
+<div class="block">
+    <div class="legal-title">1. Andmetöötleja</div>
+    <div class="muted">
+      <p>Isikuandmete vastutav töötleja on SushiX OÜ, kes tegutseb kooskõlas määrusega (EL) 2016/679 (GDPR) ja Eesti seadustega.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">2. Töödeldavad andmed</div>
+    <div class="muted">
+      <p>Võime töödelda järgmisi isikuandmeid:</p>
+      <ul>
+        <li>nimi</li>
+        <li>e-post</li>
+        <li>telefoninumber</li>
+      <li>tarneaadress (kui kohaldatav)</li>
+      <li>tellimuse kommentaarid</li>
+    </ul>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">3. Andmete töötlemise eesmärgid</div>
+    <div class="muted">
+      <p>Isikuandmeid kasutatakse üksnes:</p>
+      <ul>
+      <li>tellimuste töötlemiseks ja täitmiseks</li>
+      <li>kohaletoimetamise või järeletulemise korraldamiseks</li>
+      <li>kliendiga suhtlemiseks tellimusega seotud küsimustes</li>
+      <li>õiguslike kohustuste täitmiseks</li>
+    </ul>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">4. Õiguslik alus</div>
+    <div class="muted">
+    <p>Andmete töötlemine toimub järgmistel alustel:</p>
+    <ul>
+      <li>lepingu täitmine (GDPR art 6(1)(b))</li>
+      <li>õiguslikud kohustused (GDPR art 6(1)(c))</li>
+      <li>õigustatud huvi (GDPR art 6(1)(f)), vajaduse korral</li>
+    </ul>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">5. Makseandmed</div>
+    <div class="muted">
+      <p>Makseid töödeldakse Stripe’i kaudu, kes on iseseisev makseandmete vastutav töötleja.</p>
+      <p>Ettevõttel puudub juurdepääs täielikele pangakaardi andmetele ning neid ei säilitata.</p>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">6. Andmete edastamine</div>
+    <div class="muted">
+    <p>Isikuandmeid võidakse edastada:</p>
+    <ul>
+      <li>makseteenuse pakkujale Stripe</li>
+      <li>sisemistele tellimuste töötlemise süsteemidele</li>
+      <li>teavitussüsteemidele (e-post / SMS / sõnumirakendused)</li>
+    </ul>
+    <p>Andmeid ei müüda ega kasutata kolmandate isikute poolt turunduslikel eesmärkidel.</p>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">7. Andmete säilitamine</div>
+    <div class="muted">
+    <p>Isikuandmeid säilitatakse ainult nii kaua, kui see on vajalik:</p>
+    <ul>
+      <li>tellimuse täitmiseks</li>
+      <li>maksu- ja raamatupidamisnõuete täitmiseks</li>
+      <li>võimalike vaidluste lahendamiseks</li>
+    </ul>
+    </div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">8. Andmete turvalisus</div>
+    <div class="muted">
+    <p>Ettevõte rakendab mõistlikke tehnilisi ja organisatsioonilisi meetmeid isikuandmete kaitsmiseks volitamata juurdepääsu, muutmise, kadumise või hävimise eest.</p>
+  </div>
+  </div>
+</div>
+
+<!-- REFUND -->
+<div class="section">
+
+  <div class="legal-main-title">TAGASTUS- JA TÜHISTAMISPOLIITIKA</div>
+
+  <div class="block">
+    <div class="legal-title">1. Tellimuse tühistamine</div>
+    <div class="muted">
+    <p>Tellimust saab tühistada ainult enne selle valmistamise algust.</p>
+    <p>Kui valmistamine on alanud või tooted on juba ostetud, ei pruugi tühistamine olla võimalik.</p>
+</div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">2. Tagasimaksed</div>
+    <div class="muted">
+    <p>Tagasimaksed tehakse järgmistel juhtudel:</p>
+    <ul>
+      <li>tellimust ei ole valmistatud</li>
+      <li>viga Ettevõtte poolt</li>
+      </ul>
+    <p>Tagasimakse tehakse Stripe’i kaudu või algse makseviisi kaudu.</p>
+</div>
+  </div>
+
+<div class="block">
+    <div class="legal-title">3. Osaline tagasimakse</div>
+    <div class="muted">
+    <p>Kui mõned tooted puuduvad, on võimalik:</p>
+    <ul>
+      <li>osaline tagasimakse või</li>
+      <li>asendamine sarnase tootega</li>
+    </ul>
+</div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">4. Kompensatsioon</div>
+    <div class="muted">
+    <p>Ettevõte võib omal äranägemisel pakkuda kompensatsioonikoodi viivituste, vigade või muude teenusega seotud probleemide korral.</p>
+    <p>Selline kompensatsioon on vabatahtlik ega tähenda vastutuse tunnistamist.</p>
+</div>
+  </div>
+
+  <div class="block">
+    <div class="legal-title">5. Tagasimaksevaidlused (chargeback)</div>
+    <div class="muted">
+    <p>Põhjendamatu tagasimaksevaidluse algatamine ilma eelnevalt Ettevõttega ühendust võtmata võib kaasa tuua piirangud edasiste tellimuste tegemisel.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer" id="contacts">
+  <div class="footer-divider"></div>
+
+  <div class="footer-content">
+    <div class="footer-left">
+      <p><strong>SushiX OÜ</strong></p>
+    </div>
+
+    <div class="footer-center">
+      <ul class="contacts-list">
+        <!-- <li>Telefon: <a href="tel:+1234567890">+1 234 567 890</a></li> -->
+        <li style="font-weight: 500;">Email: <a style="font-weight: 400;" href="mailto:info@sushix.ee">sushix.info@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-right">
+      <ul class="social-list" style="font-weight: 400;">
+        <li><a href="https://www.instagram.com/sushix.eesti" target="_blank">Instagram</a></li>
+        <li><a href="https://www.facebook.com/sushix.ee" target="_blank">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+
+<div class="footer-bottom">
+  <div class="footer-bottom-inner">
+    <span class="footer-copy" style="font-weight: 500;">© 2026 SushiX. Kõik õigused kaitstud.</span>
+  </div>
+</div>
+</footer>
+
+</div>
+
+</body>
+</html>
