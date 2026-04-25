@@ -35,12 +35,11 @@ body {
 /* Логотип */
 .brand {
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  opacity: 0;
-  animation: logoFadeIn 1s ease forwards;
-  animation-delay: 0.2s;
+  width: 100%;
+  text-align: center;
 }
 
 .logo {
@@ -133,6 +132,9 @@ p { color: var(--muted); margin-bottom: 30px; line-height: 1.5; }
 /* Адаптив */
 @media (max-width: 480px) {
   .cancel-container { padding: 30px 20px; }
+}
+
+@media (max-width: 330px) {
   .logo { font-size: 2.5rem; }
   .logo .jp { font-size: 2.7rem; }
 }
