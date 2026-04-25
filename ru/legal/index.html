@@ -20,10 +20,24 @@
 body{
   margin:0;
   font-family:"Montserrat","Noto Sans JP",system-ui,-apple-system,Arial;
-  background:linear-gradient(180deg,#0b0b0c 0%, #111214 100%);
+  background:linear-gradient(180deg, #0b0b0c 0%, #111214 100%);
   color:var(--text);
   height: 100%;
   overscroll-behavior: none;
+}
+
+html {
+  height: 100%;
+  background: #0b0b0c;
+}
+
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  background: linear-gradient(180deg, #0b0b0c 0%, #111214 100%);
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
 }
 
 /* ===== LOGO ===== */
@@ -286,7 +300,7 @@ header.brand {
 <!-- LOGO -->
 <h1 class="logo">
   <a href="https://sushix0.github.io/SUSHI-X">
-    <img src="Logo.png" alt="SushiX logo" class="site-logo">
+    <img src="LogoWithoutBG.png" alt="SushiX logo" class="site-logo">
   </a>
 </h1>
 
