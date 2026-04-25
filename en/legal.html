@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Legal information | SushiX OÜ</title>
+<title>Legal Information | SushiX OÜ</title>
 <link rel="icon" type="image/png" href="./Foto/SushiX_Logo_2.png">
 
 <style>
@@ -11,7 +11,10 @@
   --bg:#0f0f10;
   --accent:#ff2d2d;
   --text:#eaeaea;
-  --muted:#b9b9b9;
+}
+
+.muted{
+  color: #b9b9b9;
 }
 
 body{
@@ -53,7 +56,7 @@ header.brand .jp{
   padding:28px;
   border-radius:14px;
   background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,45,45,0.15);
+  border:1px solid rgba(255,45,45,0.8);
   max-width:1100px;
   margin:0 auto;
   padding:40px 20px;
@@ -83,7 +86,7 @@ ul{
 .block{
   margin-bottom:22px;
   padding-bottom:18px;
-  border-bottom:1px dashed rgba(255,255,255,0.08);
+  border-bottom:1px dashed rgba(255,255,255,0.8);
 }
 
 .block:last-child{
@@ -126,6 +129,10 @@ ul{
   flex-direction: column;
   justify-content: center;
   text-align: center;
+}
+
+.footer-left {
+  font-weight: 500;
 }
 
 /* SushiX OÜ */
@@ -286,74 +293,94 @@ header.brand {
 
   <div class="block">
     <div class="legal-main-title">TERMS OF USE</div>
-    <p><b>Effective date: the current version is available on the SushiX OÜ website</b></p>
+    <div class="muted">
+    <p><b>Effective date: the current version is published on the SushiX OÜ website</p>
+      </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">1. General provisions</div>
-    <p>These Terms govern the use of services provided by SushiX OÜ, registered in the Republic of Estonia.</p>
-    <p>The company operates in the sale and delivery of ready-made meals (including sushi, rolls, and related products).</p>
-    <p>By placing an order, the user confirms that they have read and agree to these Terms.</p>
+    <div class="legal-title">1. General Provisions</div>
+    <div class="muted">
+      <p>These Terms govern the use of services provided by SushiX OÜ, a company registered in the Republic of Estonia.</p>
+      <p>The Company carries out activities related to the sale and delivery of ready-made food (including sushi, rolls, and related products).</p>
+      <p>By placing an order, the user confirms that they have read and agree to these Terms.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">2. Order placement and confirmation</div>
-    <p>An order is considered confirmed after an electronic receipt is sent to the client’s specified email address.</p>
-    <p>The electronic receipt is sent automatically within a few minutes after placing the order. In certain cases, delivery of the email may be delayed or the message may be classified by the email service as “spam”.</p>
+    <div class="legal-title">2. Order Placement and Confirmation</div>
+    <div class="muted">
+      <p>An order is considered confirmed after an electronic receipt has been sent to the customer’s specified email address.</p>
+      <p>The electronic receipt is sent automatically within a few minutes after placing the order. In some cases, email delivery may be delayed or classified as “spam” by the email service.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">3. Prices and payment</div>
-    <p>All prices are listed in euros (EUR) and include applicable taxes unless otherwise stated.</p>
+    <div class="legal-title">3. Prices and Payment</div>
+    <div class="muted">
+    <p>All prices are indicated in euros (EUR) and include applicable taxes unless stated otherwise.</p>
     <p>Available payment methods:</p>
     <ul>
       <li>online payment via Stripe</li>
       <li>cash on delivery (if available)</li>
     </ul>
     <p>When paying via Stripe, funds are charged at the moment the order is confirmed.</p>
-    <p>The company does not store or process bank card data. All payments are processed by the certified payment provider Stripe.</p>
+    <p>The Company does not store or process bank card data. All payments are processed by the certified payment provider Stripe.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">4. Delivery and pickup</div>
-    <p>Delivery is carried out exclusively within Harku Parish, village of Tiskre (Estonia).</p>
-    <p>Pickup is also available.</p>
-    <p>The delivery or pickup time selected by the client is an estimated time window and may change depending on operational, traffic, and other factors.</p>
-    <p>The company does not guarantee an exact delivery time.</p>
+    <div class="legal-title">4. Delivery and Pickup</div>
+    <div class="muted">
+      <p>Delivery is carried out exclusively within Harku vald, Tiskre village (Estonia).</p>
+      <p>Pickup is also available.</p>
+      <p>The delivery or pickup time selected by the customer is an estimated time interval and may change depending on operational, traffic, or other factors.</p>
+      <p>The Company does not guarantee an exact delivery time.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">5. Order changes</div>
-    <p>In case certain items are unavailable, the Company has the right to:</p>
-    <ul>
-      <li>offer a replacement for a similar product, or</li>
-      <li>refund the cost of the unavailable item</li>
-    </ul>
-    <p>In certain cases, a compensation promo code may be provided.</p>
+    <div class="legal-title">5. Order Changes</div>
+    <div class="muted">
+      <p>In case certain items are unavailable, the Company has the right to:</p>
+      <ul>
+        <li>offer a replacement with a similar product, or</li>
+        <li>refund the cost of the unavailable item</li>
+      </ul>
+      <p>In some cases, a compensation promo code may be provided.</p>
+    </div>
   </div>
 
   <div class="block">
     <div class="legal-title">6. Delays</div>
-    <p>In case of a delay of more than 15 minutes for delivery or more than 10 minutes for pickup, the company may provide a compensation promo code.</p>
-    <p>The provision of compensation does not constitute an admission of liability.</p>
+    <div class="muted">
+      <p>In case of a delay exceeding 10 minutes for delivery or pickup, the Company may provide a compensation promo code.</p>
+      <p>Providing compensation does not constitute an admission of liability.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">7. Order cancellation</div>
-    <p>An order may be cancelled only before its preparation has begun.</p>
-    <p>The company has the right to refuse cancellation if the products have already been purchased or preparation of the order has started.</p>
+    <div class="legal-title">7. Order Cancellation</div>
+    <div class="muted">
+      <p>An order can only be cancelled before its preparation has started.</p>
+      <p>The Company reserves the right to refuse cancellation.</p>
+    </div>
   </div>
 
   <div class="block">
     <div class="legal-title">8. Liability</div>
-    <p>To the extent permitted by applicable law, the Company shall not be liable for indirect, incidental, or consequential damages related to the use of the service.</p>
-    <p>These provisions do not limit liability that cannot be excluded under the laws of Estonia or the European Union.</p>
+    <div class="muted">
+      <p>To the extent permitted by applicable law, the Company is not liable for indirect, incidental, or consequential damages related to the use of the service.</p>
+      <p>These provisions do not limit liability that cannot be excluded under the laws of Estonia or the European Union.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">9. Changes to terms</div>
-    <p>The Company reserves the right to change these Terms at any time.</p>
-    <p>The current version is always available on the website and becomes effective upon publication.</p>
+    <div class="legal-title">9. Changes to Terms</div>
+    <div class="muted">
+      <p>The Company reserves the right to change these Terms at any time.</p>
+      <p>The current version is always available on the website and comes into force upon publication.</p>
+    </div>
   </div>
 
 </div>
@@ -364,73 +391,89 @@ header.brand {
   <div class="legal-main-title">PRIVACY POLICY (GDPR)</div>
 
 <div class="block">
-    <div class="legal-title">1. Data controller</div>
-    <p>The data controller is SushiX OÜ, operating in accordance with Regulation (EU) 2016/679 (GDPR) and the laws of Estonia.</p>
+    <div class="legal-title">1. Data Controller</div>
+    <div class="muted">
+      <p>The data controller is SushiX OÜ, operating in accordance with Regulation (EU) 2016/679 (GDPR) and the laws of Estonia.</p>
+    </div>
   </div>
 
   <div class="block">
-    <div class="legal-title">2. What data is processed</div>
-    <p>We may process the following personal data:</p>
-    <ul>
-      <li>name</li>
-      <li>email</li>
-      <li>phone number</li>
+    <div class="legal-title">2. Data We Process</div>
+    <div class="muted">
+      <p>We may process the following personal data:</p>
+      <ul>
+        <li>name</li>
+        <li>email</li>
+        <li>phone number</li>
       <li>delivery address (if applicable)</li>
       <li>order comments</li>
     </ul>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">3. Purpose of data processing</div>
-    <p>Personal data is used exclusively for:</p>
-    <ul>
+    <div class="legal-title">3. Purposes of Data Processing</div>
+    <div class="muted">
+      <p>Personal data is used exclusively for:</p>
+      <ul>
       <li>processing and fulfilling orders</li>
       <li>organizing delivery or pickup</li>
-      <li>communicating with the client regarding the order</li>
+      <li>communication with the customer regarding the order</li>
       <li>compliance with legal obligations</li>
     </ul>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">4. Legal basis</div>
+    <div class="legal-title">4. Legal Basis</div>
+    <div class="muted">
     <p>Data processing is carried out on the basis of:</p>
     <ul>
       <li>performance of a contract (Art. 6(1)(b) GDPR)</li>
       <li>legal obligations (Art. 6(1)(c) GDPR)</li>
-      <li>legitimate interest (Art. 6(1)(f) GDPR), where applicable</li>
+      <li>legitimate interest (Art. 6(1)(f) GDPR), where necessary</li>
     </ul>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">5. Payment data</div>
-    <p>Payments are processed via Stripe, which is an independent payment data controller.</p>
-    <p>The company does not have access to full bank card data and does not store it.</p>
+    <div class="legal-title">5. Payment Data</div>
+    <div class="muted">
+      <p>Payments are processed via Stripe, which is an independent payment data controller.</p>
+      <p>The Company does not have access to full bank card details and does not store them.</p>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">6. Data sharing</div>
+    <div class="legal-title">6. Data Sharing</div>
+    <div class="muted">
     <p>Personal data may be shared with:</p>
     <ul>
-      <li>payment provider Stripe</li>
+      <li>the payment provider Stripe</li>
       <li>internal order processing systems</li>
-      <li>notification systems (email / SMS / messaging services)</li>
+      <li>notification systems (email / SMS / messengers)</li>
     </ul>
-    <p>Data is not sold and is not used by third parties for marketing purposes.</p>
+    <p>Data is not sold and is not used for marketing purposes by third parties.</p>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">7. Data retention</div>
+    <div class="legal-title">7. Data Retention</div>
+    <div class="muted">
     <p>Personal data is stored only as long as necessary for:</p>
     <ul>
       <li>order fulfillment</li>
       <li>compliance with tax and accounting requirements</li>
-      <li>resolution of potential disputes</li>
+      <li>resolution of possible disputes</li>
     </ul>
+    </div>
   </div>
 
 <div class="block">
-    <div class="legal-title">8. Data security</div>
+    <div class="legal-title">8. Data Security</div>
+    <div class="muted">
     <p>The Company applies reasonable technical and organizational measures to protect personal data from unauthorized access, alteration, loss, or destruction.</p>
+  </div>
   </div>
 </div>
 
@@ -440,39 +483,49 @@ header.brand {
   <div class="legal-main-title">REFUND AND CANCELLATION POLICY</div>
 
   <div class="block">
-    <div class="legal-title">1. Order cancellation</div>
-    <p>An order may be cancelled only before preparation has begun.</p>
-    <p>If preparation has started or products have already been purchased, cancellation may not be possible.</p>
+    <div class="legal-title">1. Order Cancellation</div>
+    <div class="muted">
+    <p>An order can only be cancelled before its preparation has started.</p>
+    <p>If preparation has begun or products have already been purchased, cancellation may not be possible.</p>
+</div>
   </div>
 
 <div class="block">
     <div class="legal-title">2. Refunds</div>
+    <div class="muted">
     <p>Refunds are issued in the following cases:</p>
     <ul>
       <li>the order was not prepared</li>
-      <li>an error on the part of the Company</li>
-      <p>Refunds are processed via Stripe or the original payment method.</p>
-    </ul>
+      <li>an error on the Company’s side</li>
+      </ul>
+    <p>Refunds are made via Stripe or the original payment method.</p>
+</div>
   </div>
 
 <div class="block">
-    <div class="legal-title">3. Partial refund</div>
-    <p>In case of missing items, the following may be provided:</p>
+    <div class="legal-title">3. Partial Refund</div>
+    <div class="muted">
+    <p>In case some items are unavailable, the following is possible:</p>
     <ul>
       <li>a partial refund, or</li>
-      <li>a replacement with a similar product</li>
+      <li>replacement with a similar product</li>
     </ul>
+</div>
   </div>
 
   <div class="block">
     <div class="legal-title">4. Compensation</div>
+    <div class="muted">
     <p>The Company may, at its discretion, provide a compensation promo code in case of delays, errors, or other service issues.</p>
     <p>Such compensation is provided voluntarily and does not constitute an admission of liability.</p>
+</div>
   </div>
 
   <div class="block">
     <div class="legal-title">5. Chargebacks</div>
-    <p>Opening an unjustified chargeback without first contacting the Company may result in restrictions on future orders.</p>
+    <div class="muted">
+    <p>Initiating an unjustified chargeback without first contacting the Company may result in restrictions on placing future orders.</p>
+    </div>
   </div>
 
 </div>
@@ -488,13 +541,13 @@ header.brand {
 
     <div class="footer-center">
       <ul class="contacts-list">
-        <!-- <li>Телефон: <a href="tel:+1234567890">+1 234 567 890</a></li> -->
-        <li>Email: <a href="mailto:info@sushix.ee">sushix.info@gmail.com</a></li>
+        <!-- <li>Phone: <a href="tel:+1234567890">+1 234 567 890</a></li> -->
+        <li style="font-weight: 500;">Email: <a style="font-weight: 400;" href="mailto:info@sushix.ee">sushix.info@gmail.com</a></li>
       </ul>
     </div>
 
     <div class="footer-right">
-      <ul class="social-list">
+      <ul class="social-list" style="font-weight: 400;">
         <li><a href="https://www.instagram.com/sushix.eesti" target="_blank">Instagram</a></li>
         <li><a href="https://www.facebook.com/sushix.ee" target="_blank">Facebook</a></li>
       </ul>
@@ -503,7 +556,7 @@ header.brand {
 
 <div class="footer-bottom">
   <div class="footer-bottom-inner">
-    <span class="footer-copy">© 2026 SushiX. All rights reserved.</span>
+    <span class="footer-copy" style="font-weight: 500;">© 2026 SushiX. All rights reserved.</span>
   </div>
 </div>
 </footer>
