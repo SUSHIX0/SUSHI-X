@@ -549,7 +549,38 @@
   </div>
 </div>
 
+<div id="compactHint" class="hint-overlay">
+  <div class="hint-content">
 
+    <div class="hint-arrow">⬇</div>
+
+    <div class="hint-bubble">
+      <button class="hint-close" onclick="closeCompactHint()">✕</button>
+
+      На сайте есть <b>компактный режим</b> с более плотным расположением товара.
+    </div>
+
+  </div>
+</div>
+
+<div id="compactBlocker" class="compact-modal-block"></div>
+
+<div id="compactModeModal" class="compact-modal">
+  <div class="compact-modal__window">
+
+    <button class="compact-modal__close" onclick="closeCompactModeModal()">✕</button>
+
+    <div class="compact-modal__title">
+      Компактный режим
+    </div>
+
+    <div class="compact-modal__text">
+      Это компактный режим отображения, в котором скрыты некоторые элементы для более плотного показа товаров.  
+      Чтобы посмотреть полную информацию о товаре и добавить его в корзину — нажмите на товар для открытия его на весь экран.
+    </div>
+
+  </div>
+</div>
 
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
@@ -2737,6 +2768,143 @@ window.addEventListener('resize', updateZoom);
 
 const observer = new ResizeObserver(updateZoom);
 document.querySelectorAll('.card').forEach(card => observer.observe(card));
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function positionHint() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const hint = document.getElementById("compactHint");
+  const content = hint.querySelector(".hint-content");
+
+  if (!btn || !isMobile()) return;
+
+  const rect = btn.getBoundingClientRect();
+
+  // позиция подсказки
+  const top = rect.top - 100;
+  const left = rect.left;
+
+  content.style.top = top + "px";
+  content.style.left = (left + rect.width / 2.1) + "px";
+}
+
+function showCompactHint() {
+  if (!isMobile()) return;
+
+  const hint = document.getElementById("compactHint");
+  hint.style.display = "block";
+
+  positionHint();
+}
+
+function closeCompactHint() {
+  document.getElementById("compactHint").style.display = "none";
+}
+
+window.addEventListener("load", () => {
+  if (!isMobile()) return;
+
+  const lastShown = localStorage.getItem("compactHintLastShown");
+  const now = Date.now();
+
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+
+  // если ещё не показывали или прошло больше суток
+  if (!lastShown || now - Number(lastShown) > ONE_DAY) {
+    setTimeout(() => {
+      showCompactHint();
+
+      // сохраняем время показа
+      localStorage.setItem("compactHintLastShown", now);
+    }, 600);
+  }
+});
+
+window.addEventListener("scroll", positionHint);
+window.addEventListener("resize", positionHint);
+
+const btn = document.querySelector(".view-toggle-btn");
+
+if (btn) {
+  btn.addEventListener("click", () => {
+    closeCompactHint();
+  });
+}
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function isCompactMode() {
+  return document.body.classList.contains("compact");
+}
+
+function shouldShow() {
+  const last = localStorage.getItem("compactModalLastShown");
+  if (!last) return true;
+
+  return Date.now() - parseInt(last, 10) > 24 * 60 * 60 * 1000;
+}
+
+/* включить блок */
+function enableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.add("blocked");
+  if (blocker) blocker.style.display = "block";
+
+  document.body.classList.add("compact-modal-active");
+}
+
+/* выключить блок */
+function disableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.remove("blocked");
+  if (blocker) blocker.style.display = "none";
+
+  document.body.classList.remove("compact-modal-active");
+}
+
+/* показать модалку */
+function showCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "flex";
+  enableBlock();
+}
+
+/* закрыть */
+function closeCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "none";
+
+  disableBlock();
+
+  localStorage.setItem("compactModalLastShown", Date.now().toString());
+}
+
+/* проверка */
+function checkModal() {
+  if (!isMobile()) return;
+  if (!isCompactMode()) return;
+  if (!shouldShow()) return;
+
+  showCompactModeModal();
+}
+
+/* старт */
+window.addEventListener("load", () => {
+  setTimeout(checkModal, 500);
+});
+
+/* если переключили режим */
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".view-toggle-btn")) {
+    setTimeout(checkModal, 200);
+  }
+});
 
 updateCartUI();
 
