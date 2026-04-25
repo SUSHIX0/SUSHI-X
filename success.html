@@ -35,10 +35,11 @@ body {
 /* ===== ЛОГО ===== */
 .brand {
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
-  animation: logo-pop 0.6s ease forwards;
+  width: 100%;
+  text-align: center;
 }
 
 .logo {
@@ -190,6 +191,11 @@ p { color: var(--muted); margin-bottom:30px; line-height:1.5; }
 /* Кнопка появление */
 @keyframes button-pop {
   to { opacity:1; transform: translateY(0); }
+}
+
+@media (max-width: 330px) {
+  .logo { font-size: 2.5rem; }
+  .logo .jp { font-size: 2.7rem; }
 }
 
 /* ===== Конфетти ===== */
