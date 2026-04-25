@@ -563,6 +563,24 @@
   </div>
 </div>
 
+<div id="compactBlocker" class="compact-modal-block"></div>
+
+<div id="compactModeModal" class="compact-modal">
+  <div class="compact-modal__window">
+
+    <button class="compact-modal__close" onclick="closeCompactModeModal()">✕</button>
+
+    <div class="compact-modal__title">
+      Компактный режим
+    </div>
+
+    <div class="compact-modal__text">
+      Это компактный режим отображения, в котором скрыты некоторые элементы для более плотного показа товаров.  
+      Чтобы посмотреть полную информацию о товаре и добавить его в корзину — нажмите на товар для открытия его на весь экран.
+    </div>
+
+  </div>
+</div>
 
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
@@ -2814,6 +2832,79 @@ if (btn) {
     closeCompactHint();
   });
 }
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function isCompactMode() {
+  return document.body.classList.contains("compact");
+}
+
+function shouldShow() {
+  const last = localStorage.getItem("compactModalLastShown");
+  if (!last) return true;
+
+  return Date.now() - parseInt(last, 10) > 24 * 60 * 60 * 1000;
+}
+
+/* включить блок */
+function enableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.add("blocked");
+  if (blocker) blocker.style.display = "block";
+
+  document.body.classList.add("compact-modal-active");
+}
+
+/* выключить блок */
+function disableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.remove("blocked");
+  if (blocker) blocker.style.display = "none";
+
+  document.body.classList.remove("compact-modal-active");
+}
+
+/* показать модалку */
+function showCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "flex";
+  enableBlock();
+}
+
+/* закрыть */
+function closeCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "none";
+
+  disableBlock();
+
+  localStorage.setItem("compactModalLastShown", Date.now().toString());
+}
+
+/* проверка */
+function checkModal() {
+  if (!isMobile()) return;
+  if (!isCompactMode()) return;
+  if (!shouldShow()) return;
+
+  showCompactModeModal();
+}
+
+/* старт */
+window.addEventListener("load", () => {
+  setTimeout(checkModal, 500);
+});
+
+/* если переключили режим */
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".view-toggle-btn")) {
+    setTimeout(checkModal, 200);
+  }
+});
 
 updateCartUI();
 
