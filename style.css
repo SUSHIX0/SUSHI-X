@@ -1862,7 +1862,6 @@ header.brand h1 .jp {
 .hint-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99999;
   display: none;
 }
 
@@ -1931,7 +1930,7 @@ header.brand h1 .jp {
 /* 🔥 КНОПКА ВСЕГДА ПОВЕРХ */
 .view-toggle-btn {
   position: relative;
-  z-index: 100001;
+  z-index: 100;
 }
 
 /* затемнение ВСЕГО сайта */
@@ -1939,7 +1938,7 @@ header.brand h1 .jp {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.75);
-  z-index: 99998;
+  z-index: 100;
   display: none;
 }
 
