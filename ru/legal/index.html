@@ -26,12 +26,6 @@ body{
   overscroll-behavior: none;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  overscroll-behavior: none;
-}
-
 /* ===== LOGO ===== */
 header.brand{
   display:flex;
@@ -569,20 +563,6 @@ header.brand {
 </footer>
 
 </div>
-
-<script>
-document.addEventListener('touchmove', function (e) {
-  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-  // если тянем вниз в самом верху страницы
-  if (scrollTop === 0) {
-    const touchY = e.touches[0].clientY;
-    if (touchY > 0) {
-      e.preventDefault();
-    }
-  }
-}, { passive: false });
-</script>
 
 </body>
 </html>
