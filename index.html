@@ -549,6 +549,19 @@
   </div>
 </div>
 
+<div id="compactHint" class="hint-overlay">
+  <div class="hint-content">
+
+    <div class="hint-arrow">⬇</div>
+
+    <div class="hint-bubble">
+      <button class="hint-close" onclick="closeCompactHint()">✕</button>
+
+      На сайте есть <b>компактный режим</b> с более плотным расположением товара.
+    </div>
+
+  </div>
+</div>
 
 
 <script>
@@ -2737,6 +2750,70 @@ window.addEventListener('resize', updateZoom);
 
 const observer = new ResizeObserver(updateZoom);
 document.querySelectorAll('.card').forEach(card => observer.observe(card));
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function positionHint() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const hint = document.getElementById("compactHint");
+  const content = hint.querySelector(".hint-content");
+
+  if (!btn || !isMobile()) return;
+
+  const rect = btn.getBoundingClientRect();
+
+  // позиция подсказки
+  const top = rect.top - 100;
+  const left = rect.left;
+
+  content.style.top = top + "px";
+  content.style.left = (left + rect.width / 2.1) + "px";
+}
+
+function showCompactHint() {
+  if (!isMobile()) return;
+
+  const hint = document.getElementById("compactHint");
+  hint.style.display = "block";
+
+  positionHint();
+}
+
+function closeCompactHint() {
+  document.getElementById("compactHint").style.display = "none";
+}
+
+window.addEventListener("load", () => {
+  if (!isMobile()) return;
+
+  const lastShown = localStorage.getItem("compactHintLastShown");
+  const now = Date.now();
+
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+
+  // если ещё не показывали или прошло больше суток
+  if (!lastShown || now - Number(lastShown) > ONE_DAY) {
+    setTimeout(() => {
+      showCompactHint();
+
+      // сохраняем время показа
+      localStorage.setItem("compactHintLastShown", now);
+    }, 600);
+  }
+});
+
+window.addEventListener("scroll", positionHint);
+window.addEventListener("resize", positionHint);
+
+const btn = document.querySelector(".view-toggle-btn");
+
+if (btn) {
+  btn.addEventListener("click", () => {
+    closeCompactHint();
+  });
+}
 
 updateCartUI();
 
