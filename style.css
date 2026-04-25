@@ -1708,7 +1708,6 @@ body.compact {
   #checkoutForm button,
   #applyPromo,
   #cancelPromo,
-  .floating-cart,
   #showPromoBtn {    /* кнопка "ввести промокод" */
     font-size: 18px;
     margin-bottom: 10px;
