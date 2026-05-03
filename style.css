@@ -394,9 +394,9 @@ body {
 .section-title {
   font-family: 'Jost', sans-serif; /* или Raleway */
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
   text-align: center;
 }
 
@@ -1770,6 +1770,14 @@ body.compact .card-badge {
 }
 
 @media (max-width: 767px) {
+  .section-title {
+  font-family: 'Jost', sans-serif; /* или Raleway */
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 20px;
+  text-align: center;
+}
   .card-badge {
     font-size: 0.9rem;
     padding: 7px 13px;
