@@ -527,15 +527,16 @@
           <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона *" autocomplete="tel" required/>
           <input name="email" type="email" placeholder="Почта *" autocomplete="email" />
           <select name="payment">
-            <option value="" disabled selected>Способ оплаты *</option>
-            <option>Наличные</option>
-            <option>Карта онлайн</option>
-          </select>
-          <select name="method">
-            <option value="" disabled selected>Способ получения *</option>
-            <option>Самовывоз</option>
-            <option>Доставка</option>
-          </select>
+    <option value="" disabled selected>Способ оплаты *</option>
+    <option value="cash">Наличные</option>
+    <option value="card">Карта онлайн</option>
+</select>
+
+<select name="method">
+    <option value="" disabled selected>Способ получения *</option>
+    <option value="pickup">Самовывоз</option>
+    <option value="delivery">Доставка</option>
+</select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
   <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
@@ -997,7 +998,7 @@ const roundingEl = document.querySelector('.rounding-price');
 const paymentSelect = checkoutForm?.payment;
 
 paymentSelect?.addEventListener('change', () => {
-    if (paymentSelect.value.toLowerCase() === 'карта онлайн') {
+    if (paymentSelect.value === 'card') {
         placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
         placeOrderBtn.textContent = 'Оформить заказ';
@@ -1185,7 +1186,7 @@ const fields = [
   {el: checkoutForm.method, required: true},
   {el: document.getElementById('deliveryTime'), required: true},
   {el: document.getElementById('chooseDateBtn'), required: true, isBtn: true},
-  {el: document.getElementById('deliveryAddress'), required: method === 'доставка'}
+  {el: document.getElementById('deliveryAddress'), required: method === 'delivery'}
 ];
 
 fields.forEach(f => {
@@ -1208,8 +1209,8 @@ if (hasError) {
   return;
 }
 
-    const isDelivery = method === 'доставка';
-    const isPickup = method === 'самовывоз';
+    const isDelivery = method === 'delivery';
+    const isPickup = method === 'pickup';
 
     const dateBtn = document.getElementById('chooseDateBtn');
     const timeSelect = document.getElementById('deliveryTime');
@@ -1241,7 +1242,7 @@ if (hasError) {
     }
 
 // ===== Логика для оплаты картой =====
-if (payment.toLowerCase() === 'карта онлайн') {
+if (payment === 'card') {
     showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000);
 
 const cartData = [];
@@ -1330,7 +1331,7 @@ function updateOrderButtonText() {
 
     const payment = checkoutForm.payment.value;
 
-    if (payment === 'Карта онлайн') {
+    if (payment === 'card') {
         placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
         placeOrderBtn.textContent = 'Оформить заказ';
@@ -1362,6 +1363,12 @@ const orderData = {
         discount: parseFloat(discountEl.textContent) || 0,
         lang: currentLang
     };
+
+showToast(
+  '<strong>Обработка заказа...</strong><br><small>Пожалуйста, подождите</small>',
+  false,
+  120000
+);
 
         const res = await fetch('https://telegram-server-fcgc.onrender.com/order', {
             method: 'POST',
@@ -2004,16 +2011,14 @@ async function loadDeliveryTimes() {
 }
 
 // ===== ФИЛЬТРАЦИЯ СЛОТОВ ПО МИН. ЧАСАМ =====
-function filterDeliveryTimes(times) {
-    if (!selectedDate) return [];
+function filterDeliveryTimes(times, dateStr = selectedDate) {
+    if (!dateStr) return [];
 
     const now = new Date();
 
-    // считаем общее количество товаров в корзине
     let totalItems = 0;
     cart.forEach(i => totalItems += i.qty);
 
-    // ищем нужный диапазон
     let minHours = 0;
     for (const range of minHoursRanges) {
         if (range.maxItems === null || totalItems <= range.maxItems) {
@@ -2022,15 +2027,35 @@ function filterDeliveryTimes(times) {
         }
     }
 
-    const [day, month, year] = selectedDate.split(".").map(Number);
+    const [day, month, year] = dateStr.split(".").map(Number);
 
     return times.filter(t => {
         const [startTime] = t.split("–");
         const [hours, minutes] = startTime.split(":").map(Number);
-        const slotDate = new Date(year, month - 1, day, hours, minutes);
+
+        const slotDate = new Date(
+            year,
+            month - 1,
+            day,
+            hours,
+            minutes
+        );
+
         const diffHours = (slotDate - now) / (1000 * 60 * 60);
+
         return diffHours >= minHours;
     });
+}
+
+function hasAvailableTimesForDate(dateStr) {
+    const method = methodSelect?.value?.toLowerCase();
+
+    if (!method) return true;
+
+    const key = `${dateStr}|${method}`;
+    const times = deliveryTimesByDate[key] || [];
+
+    return filterDeliveryTimes(times, dateStr).length > 0;
 }
 
 // ===== ОБНОВЛЕНИЕ ВРЕМЕНИ В SELECT =====
@@ -2114,17 +2139,17 @@ function updateDeliveryFields() {
   const pickupInfo = document.getElementById('pickupInfo');
   const pickupMap = document.getElementById('pickupMap');
 
-  if(method === "доставка" || method === "самовывоз"){
+  if(method === "delivery" || method === "pickup"){
     deliveryFields.style.display = "block";
 
-    if(method === "доставка"){
+    if(method === "delivery"){
   deliveryNote.style.display = "block";        
   deliveryAddress.style.display = "block";     
 
   if (pickupInfo) pickupInfo.style.display = "none";
   if (pickupMap) pickupMap.style.display = "none";
 
-} else if (method === "самовывоз") {
+} else if (method === "pickup") {
 
   deliveryNote.style.display = "none";         
   deliveryAddress.style.display = "none";      
@@ -2140,7 +2165,7 @@ function updateDeliveryFields() {
 
     // Сбрасываем дату и время при смене метода
     selectedDate = null;
-    chooseDateBtn.textContent = method === "доставка" ? "Выбрать дату *" : "Выбрать дату *";
+    chooseDateBtn.textContent = method === "delivery" ? "Выбрать дату *" : "Выбрать дату *";
     deliveryTime.innerHTML = "";
   } else {
     deliveryFields.style.display = "none";
@@ -2238,6 +2263,12 @@ const yearStr = date.getFullYear();
 
 const fullDate = `${dayStr}.${monthStr}.${yearStr}`;
 
+// если для даты нет доступного времени
+if (!hasAvailableTimesForDate(fullDate)) {
+    dayDiv.classList.remove('available');
+    dayDiv.classList.add('unavailable');
+}
+
 if(fullDate === selectedDate){
     dayDiv.classList.add('selected'); // красим выбранный день
 }
@@ -2273,7 +2304,7 @@ loadBlockedDates().then(() => renderCalendar());
 
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
   const method = checkoutForm?.method?.value?.toLowerCase();
-    if (method === "самовывоз") delivery = 0;
+    if (method === "pickup") delivery = 0;
 
     let discount = 0;
 
@@ -2322,7 +2353,7 @@ let roundingDiff = 0;
 const paymentMethod = checkoutForm?.payment?.value?.toLowerCase();
 
 // ===== ОКРУГЛЕНИЕ ДЛЯ НАЛИЧНЫХ =====
-if (paymentMethod === 'наличные') {
+if (paymentMethod === 'cash') {
   finalTotal = roundCash(total);
   roundingDiff = finalTotal - total;
 }
@@ -2333,7 +2364,7 @@ deliveryEl.textContent = delivery.toFixed(2) + " €";
 totalEl.textContent = finalTotal.toFixed(2) + " €";
 
 // ===== СТРОКА "ОКРУГЛЕНИЕ" =====
-if (paymentMethod === 'наличные') {
+if (paymentMethod === 'cash') {
   roundingRow.style.display = '';
 
   roundingEl.textContent =
@@ -2352,6 +2383,8 @@ if (paymentMethod === 'наличные') {
   }
   saveCart();
   savePromo();
+
+  renderCalendar();
   updateDeliveryTimes();
 }
 
@@ -2373,7 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!checkoutForm || !placeOrderBtn || !paymentSelect) return;
 
   function updateButton() {
-    if (paymentSelect.value === 'Карта онлайн') {
+    if (paymentSelect.value === 'card') {
       placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
       placeOrderBtn.textContent = 'Оформить заказ';
