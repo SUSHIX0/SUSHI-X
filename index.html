@@ -2011,16 +2011,14 @@ async function loadDeliveryTimes() {
 }
 
 // ===== ФИЛЬТРАЦИЯ СЛОТОВ ПО МИН. ЧАСАМ =====
-function filterDeliveryTimes(times) {
-    if (!selectedDate) return [];
+function filterDeliveryTimes(times, dateStr = selectedDate) {
+    if (!dateStr) return [];
 
     const now = new Date();
 
-    // считаем общее количество товаров в корзине
     let totalItems = 0;
     cart.forEach(i => totalItems += i.qty);
 
-    // ищем нужный диапазон
     let minHours = 0;
     for (const range of minHoursRanges) {
         if (range.maxItems === null || totalItems <= range.maxItems) {
@@ -2029,15 +2027,35 @@ function filterDeliveryTimes(times) {
         }
     }
 
-    const [day, month, year] = selectedDate.split(".").map(Number);
+    const [day, month, year] = dateStr.split(".").map(Number);
 
     return times.filter(t => {
         const [startTime] = t.split("–");
         const [hours, minutes] = startTime.split(":").map(Number);
-        const slotDate = new Date(year, month - 1, day, hours, minutes);
+
+        const slotDate = new Date(
+            year,
+            month - 1,
+            day,
+            hours,
+            minutes
+        );
+
         const diffHours = (slotDate - now) / (1000 * 60 * 60);
+
         return diffHours >= minHours;
     });
+}
+
+function hasAvailableTimesForDate(dateStr) {
+    const method = methodSelect?.value?.toLowerCase();
+
+    if (!method) return true;
+
+    const key = `${dateStr}|${method}`;
+    const times = deliveryTimesByDate[key] || [];
+
+    return filterDeliveryTimes(times, dateStr).length > 0;
 }
 
 // ===== ОБНОВЛЕНИЕ ВРЕМЕНИ В SELECT =====
@@ -2245,6 +2263,12 @@ const yearStr = date.getFullYear();
 
 const fullDate = `${dayStr}.${monthStr}.${yearStr}`;
 
+// если для даты нет доступного времени
+if (!hasAvailableTimesForDate(fullDate)) {
+    dayDiv.classList.remove('available');
+    dayDiv.classList.add('unavailable');
+}
+
 if(fullDate === selectedDate){
     dayDiv.classList.add('selected'); // красим выбранный день
 }
@@ -2359,6 +2383,8 @@ if (paymentMethod === 'cash') {
   }
   saveCart();
   savePromo();
+
+  renderCalendar();
   updateDeliveryTimes();
 }
 
