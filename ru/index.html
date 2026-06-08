@@ -6,13 +6,14 @@
 <title>SUSHI メ</title>
 <link rel="stylesheet" href="/SUSHI-X/style.css">
 <link rel="preconnect" href="https://fonts.gstatic.com">
+<link rel="icon" type="image/png" href="./legal/SushiX_Logo_2.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&display=swap" rel="stylesheet">
 
 
 <!-- Open Graph для соцсетей -->
 <meta property="og:title" content="SUSHI メ" />
-<meta property="og:image" content="https://sushix0.github.io/SUSHI-X/Foto/Logo.png" />
+<meta property="og:image" content="https://sushix0.github.io/SUSHI-X/Foto/Logo2.png" />
 <meta property="og:type" content="website" />
 </head>
 
@@ -28,27 +29,26 @@
 
 <body>
 
-
 <div class="wrap">
   <header class="brand">
-    <!-- Центрированный логотип -->
-    <h1 class="logo"><span>SUSHI</span> <span class="jp">メ</span></h1>
+  <h1 class="logo">
+    <a href="https://sushix0.github.io/SUSHI-X" id="logoLink">
+      <span>SUSHI</span> <span class="jp">メ</span>
+    </a>
+  </h1>
 
-<div class="lang-switcher">
-  <a href="/SUSHI-X/"    class="lang-btn">ET</a>
-  <a href="" class="lang-btn active">RU</a>
-  <a href="/SUSHI-X/en/" class="lang-btn">EN</a>
+  <div class="lang-switcher">
+    <a href="/SUSHI-X/" class="lang-btn active">ET</a>
+    <a href="" class="lang-btn">RU</a>
+    <a href="/SUSHI-X/en/" class="lang-btn">EN</a>
 </div>
 
   </header>
   <div class="note-orders-disabled" id="orders-disabled-note" style="display:none;">NB! Заказы временно не принимаются</div>
 
-
-
-
 <!-- Основной фиксированный бар -->
 <div class="menu-filters" id="menuFilters">
-  <button>123</button>
+  <button>Предложения</button>
   <button>Урамаки</button>
   <button>Футомаки</button>
   <button>Маки</button>
@@ -57,11 +57,12 @@
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
+  <button data-action="contacts">Информация</button>
 </div>
 
 <!-- Плавающий бар -->
 <div class="menu-filters-floating" id="menuFiltersFloating">
-  <button>123</button>
+  <button>Предложения</button>
   <button>Урамаки</button>
   <button>Футомаки</button>
   <button>Маки</button>
@@ -70,11 +71,23 @@
   <button>Нигири</button>
   <button>Наборы</button>
   <button>Дополнительно</button>
+  <button data-action="contacts">Информация</button>
 </div>
 
+  <button id="toggleCompact" class="view-toggle-btn" title="Переключить вид">
+    <span class="icon-grid active" aria-label="Сетка">
+      <span></span><span></span>
+      <span></span><span></span>
+    </span>
+    <span class="icon-list" aria-label="Список">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  </button>
 
   <main>
-
+  
 <section class="menu-section" id="specialOffers">
   <h2 class="section-title">Предложения</h2>
   <div class="grid"></div>
@@ -84,9 +97,9 @@
   <section class="menu-section">
     <h2 class="section-title">Урамаки</h2>
     <div class="grid">
-      <article class="card" data-id="филадельфия">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-1.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <article class="card" data-badge="classic" data-id="SushiX-Uramaki-1">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-1.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -96,9 +109,9 @@
         </div>
       </article>
 
-      <article class="card" data-id="снежный_краб">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-10.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <article class="card" data-badge="popular" data-id="SushiX-Uramaki-2">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-2.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -108,9 +121,9 @@
         </div>
       </article>
 
-      <article class="card" data-id="калифорния">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-11.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <article class="card" data-id="SushiX-Uramaki-3">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-3.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -120,27 +133,67 @@
         </div>
       </article>
 
-      <article class="card" data-id="аляска">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-8.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <article class="card" data-id="SushiX-Uramaki-4">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-4.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
           <h3 class="title"><span class="name">Аляска</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
-          <p class="ingredients">Угорь · Лосось · Philadelphia · Авокадо</p>
+          <p class="ingredients">Лосось · Philadelphia · Авокадо · Масаго</p>
           <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
         </div>
       </article>
+
+<article class="card" data-id="SushiX-Uramaki-5">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-5.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Таношими</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+          <p class="ingredients">Креветка · Philadelphia · Огурец · Кунжут</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="SushiX-Uramaki-6">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-6.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Урамаки с креветкой темпура</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+          <p class="ingredients">Креветка темпура · Philadelphia · Огурец · Тамаго · Кунжут</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+      <article class="card" data-id="SushiX-Uramaki-7">
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-7.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
+          <div class="overlay-unavailable"></div>
+        </div>
+        <div class="body">
+          <h3 class="title"><span class="name">Урамаки с курицей</span><span class="label-jp"><span class="scroll-text">アラスカ</span></span></h3>
+          <p class="ingredients">Курица · Philadelphia · Огурец · Паприка · Кунжут</p>
+          <div class="bottom"><div class="note">8 шт</div><div class="price"></div></div>
+        </div>
+      </article>
+
+
     </div>
   </section>
+
+  
 
   <!-- Раздел: Футомаки -->
   <section class="menu-section">
     <h2 class="section-title">Футомаки</h2>
     <div class="grid">
       <article class="card" data-id="футомаки_с_крабом">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-4.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-8.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -151,8 +204,8 @@
       </article>
 
       <article class="card" data-id="футомаки_с_креветкой">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-3.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-9.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -169,8 +222,8 @@
     <h2 class="section-title">Маки</h2>
     <div class="grid">
       <article class="card" data-id="маки_с_огурцом">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-7.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-11.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -181,8 +234,8 @@
       </article>
 
       <article class="card" data-id="маки_с_омлетом">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-6.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-15.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -199,8 +252,8 @@
     <h2 class="section-title">Темпура</h2>
     <div class="grid">
       <article class="card" data-id="темпура_с_крабом">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-22.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-16.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -211,8 +264,8 @@
       </article>
 
       <article class="card" data-id="темпура_с_курицей">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-13.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/SushiX-Photo-17.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -229,9 +282,20 @@
     <h2 class="section-title">Запечённые</h2>
     <div class="grid">
       <article class="card" data-id="запечённый_ролл_нико">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-19.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-19.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
+    <!-- Шапочки -->
+    <div class="roll-select-wrapper">
+      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
+      <ul class="select-dropdown">
+  <li data-id="сырная_шапочка" data-price="0">Сырная шапочка</li>
+  <li data-id="рыбная_шапочка" data-price="1.5">Рыбная шапочка</li>
+  <li data-id="спайси_шапочка" data-price="1.2">Спайси шапочка</li>
+  <li data-id="шапочка_с_крабом" data-price="1.4">Шапочка с крабом</li>
+  <li data-id="шапочка_с_креветкой" data-price="1.64">Шапочка с креветкой</li>
+</ul>
+    </div>
           </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Нико»</span><span class="label-jp"><span class="scroll-text">ニコ焼きロール</span></span></h3>
@@ -241,10 +305,21 @@
       </article>
 
       <article class="card" data-id="запечённый_ролл_салмон">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-18.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-18.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
-        </div>
+        <!-- Шапочки -->
+    <div class="roll-select-wrapper">
+      <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
+      <ul class="select-dropdown">
+  <li data-id="сырная_шапочка" data-price="0">Сырная шапочка</li>
+  <li data-id="рыбная_шапочка" data-price="1.5">Рыбная шапочка</li>
+  <li data-id="спайси_шапочка" data-price="1.2">Спайси шапочка</li>
+  <li data-id="шапочка_с_крабом" data-price="1.4">Шапочка с крабом</li>
+  <li data-id="шапочка_с_креветкой" data-price="1.64">Шапочка с креветкой</li>
+</ul>
+    </div>
+          </div>
         <div class="body">
           <h3 class="title"><span class="name">Запечённый Ролл «Сaлмон»</span><span class="label-jp"><span class="scroll-text">サーモン焼きロール</span></span></h3>
           <p class="ingredients">Авокадо · Сыр Philadelphia · Лосось</p>
@@ -259,8 +334,8 @@
     <h2 class="section-title">Нигири</h2>
     <div class="grid">
       <article class="card" data-id="нигири_с_креветкой">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-27.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-27.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -271,8 +346,8 @@
       </article>
 
       <article class="card" data-id="нигири_с_угрём">
-        <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-28.jpg');">
-          <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+        <div class="photo" style="background-image:url('Foto/Shushi-28.jpg');">
+          <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
           <div class="overlay-unavailable"></div>
         </div>
         <div class="body">
@@ -289,8 +364,8 @@
   <h2 class="section-title">Наборы</h2>
   <div class="grid">
     <article class="card" data-id="классика">
-      <div class="photo" style="background-image:url('/SUSHI-X/Foto/');">
-        <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
         <div class="overlay-unavailable"></div>
       </div>
       <div class="body">
@@ -301,8 +376,8 @@
     </article>
 
     <article class="card" data-id="премиум">
-      <div class="photo" style="background-image:url('/SUSHI-X/Foto/');">
-        <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
         <div class="overlay-unavailable"></div>
       </div>
       <div class="body">
@@ -319,8 +394,8 @@
   <h2 class="section-title">Дополнительно</h2>
   <div class="grid">
     <article class="card" data-id="соевый_соус">
-      <div class="photo" style="background-image:url('/SUSHI-X/Foto/');">
-        <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <div class="photo" style="background-image:url('Foto/');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
         <div class="overlay-unavailable"></div>
       </div>
       <div class="body">
@@ -331,8 +406,8 @@
     </article>
 
     <article class="card" data-id="имбирь">
-      <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-31.jpg');">
-        <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <div class="photo" style="background-image:url('Foto/Shushi-31.jpg');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
         <div class="overlay-unavailable"></div>
       </div>
       <div class="body">
@@ -343,8 +418,8 @@
     </article>
 
     <article class="card" data-id="вакаме">
-      <div class="photo" style="background-image:url('/SUSHI-X/Foto/Shushi-30.jpg');">
-        <div class="cart-icon"><img src="/SUSHI-X/Foto/cart.png" alt="Корзина"></div>
+      <div class="photo" style="background-image:url('Foto/Shushi-30.jpg');">
+        <div class="cart-icon"><img src="Foto/cart.png" alt="Корзина"></div>
         <div class="overlay-unavailable"></div>
       </div>
       <div class="body">
@@ -356,12 +431,10 @@
   </div>
 </section>
 
-
-
   <div class="menu-bottom-space"></div>
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer" id="contacts">
   <div class="footer-divider"></div>
 
   <div class="footer-content">
@@ -371,39 +444,39 @@
 
     <div class="footer-center">
       <ul class="contacts-list">
-        <li>Телефон: <a href="tel:+1234567890">+1 234 567 890</a></li>
-        <li>Email: <a href="mailto:info@sushix.ee">info@sushix.ee</a></li>
+        <!-- <li>Телефон: <a href="tel:+1234567890">+1 234 567 890</a></li> -->
+        <li>Email: <a href="mailto:info@sushix.ee">sushix.info@gmail.com</a></li>
       </ul>
     </div>
 
     <div class="footer-right">
       <ul class="social-list">
         <li><a href="https://www.instagram.com/sushix.eesti" target="_blank">Instagram</a></li>
-        <li><a href="https://www.facebook.com/sushix.eesti" target="_blank">Facebook</a></li>
+        <li><a href="https://www.facebook.com/sushix.ee" target="_blank">Facebook</a></li>
       </ul>
     </div>
   </div>
 
-  <div class="footer-bottom">
-    <p>© 2026 SushiX. Все права защищены.</p>
+<div class="footer-bottom">
+  <div class="footer-bottom-inner">
+    <span class="footer-copy">© 2026 SushiX. Все права защищены.</span>
+
+    <a href="legal/" class="legal-btn">Правовая информация</a>
   </div>
+</div>
 </footer>
-
-
 
 </div>
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
 <div class="floating-cart">
-  <img src="/SUSHI-X/Foto/cart.png" alt="Корзина">
+  <img src="Foto/cart.png" alt="Корзина">
   <span>Корзина</span>
 </div>
 
 <div id="toast" class="toast">
   <div class="toast-text"></div>
 </div>
-
-
 
 <!-- Fullscreen корзина -->
 <div id="cartFullscreen" class="cart-fullscreen" aria-hidden="true">
@@ -424,15 +497,17 @@
         <div class="summary-row"><span>Товары</span><span class="subtotal-price">0.00 €</span></div>
         <div class="summary-row"><span>Доставка</span><span class="delivery-price">0.00 €</span></div>
         <div class="summary-row"><span>Скидка</span><span class="discount-price">0.00 €</span></div>
+        <div class="summary-row rounding-row" style="display:none;">
+  <span>Округление</span>
+  <span class="rounding-price">0.00 €</span>
+</div>
 <!-- Кнопка показать поле промокода -->
 <button id="showPromoBtn" class="btn-primary promo-toggle-btn">Ввести промокод</button>
-
 
 <!-- Поле для ввода промокода (изначально скрыто) -->
 <div class="promo-code-box" style="display:none;">
   <div class="checkout-form input"><input id="promoInput" type="text" placeholder="Промокод"></div>
  
-  
   <div class="promo-actions">
     <button id="applyPromo" class="btn-primary">Применить</button>
     <button id="cancelPromo" class="btn-ghost">Отмена</button>
@@ -452,18 +527,36 @@
           <input name="phone" type="tel" pattern="[+\d]*" placeholder="Номер телефона *" autocomplete="tel" required/>
           <input name="email" type="email" placeholder="Почта *" autocomplete="email" />
           <select name="payment">
-            <option value="" disabled selected>Способ оплаты *</option>
-            <option>Наличные</option>
-            <option>Карта онлайн</option>
-          </select>
-          <select name="method">
-            <option value="" disabled selected>Способ получения *</option>
-            <option>Самовывоз</option>
-            <option>Доставка</option>
-          </select>
+    <option value="" disabled selected>Способ оплаты *</option>
+    <option value="cash">Наличные</option>
+    <option value="card">Карта онлайн</option>
+</select>
+
+<select name="method">
+    <option value="" disabled selected>Способ получения *</option>
+    <option value="pickup">Самовывоз</option>
+    <option value="delivery">Доставка</option>
+</select>
 
 <div id="deliveryFields" style="display:none; margin-top:10px;">
   <p class="deliveryNote">NB! Доставка осуществляется только по Tiskre Küla</p>  
+
+<!-- ===== САМОВЫВОЗ ===== -->
+<div id="pickupInfo" style="display:none; margin-top:10px;">
+Самовывоз: Harku Vald, Tiskre küla, <!-- Välja 10 -->
+</div>
+
+<div id="pickupMap" style="display:none; margin-top:10px;">
+  <iframe
+    src="https://www.google.com/maps?q=<!-- Välja+10,+ -->Tiskre,+76916+Harju+maakond&output=embed"
+    width="100%"
+    height="250"
+    style="border:0; border-radius:12px;"
+    allowfullscreen=""
+    loading="lazy">
+  </iframe>
+</div>
+
   <button type="button" class="btn-ghost" id="chooseDateBtn">Выбрать дату *</button>
   <div id="deliveryCalendar" class="custom-calendar" style="display:none;"></div>
 
@@ -475,17 +568,7 @@
   <textarea id="orderComment" name="comment" placeholder="Комментарий (необязательно)" rows="3"></textarea>
 </div>
 
-
-
-
-
 </div>
-
-
-
-
-
-
           <div class="checkout-actions">
             <button id="placeOrder" class="btn-primary" type="button">Оформить заказ</button>
             <button id="clearCartBtn" class="btn-ghost" type="button">Очистить корзину</button>
@@ -499,8 +582,46 @@
 <div id="cartBackdrop" class="cart-backdrop"></div>
 
 
+<div class="card-modal">
+  <div class="card-modal-bg"></div>
+  <div class="card-modal-window">
+    <button class="card-modal-close">✕</button>
+    <div class="card-modal-content"></div>
+  </div>
+</div>
 
+<div id="compactHint" class="hint-overlay">
+  <div class="hint-content">
 
+    <div class="hint-arrow">⬇</div>
+
+    <div class="hint-bubble">
+      <button class="hint-close" onclick="closeCompactHint()">✕</button>
+
+      На сайте есть <b>компактный режим</b> с более плотным расположением товара.
+    </div>
+
+  </div>
+</div>
+
+<div id="compactBlocker" class="compact-modal-block"></div>
+
+<div id="compactModeModal" class="compact-modal">
+  <div class="compact-modal__window">
+
+    <button class="compact-modal__close" onclick="closeCompactModeModal()">✕</button>
+
+    <div class="compact-modal__title">
+      Компактный режим
+    </div>
+
+    <div class="compact-modal__text">
+      Это компактный режим отображения, в котором скрыты некоторые элементы для более плотного показа товаров.  
+      Чтобы посмотреть полную информацию о товаре и добавить его в корзину — нажмите на товар для открытия его на весь экран.
+    </div>
+
+  </div>
+</div>
 
 <script>
 const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRU16G77uq0XR1rGplEVVqn5-049-uhe-ycWu0DdNktVUOXvgfCMuV2pJwU-XPR8xLLCNdwOgh4q1Zs/pub?gid=0&single=true&output=csv';
@@ -509,6 +630,73 @@ function updateCartUI() {
   renderCart();
   updateDeliveryTimes();
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  const paid = localStorage.getItem('orderPaid');
+  if (paid === 'true') {
+    // Сбрасываем флаг, чтобы не повторять очистку
+    localStorage.removeItem('orderPaid');
+
+    // 🔥 Сбрасываем корзину и форму
+    cart.clear();
+    resetPromo();
+    resetCheckoutExtras();
+    checkoutForm.reset();
+    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+    if (timeSelect) timeSelect.value = '';
+    if (addressInput) addressInput.value = '';
+
+    setTimeout(closeCart, 900);
+
+    saveCart();
+    updateCartUI();
+  }
+});
+
+function applyJPScrollSync() {
+  const scrollTexts = document.querySelectorAll('.label-jp .scroll-text');
+  if (!scrollTexts.length) return;
+
+  // Сбрасываем анимацию
+  scrollTexts.forEach(el => el.style.animation = '');
+
+  // Считаем максимальное смещение с запасом
+  let maxDistance = 0;
+  scrollTexts.forEach(el => {
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 16;
+    if (distance > maxDistance) maxDistance = distance;
+  });
+
+  if (maxDistance <= 0) return; // Все тексты помещаются
+
+  // Общая продолжительность анимации
+  const totalDuration = maxDistance * 0.065; // можно регулировать скорость
+
+  scrollTexts.forEach(el => {
+    const distance = el.scrollWidth - el.parentElement.offsetWidth + 16;
+    if (distance <= 0) return;
+
+    const styleSheet = document.styleSheets[0];
+    const animationName = `marquee-${Math.random().toString(36).substr(2,5)}`;
+
+    // Ключевые кадры движения туда-сюда
+    const keyframes = `
+      @keyframes ${animationName} {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-${distance}px); }
+      }
+    `;
+    styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+
+    // Синхронная анимация для всех
+    el.style.animation = `${animationName} ${totalDuration}s cubic-bezier(0.31, 0.02, 0.76, 1.02) 0s infinite alternate`;
+  });
+}
+
+// Запуск после загрузки страницы
+window.addEventListener('load', () => {
+  requestAnimationFrame(applyJPScrollSync);
+});
 
 // ===== Плавающий фильтр =====
 const mainBar = document.getElementById('menuFilters');
@@ -559,7 +747,6 @@ async function updateMenuFromSheet() {
     continue;
 }
 
-
 // НАСТРОЙКИ ДОСТАВКИ ИЗ ТАБЛИЦЫ
 if (item['id'] && item['id'].toLowerCase() === 'delivery_cost') {
     DELIVERY_COST = parseFloat(item['Цена']?.replace(',', '.')) || 0;
@@ -570,8 +757,6 @@ if (item['id'] && item['id'].toLowerCase() === 'free_delivery_limit') {
     FREE_DELIVERY_LIMIT = parseFloat(item['Цена']?.replace(',', '.')) || 0;
     continue;
 }
-
-
 
       const el = document.querySelector(`.card[data-id="${item['id']}"]`);
       if (!el) continue;
@@ -621,11 +806,13 @@ if (item['id'] && item['id'].toLowerCase() === 'free_delivery_limit') {
     }
 
     // Корзина
-document.querySelectorAll('.cart-icon').forEach(icon => {
-  icon.addEventListener('click', () => {
+// Делегирование кликов по кнопкам корзины
+document.body.addEventListener('click', function(e) {
+  const icon = e.target.closest('.cart-icon');
+  if (icon) {
     const card = icon.closest('.card');
     addToCart(card);
-  });
+  }
 });
 
     document.querySelector('.floating-cart').onclick = () => {
@@ -633,15 +820,12 @@ document.querySelectorAll('.cart-icon').forEach(icon => {
   // иначе ничего не делаем, чтобы надпись не появлялась
 };
 
-
     // Специальные предложения
     updateSpecialOffersSection();
 
 updateCartUI();
 
-
-
-  } catch (e) { console.error('Ошибка загрузки меню', e); }
+  } catch (e) { }
 }
 
 // ===== Специальные предложения =====
@@ -666,15 +850,6 @@ function updateSpecialOffersSection() {
     buttons.forEach(btn => { 
       if(btn.textContent.trim().toLowerCase() === 'предложения') btn.style.display='inline-block'; 
     });
-
-    // Навешиваем корзину на клонированные карточки
-specialGrid.querySelectorAll('.cart-icon').forEach(icon => {
-  icon.onclick = () => {
-    const card = icon.closest('.card');
-    addToCart(card); // теперь товары добавляются в корзину с учётом количества
-  }
-});
-
 
   } else {
     specialSection.style.display = 'none';
@@ -734,7 +909,6 @@ function updateActiveFilter() {
     return; // чтобы не выполнялась остальная часть
   }
 
-
   const specialSection = document.querySelector('.special-offers-section');
   if (specialSection) {
     const sectionTop = specialSection.offsetTop;
@@ -780,68 +954,30 @@ buttons.forEach(btn => {
   });
 });
 
-// ===== Инициализация =====
-(async () => {
-  await updateMenuFromSheet();   // ждем загрузку меню
-  updateActiveFilter();          // обновляем активный фильтр
-  setTimeout(() => {
-    animateCards();              // запускаем анимацию
-  }, 250);
-  
-})();
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action="contacts"]');
+  if (!btn) return;
 
+  const footer = document.getElementById('contacts');
+  if (!footer) return;
 
-// ===== Выбор шапочки =====
-const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
-
-rollSelectWrappers.forEach(wrapper => {
-  const btn = wrapper.querySelector('.select-btn');
-  const dropdown = wrapper.querySelector('.select-dropdown');
-  const arrow = wrapper.querySelector('.arrow');
-
-  // Проверяем, есть ли "Сырная шапочка" в списке
-  let defaultTopping = 'Сырная шапочка';
-  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
-  if (!exists) {
-    const li = document.createElement('li');
-    li.textContent = defaultTopping;
-    dropdown.prepend(li);
-  }
-
-  // Устанавливаем значение по умолчанию
-  btn.firstChild.textContent = defaultTopping + ' ';
-
-  // Открытие/закрытие списка
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    dropdown.classList.toggle('show');
-    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-  });
-
-  // Выбор элемента из списка
-  dropdown.querySelectorAll('li').forEach(item => {
-    item.addEventListener('click', () => {
-      btn.firstChild.textContent = item.textContent + ' ';
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    });
-  });
-
-  // Закрытие при клике вне области
-  document.addEventListener('click', (e) => {
-    if (!wrapper.contains(e.target)) {
-      dropdown.classList.remove('show');
-      arrow.style.transform = 'rotate(0deg)';
-    }
+  footer.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
   });
 });
 
+(async () => {
+  await updateMenuFromSheet();   // ждем загрузку меню
 
+  await loadToppingPrices(); 
 
+  updateActiveFilter();          
 
-
-
-
+  setTimeout(() => {
+    animateCards();              
+  }, 250);
+})();
 
 // ===== НАСТРОЙКИ =====
 const cartItemsContainer = document.querySelector('.cart-items');
@@ -857,20 +993,18 @@ const placeOrderBtn = document.getElementById('placeOrder');
 const clearCartBtn = document.getElementById('clearCartBtn');
 const checkoutForm = document.getElementById('checkoutForm');
 const phoneInput = checkoutForm?.querySelector('input[name="phone"]');
-
-
+const roundingRow = document.querySelector('.rounding-row');
+const roundingEl = document.querySelector('.rounding-price');
 const paymentSelect = checkoutForm?.payment;
 
 paymentSelect?.addEventListener('change', () => {
-    if (paymentSelect.value.toLowerCase() === 'карта онлайн') {
+    if (paymentSelect.value === 'card') {
         placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
         placeOrderBtn.textContent = 'Оформить заказ';
     }
 });
-
-
-
+checkoutForm?.payment?.addEventListener('change', renderCart);
 
 if(phoneInput){
     phoneInput.addEventListener('input', () => {
@@ -878,11 +1012,8 @@ if(phoneInput){
     });
 }
 
-let DELIVERY_COST = 5.00;
-let FREE_DELIVERY_LIMIT = 50.00;
 const ITEM_LIMIT = 20;
 const cart = new Map();
-
 
 // ===== LOCALSTORAGE =====
 function saveCart(){ localStorage.setItem('cart', JSON.stringify(Object.fromEntries(cart))); }
@@ -915,9 +1046,12 @@ function showToast(msg, isRed = false, duration = 2500) {
     }, duration);
 }
 
-
 // ===== ESCAPE HTML =====
 function escapeHtml(str){ return String(str).replace(/[&<>"]/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s])); }
+
+function roundCash(value) {
+  return Math.round(value * 20) / 20;
+}
 
 // ===== ДОБАВЛЕНИЕ В КОРЗИНУ =====
 function addToCart(card){
@@ -937,15 +1071,34 @@ function addToCart(card){
         ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.'))||unitPrice
         : unitPrice;
 
-    if(cart.has(id)){
-        const item = cart.get(id);
+const toppingBtn = card.querySelector('.select-btn');
+
+let toppingPrice = 0;
+let toppingName = '';
+
+if (toppingBtn) {
+  toppingPrice = parseFloat(toppingBtn.dataset.price || 0);
+  toppingName = toppingBtn.dataset.name || '';
+}
+
+    const finalId = id + (toppingName ? '_' + toppingName : '');
+
+if(cart.has(finalId)){
+        const item = cart.get(finalId);
         if(item.qty<ITEM_LIMIT){
             item.qty++;
-            cart.set(id,item);
+            cart.set(finalId,item);
             showToast('Товар добавлен в корзину');
         } else showToast(`Максимум ${ITEM_LIMIT} штук`, true);
     } else {
-        cart.set(id,{name,unitPrice,originalPrice,qty:1});
+        const finalPrice = unitPrice;
+
+cart.set(finalId, {
+  name: toppingName ? `${name} (${toppingName})` : name,
+  unitPrice: finalPrice,
+  originalPrice: originalPrice,
+  qty: 1
+});
         showToast('Товар добавлен в корзину');
     }
 
@@ -955,7 +1108,6 @@ function addToCart(card){
 
 // ===== ОБНОВЛЕНИЕ ПРИ СМЕНЕ СПОСОБА ПОЛУЧЕНИЯ =====
 checkoutForm?.method?.addEventListener('change', renderCart);
-
 
 // ===== OPEN/CLOSE =====
 function openCart(){ cartFullscreenEl?.setAttribute('aria-hidden','false'); cartBackdrop?.classList.add('show'); }
@@ -998,7 +1150,6 @@ if (addressInput) {
     });
 }
 
-
   // Сохраняем при изменении любого поля
   checkoutForm.addEventListener('input', () => {
     const data = {};
@@ -1010,7 +1161,7 @@ if (addressInput) {
 }
 
 // ====== Очистка формы при оформлении заказа ======
-placeOrderBtn?.addEventListener('click', () => {
+placeOrderBtn?.addEventListener('click', async () => {
     if (!checkoutForm) return;
     
 
@@ -1035,7 +1186,7 @@ const fields = [
   {el: checkoutForm.method, required: true},
   {el: document.getElementById('deliveryTime'), required: true},
   {el: document.getElementById('chooseDateBtn'), required: true, isBtn: true},
-  {el: document.getElementById('deliveryAddress'), required: method === 'доставка'}
+  {el: document.getElementById('deliveryAddress'), required: method === 'delivery'}
 ];
 
 fields.forEach(f => {
@@ -1058,9 +1209,8 @@ if (hasError) {
   return;
 }
 
-
-    const isDelivery = method === 'доставка';
-    const isPickup = method === 'самовывоз';
+    const isDelivery = method === 'delivery';
+    const isPickup = method === 'pickup';
 
     const dateBtn = document.getElementById('chooseDateBtn');
     const timeSelect = document.getElementById('deliveryTime');
@@ -1091,10 +1241,8 @@ if (hasError) {
         return;
     }
 
-
-
 // ===== Логика для оплаты картой =====
-if (payment.toLowerCase() === 'карта онлайн') {
+if (payment === 'card') {
     showToast('<strong>Перенаправление к странице оплаты...</strong><br><small>Это может занять до 1 минуты</small>', false, 120000);
 
 const cartData = [];
@@ -1108,7 +1256,6 @@ cart.forEach((item, id) => {
         promoFree: item.promoFree || false
     });
 });
-
 
     const delivery = parseFloat(deliveryEl.textContent) || 0;
 
@@ -1135,6 +1282,24 @@ if (activePromo) {
   }
 }
 
+const orderData = {
+    checkout: {
+        name: checkoutForm.name.value,
+        phone: checkoutForm.phone.value,
+        email: checkoutForm.email.value,
+        payment: checkoutForm.payment.value,
+        method: checkoutForm.method.value,
+        date: chooseDateBtn?.textContent || '',
+        time: deliveryTime?.value || '',
+        address: deliveryAddress?.value || '',
+        comment: checkoutForm.comment?.value || '',
+        promo: activePromo?.code || ''
+    },
+    total: parseFloat(totalEl.textContent) || 0,
+    delivery: parseFloat(deliveryEl.textContent) || 0,
+    discount: parseFloat(discountEl.textContent) || 0,
+    lang: currentLang
+};
 
 // Теперь отправляем на сервер
 fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
@@ -1143,7 +1308,9 @@ fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
   body: JSON.stringify({
     cart: cartData,
     delivery,
-    promo: promoForStripe   // ← ТОЛЬКО ЭТО
+    promo: promoForStripe,   // ← ТОЛЬКО ЭТО
+    lang: currentLang,  // ← передаем язык
+    orderData
   })
 })
 .then(res => res.json())
@@ -1159,41 +1326,71 @@ fetch("https://stripe-test-it0r.onrender.com/create-checkout-session", {
     return;
 }
 
-
-
 function updateOrderButtonText() {
     if (!checkoutForm || !placeOrderBtn) return;
 
     const payment = checkoutForm.payment.value;
 
-    if (payment === 'Карта онлайн') {
+    if (payment === 'card') {
         placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
         placeOrderBtn.textContent = 'Оформить заказ';
     }
 }
 
+const orderData = {
+        cart: Array.from(cart.entries()).map(([id, item]) => ({
+            id,
+            name: item.name,
+            unitPrice: item.unitPrice,
+            qty: item.qty,
+            promoFree: item.promoFree || false
+        })),
+        checkout: {
+            name: checkoutForm.name.value,
+            phone: checkoutForm.phone.value,
+            email: checkoutForm.email.value,
+            payment: checkoutForm.payment.value,
+            method: checkoutForm.method.value,
+            date: chooseDateBtn?.textContent || '',
+            time: deliveryTime?.value || '',
+            address: deliveryAddress?.value || '',
+            comment: checkoutForm.comment?.value || '',
+            promo: activePromo?.code || ''
+        },
+        total: parseFloat(totalEl.textContent) || 0,
+        delivery: parseFloat(deliveryEl.textContent) || 0,
+        discount: parseFloat(discountEl.textContent) || 0,
+        lang: currentLang
+    };
 
+showToast(
+  '<strong>Обработка заказа...</strong><br><small>Пожалуйста, подождите</small>',
+  false,
+  120000
+);
 
-    // ===== оформление заказа =====
-    showToast('Заказ принят — спасибо!');
+        const res = await fetch('https://telegram-server-fcgc.onrender.com/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+        const result = await res.json();
+
+            showToast('Заказ принят — спасибо!');
     cart.clear();
-    saveCart();
-    updateCartUI();
-
+resetPromo(); // 🔥 ВОТ ЭТА СТРОКА
+resetCheckoutExtras();
     checkoutForm.reset();
     if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
     if (timeSelect) timeSelect.value = '';
     if (addressInput) addressInput.value = '';
 
-    localStorage.removeItem('checkoutFormData');
-    localStorage.removeItem('deliveryAddress');
     setTimeout(closeCart, 900);
+
+    saveCart();
+    updateCartUI();
 });
-
-
-
-
 
 // ========================================================
 // 1. ЗАГРУЗКА ПРОМОКОДОВ ИЗ GOOGLE SHEETS
@@ -1212,18 +1409,31 @@ function savePromo() {
 
 function loadPromo() {
   const data = localStorage.getItem('activePromo');
-  if (data) {
-    activePromo = JSON.parse(data);
-    promoInput.value = activePromo.code || '';
-    if (activePromo.type === 'free_item' && activePromo.min > 0) {
-      promoMessage.textContent = `Промокод "${activePromo.code}" активен при покупке от ${activePromo.min} €`;
+  const appliedAt = localStorage.getItem('promoAppliedAt');
+
+  if (data && appliedAt) {
+    const now = Date.now();
+    const elapsed = now - Number(appliedAt);
+
+    if (elapsed < 1800000) { // 15 минут
+      activePromo = JSON.parse(data);
+      promoInput.value = activePromo.code || '';
+      if (activePromo.type === 'free_item' && activePromo.min > 0) {
+        promoMessage.textContent = `Промокод "${activePromo.code}" активен при покупке от ${activePromo.min} €`;
+      } else {
+        promoMessage.textContent = `Промокод "${activePromo.code}" применён`;
+      }
+      promoMessage.style.color = 'green';
     } else {
-      promoMessage.textContent = `Промокод "${activePromo.code}" применён`;
+      // Сбрасываем промокод, если прошло > 15 мин
+      activePromo = null;
+      promoInput.value = '';
+      promoMessage.textContent = '';
+      localStorage.removeItem('activePromo');
+      localStorage.removeItem('promoAppliedAt');
     }
-    promoMessage.style.color = 'green';
   }
 }
-
 
 async function loadPromoCodes() {
   try {
@@ -1253,14 +1463,181 @@ async function loadPromoCodes() {
       if (itemId) promoCodes[code].itemId = itemId;
     }
 
-    console.log("Промокоды загружены:", promoCodes);
   } catch (err) {
-    console.error("Ошибка загрузки промокодов:", err);
+    console.error("", err);
   }
 }
 
 loadPromoCodes();
 
+async function loadToppingPrices() {
+  try {
+    const res = await fetch(sheetUrl);
+    const csv = await res.text();
+    const lines = csv.split("\n").map(l => l.trim());
+
+    const priceMap = {};
+    const activeMap = {};
+    const hiddenMap = {}; // ✅ ДОБАВИЛИ
+
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i]) continue;
+
+      const cols = lines[i].split(",");
+
+      const id = (cols[0] || "").trim().toLowerCase();
+      const price = parseFloat((cols[1] || "0").replace(",", ".")) || 0;
+
+      const activeRaw = (cols[4] || "").trim().toLowerCase();
+      const hiddenRaw = (cols[5] || "").trim().toLowerCase();
+
+      const isActive = activeRaw === "true";
+      const isHidden = hiddenRaw === "true";
+
+      if (!id) continue;
+
+      priceMap[id] = price;
+      activeMap[id] = isActive;
+      hiddenMap[id] = isHidden; // ✅ сохраняем
+    }
+
+    document.querySelectorAll('.select-dropdown li').forEach(li => {
+      const id = li.dataset.id?.trim().toLowerCase();
+      if (!id) return;
+
+      const price = priceMap[id];
+      const isActive = activeMap[id];
+      const isHidden = hiddenMap[id];
+
+      if (price === undefined) return;
+
+      // 🚨 ГЛАВНОЕ: СКРЫТИЕ
+      if (isHidden) {
+        li.remove();
+        return;
+      }
+
+      li.dataset.price = price;
+
+      let span = li.querySelector('.topping-price');
+      if (!span) {
+        span = document.createElement('span');
+        span.className = 'topping-price';
+        li.appendChild(span);
+      }
+
+      if (!isActive) {
+        li.classList.add('disabled');
+        span.textContent = "Недоступно";
+      } else {
+        li.classList.remove('disabled');
+        span.textContent = `+${price.toFixed(2)} €`;
+      }
+    });
+
+  } catch (err) {
+    console.error('', err)
+  }
+}
+
+function applyToppingImage(card, toppingId) {
+  const photo = card.querySelector('.photo');
+  if (!photo || !toppingId) return;
+
+  const rollId = card.dataset.id;
+
+  const map = {
+    "запечённый_ролл_нико": {
+      "сырная_шапочка": "Foto/Shushi-19.jpg",
+      "рыбная_шапочка": "Foto/Shushi-22.jpg",
+      "спайси_шапочка": "Foto/Shushi-31.jpg",
+      "шапочка_с_крабом": "Foto/Shushi-4.jpg",
+      "шапочка_с_креветкой": "Foto/Shushi-1.jpg"
+    },
+    "запечённый_ролл_салмон": {
+      "сырная_шапочка": "Foto/Shushi-18.jpg",
+      "рыбная_шапочка": "Foto/Shushi-19.jpg",
+      "спайси_шапочка": "Foto/Shushi-1.jpg",
+      "шапочка_с_крабом": "Foto/Shushi-3.jpg",
+      "шапочка_с_креветкой": "Foto/Shushi-17.jpg"
+    }
+  };
+
+  const img = map?.[rollId]?.[toppingId];
+  if (!img) return;
+
+  photo.classList.add('is-fading');
+
+  setTimeout(() => {
+    photo.style.backgroundImage = `url('${img}')`;
+    photo.classList.remove('is-fading');
+  }, 150);
+}
+
+function setDefaultTopping() {
+  document.querySelectorAll('.roll-select-wrapper').forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const items = wrapper.querySelectorAll('.select-dropdown li');
+    const card = wrapper.closest('.card');
+
+    let found = null;
+
+    items.forEach(li => {
+      if (found) return;
+
+      const isDisabled = li.classList.contains('disabled');
+      const isHidden = li.style.display === 'none';
+
+      if (!isDisabled && !isHidden) {
+        found = li;
+      }
+    });
+
+    if (!found) return;
+
+    const name = found.childNodes[0].textContent.trim();
+    const price = parseFloat(found.dataset.price || 0);
+
+if (card) {
+  applyToppingImage(card, found.dataset.id);
+}
+
+    // ===== обновляем кнопку =====
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.name = name;
+    btn.dataset.price = price;
+
+    // ===== 💥 ВАЖНО: пересчёт цены карточки =====
+    if (card) {
+      const priceEl = card.querySelector('.price');
+      const newPriceEl = priceEl?.querySelector('.new-price');
+      const oldPriceEl = priceEl?.querySelector('.old-price');
+
+      let basePrice = parseFloat(card.dataset.basePrice);
+
+      if (!basePrice) {
+        const priceText = (newPriceEl || priceEl).textContent;
+        basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+        card.dataset.basePrice = basePrice;
+      }
+
+      const finalPrice = basePrice + price;
+
+      if (newPriceEl) {
+        newPriceEl.textContent =
+          finalPrice.toFixed(2).replace('.', ',') + ' €';
+      } else {
+        priceEl.textContent =
+          finalPrice.toFixed(2).replace('.', ',') + ' €';
+      }
+
+      if (oldPriceEl) {
+        oldPriceEl.textContent =
+          (basePrice + price).toFixed(2).replace('.', ',') + ' €';
+      }
+    }
+  });
+}
 
 // ========================================================
 // 2. ЭЛЕМЕНТЫ И UI
@@ -1313,6 +1690,9 @@ if (activePromo && activePromo.type === 'free_item') {
     activePromo.code = code;
     savePromo();
 
+    localStorage.setItem('promoAppliedAt', Date.now());
+
+
     if (activePromo.type === 'free_item', 'min_total_discount' && activePromo.min > 0) {
       promoMessage.textContent = `Промокод "${code}" активен при покупке от ${activePromo.min} €`;
     } else {      
@@ -1346,6 +1726,55 @@ cancelPromoBtn.addEventListener('click', () => {
 
   updateCartUI();
 });
+
+function resetPromo() {
+    // удалить бесплатный товар, если есть
+    if (activePromo && activePromo.type === 'free_item') {
+        const promoId = activePromo.itemId + '_promo';
+        if (cart.has(promoId)) {
+            cart.delete(promoId);
+        }
+    }
+
+    activePromo = null;
+
+    localStorage.removeItem('activePromo');
+
+    if (promoInput) promoInput.value = '';
+    if (promoMessage) promoMessage.textContent = '';
+    
+    // свернуть UI промокода
+    if (promoBox && showPromoBtn) {
+        promoBox.style.display = 'none';
+        showPromoBtn.style.display = 'block';
+    }
+}
+
+function resetCheckoutExtras() {
+    // ===== комментарий =====
+    const commentField = checkoutForm?.querySelector('[name="comment"]');
+    if (commentField) commentField.value = '';
+
+    // ===== способ получения =====
+    const methodField = checkoutForm?.querySelector('[name="method"]');
+    if (methodField) methodField.value = '';
+
+    // ===== способ оплаты =====
+    const paymentField = checkoutForm?.querySelector('[name="payment"]');
+    if (paymentField) paymentField.value = '';
+
+    // ===== чистим localStorage =====
+    localStorage.removeItem('checkoutComment');
+
+    const savedForm = localStorage.getItem('checkoutFormData');
+    if (savedForm) {
+        const data = JSON.parse(savedForm);
+        delete data.comment;
+        delete data.method;
+        delete data.payment;
+        localStorage.setItem('checkoutFormData', JSON.stringify(data));
+    }
+}
 
 
 // ========================================================
@@ -1528,7 +1957,7 @@ async function loadMinHours() {
             if (!isNaN(hours)) minHoursRanges.push({ maxItems, hours });
         }
     } catch (err) {
-        console.error("Ошибка загрузки мин. часов из таблицы", err);
+        console.error("", err);
     }
 }
 
@@ -1577,21 +2006,19 @@ async function loadDeliveryTimes() {
 
         updateDeliveryTimes(); // первый рендер
     } catch (err) {
-        console.error("Ошибка загрузки времени доставки", err);
+        console.error("", err);
     }
 }
 
 // ===== ФИЛЬТРАЦИЯ СЛОТОВ ПО МИН. ЧАСАМ =====
-function filterDeliveryTimes(times) {
-    if (!selectedDate) return [];
+function filterDeliveryTimes(times, dateStr = selectedDate) {
+    if (!dateStr) return [];
 
     const now = new Date();
 
-    // считаем общее количество товаров в корзине
     let totalItems = 0;
     cart.forEach(i => totalItems += i.qty);
 
-    // ищем нужный диапазон
     let minHours = 0;
     for (const range of minHoursRanges) {
         if (range.maxItems === null || totalItems <= range.maxItems) {
@@ -1600,15 +2027,35 @@ function filterDeliveryTimes(times) {
         }
     }
 
-    const [day, month, year] = selectedDate.split(".").map(Number);
+    const [day, month, year] = dateStr.split(".").map(Number);
 
     return times.filter(t => {
         const [startTime] = t.split("–");
         const [hours, minutes] = startTime.split(":").map(Number);
-        const slotDate = new Date(year, month - 1, day, hours, minutes);
+
+        const slotDate = new Date(
+            year,
+            month - 1,
+            day,
+            hours,
+            minutes
+        );
+
         const diffHours = (slotDate - now) / (1000 * 60 * 60);
+
         return diffHours >= minHours;
     });
+}
+
+function hasAvailableTimesForDate(dateStr) {
+    const method = methodSelect?.value?.toLowerCase();
+
+    if (!method) return true;
+
+    const key = `${dateStr}|${method}`;
+    const times = deliveryTimesByDate[key] || [];
+
+    return filterDeliveryTimes(times, dateStr).length > 0;
 }
 
 // ===== ОБНОВЛЕНИЕ ВРЕМЕНИ В SELECT =====
@@ -1662,12 +2109,6 @@ methodSelect?.addEventListener('change', updateDeliveryTimes);
 // ===== ЗАГРУЗКА ПРИ СТАРТЕ =====
 Promise.all([loadMinHours(), loadDeliveryTimes()]);
 
-
-
-
-
-
-
 let selectedDate = null;
 let blockedDates = new Set();
 let blockedWeekday = false;
@@ -1689,28 +2130,42 @@ async function loadBlockedDates() {
       if(weekend && weekend.trim().toUpperCase() === "YES") blockedWeekend = true;
     }
   } catch(err) {
-    console.error("Ошибка загрузки Google Sheet", err);
+    console.error("", err);
   }
 }
 
-
 function updateDeliveryFields() {
   const method = methodSelect.value?.toLowerCase();
+  const pickupInfo = document.getElementById('pickupInfo');
+  const pickupMap = document.getElementById('pickupMap');
 
-  if(method === "доставка" || method === "самовывоз"){
+  if(method === "delivery" || method === "pickup"){
     deliveryFields.style.display = "block";
 
-    if(method === "доставка"){
-      deliveryNote.style.display = "block";        
-      deliveryAddress.style.display = "block";     
-    } else { 
-      deliveryNote.style.display = "none";         
-      deliveryAddress.style.display = "none";      
-    }
+    if(method === "delivery"){
+  deliveryNote.style.display = "block";        
+  deliveryAddress.style.display = "block";     
+
+  if (pickupInfo) pickupInfo.style.display = "none";
+  if (pickupMap) pickupMap.style.display = "none";
+
+} else if (method === "pickup") {
+
+  deliveryNote.style.display = "none";         
+  deliveryAddress.style.display = "none";      
+
+  if (pickupInfo) pickupInfo.style.display = "block";
+  if (pickupMap) pickupMap.style.display = "block";
+
+} else {
+
+  if (pickupInfo) pickupInfo.style.display = "none";
+  if (pickupMap) pickupMap.style.display = "none";
+}
 
     // Сбрасываем дату и время при смене метода
     selectedDate = null;
-    chooseDateBtn.textContent = method === "доставка" ? "Выбрать дату *" : "Выбрать дату *";
+    chooseDateBtn.textContent = method === "delivery" ? "Выбрать дату *" : "Выбрать дату *";
     deliveryTime.innerHTML = "";
   } else {
     deliveryFields.style.display = "none";
@@ -1730,7 +2185,6 @@ methodSelect?.addEventListener('change', () => {
 
 // вызовем один раз при старте, чтобы корректно отобразить поля при перезагрузке
 updateDeliveryFields();
-
 
 // ===== ОТКРЫТИЕ КАЛЕНДАРЯ =====
 chooseDateBtn?.addEventListener('click', () => {
@@ -1803,25 +2257,39 @@ function renderCalendar() {
         dayDiv.classList.add('unavailable');
       }
 
-      if(selectedDate === isoDate){
-        dayDiv.classList.add('selected');
-      }
+      const dayStr = day.toString().padStart(2, '0');
+const monthStr = (date.getMonth()+1).toString().padStart(2, '0');
+const yearStr = date.getFullYear();
 
-      dayDiv.addEventListener('click', () => {
+const fullDate = `${dayStr}.${monthStr}.${yearStr}`;
+
+// если для даты нет доступного времени
+if (!hasAvailableTimesForDate(fullDate)) {
+    dayDiv.classList.remove('available');
+    dayDiv.classList.add('unavailable');
+}
+
+if(fullDate === selectedDate){
+    dayDiv.classList.add('selected'); // красим выбранный день
+}
+
+dayDiv.addEventListener('click', () => {
     if(dayDiv.classList.contains('unavailable')) return;
 
-    const [year, month, day] = isoDate.split('-').map(Number);
+    // Форматируем день и месяц с ведущим нулём
+    const dayStr = day.toString().padStart(2, '0');
+    const monthStr = (date.getMonth()+1).toString().padStart(2, '0');
+    const yearStr = date.getFullYear();
 
     // selectedDate в формате дд.мм.гггг
-    selectedDate = `${day.toString().padStart(2,'0')}.${month.toString().padStart(2,'0')}.${year}`;
+    selectedDate = `${dayStr}.${monthStr}.${yearStr}`;
 
     chooseDateBtn.textContent = "Дата: " + selectedDate;
     deliveryCalendar.style.display = "none";
 
     renderCalendar();
-    updateDeliveryTimes(); // сразу обновляем список времени для выбранной даты
+    updateDeliveryTimes(); // обновляем список времени
 });
-
 
       daysContainer.appendChild(dayDiv);
     }
@@ -1834,17 +2302,9 @@ function renderCalendar() {
 loadBlockedDates().then(() => renderCalendar());
 
 
-
-
-
-
-
-
-
-
   let delivery = subtotal >= FREE_DELIVERY_LIMIT ? 0 : DELIVERY_COST;
   const method = checkoutForm?.method?.value?.toLowerCase();
-    if (method === "самовывоз") delivery = 0;
+    if (method === "pickup") delivery = 0;
 
     let discount = 0;
 
@@ -1885,10 +2345,35 @@ if (
   discountRow.style.display = 'none';
 }
 
-  const total = subtotal + delivery - discount;
-  subtotalEl.textContent = subtotal.toFixed(2) + " €";
-  deliveryEl.textContent = delivery.toFixed(2) + " €";
-    totalEl.textContent = total.toFixed(2) + " €";
+  let total = subtotal + delivery - discount;
+
+let finalTotal = total;
+let roundingDiff = 0;
+
+const paymentMethod = checkoutForm?.payment?.value?.toLowerCase();
+
+// ===== ОКРУГЛЕНИЕ ДЛЯ НАЛИЧНЫХ =====
+if (paymentMethod === 'cash') {
+  finalTotal = roundCash(total);
+  roundingDiff = finalTotal - total;
+}
+
+// ===== ОБНОВЛЕНИЕ UI =====
+subtotalEl.textContent = subtotal.toFixed(2) + " €";
+deliveryEl.textContent = delivery.toFixed(2) + " €";
+totalEl.textContent = finalTotal.toFixed(2) + " €";
+
+// ===== СТРОКА "ОКРУГЛЕНИЕ" =====
+if (paymentMethod === 'cash') {
+  roundingRow.style.display = '';
+
+  roundingEl.textContent =
+    (roundingDiff > 0 ? '+' : '') +
+    roundingDiff.toFixed(2) + ' €';
+
+} else {
+  roundingRow.style.display = 'none';
+}
 
   // Значок количества в корзине
   if (cartCountEl) {
@@ -1898,9 +2383,10 @@ if (
   }
   saveCart();
   savePromo();
+
+  renderCalendar();
   updateDeliveryTimes();
 }
-
 
 // ===== ИНИЦИАЛЬНЫЙ РЕНДЕР =====
 loadCart();
@@ -1912,7 +2398,6 @@ if (localStorage.getItem('activePromo')) {
     showPromoBtn.style.display = 'none';
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
   const checkoutForm = document.getElementById('checkoutForm');
   const placeOrderBtn = document.getElementById('placeOrder');
@@ -1921,7 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!checkoutForm || !placeOrderBtn || !paymentSelect) return;
 
   function updateButton() {
-    if (paymentSelect.value === 'Карта онлайн') {
+    if (paymentSelect.value === 'card') {
       placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
       placeOrderBtn.textContent = 'Оформить заказ';
@@ -1944,9 +2429,558 @@ langBtns.forEach(btn => {
   });
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggleCompact');
+  const STORAGE_KEY = 'compactMode';
+  const EXPIRY_KEY = 'compactModeExpiry';
+  const TTL = 1800000
 
+  // ===== Восстанавливаем состояние при загрузке =====
+  const now = Date.now();
+  const expiry = localStorage.getItem(EXPIRY_KEY);
+  if (expiry && now < +expiry) {
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+      document.body.classList.add('compact');
+      toggleBtn.querySelector('.icon-grid').classList.remove('active');
+      toggleBtn.querySelector('.icon-list').classList.add('active');
+
+      // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПОСЛЕ ВОССТАНОВЛЕНИЯ =====
+      requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
+    }
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
+  }
+
+  // ===== Клик по кнопке =====
+  toggleBtn.addEventListener('click', () => {
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+
+    const isCompact = document.body.classList.toggle('compact');
+    toggleBtn.querySelector('.icon-grid').classList.toggle('active', !isCompact);
+    toggleBtn.querySelector('.icon-list').classList.toggle('active', isCompact);
+
+    // Сохраняем состояние
+    localStorage.setItem(STORAGE_KEY, isCompact);
+    localStorage.setItem(EXPIRY_KEY, Date.now() + TTL);
+
+    // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПРИ ПЕРЕКЛЮЧЕНИИ =====
+    requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
+  });
+
+// ===== Выбор шапочки =====
+const rollSelectWrappers = document.querySelectorAll('.roll-select-wrapper');
+
+rollSelectWrappers.forEach(wrapper => {
+  const btn = wrapper.querySelector('.select-btn');
+  const dropdown = wrapper.querySelector('.select-dropdown');
+  const arrow = wrapper.querySelector('.arrow');
+
+  // Проверяем, есть ли "Сырная шапочка" в списке
+  let defaultTopping = 'Сырная шапочка';
+  let exists = Array.from(dropdown.querySelectorAll('li')).some(li => li.textContent.trim() === defaultTopping);
+  if (!exists) {
+    const li = document.createElement('li');
+    li.textContent = defaultTopping;
+    dropdown.prepend(li);
+  }
+
+  // Открытие/закрытие списка
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdown.classList.toggle('show');
+    arrow.style.transform = dropdown.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+dropdown.querySelectorAll('li').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    if (item.classList.contains('disabled')) {
+      showToast('Временно недоступно', true);
+      return;
+    }
+
+    const name = item.childNodes[0].textContent.trim();
+    const price = parseFloat(item.dataset.price || 0);
+
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.name = name;
+    btn.dataset.price = price;
+
+    const card = wrapper.closest('.card');
+    if (!card) return;
+
+    const photo = card.querySelector('.photo');
+    if (!photo) return;
+
+    const rollId = card.dataset.id;
+    const toppingId = item.dataset.id;
+
+applyToppingImage(card, item.dataset.id);
+
+    dropdown.classList.remove('show');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
+  });
+});
+
+dropdown.querySelectorAll('li').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.childNodes[0].textContent.trim();
+    const price = parseFloat(item.dataset.price || 0);
+    
+if (item.classList.contains('disabled')) {
+  showToast('Временно недоступно', true);
+  return;
+}
+    // обновляем кнопку
+    btn.firstChild.textContent = name + ' ';
+    btn.dataset.price = price;
+    btn.dataset.name = name;
+
+    dropdown.classList.remove('show');
+    arrow.style.transform = 'rotate(0deg)';
+
+    // ===== ВОТ ЭТО НОВОЕ =====
+    const card = wrapper.closest('.card');
+    if (!card) return;
+
+    const priceEl = card.querySelector('.price');
+    if (!priceEl) return;
+
+    const newPriceEl = priceEl.querySelector('.new-price');
+    const oldPriceEl = priceEl.querySelector('.old-price');
+
+    // ===== БАЗОВАЯ ЦЕНА =====
+    let basePrice = parseFloat(card.dataset.basePrice);
+
+    if (!basePrice) {
+      const priceText = (newPriceEl || priceEl).textContent;
+      basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+      card.dataset.basePrice = basePrice;
+    }
+
+    // ===== НОВАЯ ЦЕНА =====
+    const finalPrice = basePrice + price;
+
+    // ===== ОБНОВЛЯЕМ UI =====
+    if (newPriceEl) {
+  newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+} else {
+  priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+}
+
+if (oldPriceEl) {
+  oldPriceEl.textContent = (basePrice + price).toFixed(2).replace('.', ',') + ' €';
+}
+  });
+});
+
+  // Закрытие при клике вне области
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      dropdown.classList.remove('show');
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  });
+});
+
+document.querySelectorAll('.select-dropdown li').forEach(li => {
+  const price = parseFloat(li.dataset.price || 0);
+
+  let priceSpan = li.querySelector('.topping-price');
+
+  if (!priceSpan) {
+    priceSpan = document.createElement('span');
+    priceSpan.className = 'topping-price';
+    li.appendChild(priceSpan);
+  }
+
+  priceSpan.textContent = `+${price.toFixed(2)} €`;
+});
+
+  // ===== Показ/скрытие кнопки при ресайзе =====
+  function updateViewForMobile() {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      toggleBtn.style.display = "flex";
+    } else {
+      toggleBtn.style.display = "none";
+      document.body.classList.remove('compact');
+      toggleBtn.querySelector('.icon-grid').classList.add('active');
+      toggleBtn.querySelector('.icon-list').classList.remove('active');
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(EXPIRY_KEY);
+    }
+  }
+  updateViewForMobile();
+  window.addEventListener('resize', updateViewForMobile);
+
+  // ================== МОДАЛКА ==================
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest("body.compact .card");
+    if (!card) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+
+    e.preventDefault();
+
+    const modal = document.querySelector(".card-modal");
+    const content = modal.querySelector(".card-modal-content");
+
+    content.innerHTML = "";
+content.appendChild(card.cloneNode(true));
+
+initCardEvents(content);
+
+    // Временно выключаем компактный режим
+    document.body.classList.remove("compact");
+
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА В МОДАЛКЕ =====
+    requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
+  });
+
+  function closeModal() {
+    const modal = document.querySelector(".card-modal");
+    modal.classList.remove("active");
+
+    // Возвращаем компактный режим, если был
+    const expiry = localStorage.getItem(EXPIRY_KEY);
+    if (window.matchMedia("(max-width: 767px)").matches && expiry && Date.now() < +expiry) {
+      document.body.classList.add("compact");
+
+      // ===== ПЕРЕСЧЁТ ЯПОНСКОГО ТЕКСТА ПОСЛЕ ВОЗВРАТА В COMPACT =====
+      requestAnimationFrame(() => requestAnimationFrame(applyJPScrollSync));
+    }
+
+    document.body.style.overflow = "";
+  }
+
+  document.querySelector(".card-modal-bg").onclick = closeModal;
+  document.querySelector(".card-modal-close").onclick = closeModal;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Выбираем элементы
+  const logo = document.querySelector('header.brand .logo');
+  const langSwitcher = document.querySelector('.lang-switcher');
+  const toggleCompactBtn = document.getElementById('toggleCompact');
+
+  // Добавляем класс fade-slide
+  [logo, langSwitcher, toggleCompactBtn].forEach(el => {
+    if (!el) return;
+    el.classList.add('fade-slide');
+  });
+
+  // Плавное появление с небольшой задержкой для красивого эффекта
+  setTimeout(() => {
+    logo?.classList.add('show');
+  }, 200); // логотип чуть позже
+
+  setTimeout(() => {
+    langSwitcher?.classList.add('show');
+  }, 400); // кнопки языка
+
+  setTimeout(() => {
+    toggleCompactBtn?.classList.add('show');
+  }, 600); // кнопка переключения режима
+});
+loadToppingPrices().then(() => {
+  setDefaultTopping();
+});
+
+window.addEventListener('load', () => {
+  document.querySelectorAll('.roll-select-wrapper').forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const card = wrapper.closest('.card');
+
+    if (!card || !btn?.dataset.id) return;
+
+    applyToppingImage(card, btn.dataset.id);
+  });
+});
+
+function initCardEvents(root = document) {
+  const wrappers = root.querySelectorAll('.roll-select-wrapper');
+
+  wrappers.forEach(wrapper => {
+    const btn = wrapper.querySelector('.select-btn');
+    const dropdown = wrapper.querySelector('.select-dropdown');
+    const arrow = wrapper.querySelector('.arrow');
+
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+
+      if (arrow) {
+        arrow.style.transform = dropdown.classList.contains('show')
+          ? 'rotate(180deg)'
+          : 'rotate(0deg)';
+      }
+    });
+
+    dropdown.querySelectorAll('li').forEach(item => {
+      item.onclick = (e) => {
+        e.stopPropagation();
+
+        if (item.classList.contains('disabled')) {
+          showToast('Временно недоступно', true);
+          return;
+        }
+
+        const name = item.childNodes[0].textContent.trim();
+        const price = parseFloat(item.dataset.price || 0);
+
+        const card = wrapper.closest('.card');
+applyToppingImage(card, item.dataset.id);
+
+        btn.firstChild.textContent = name + ' ';
+        btn.dataset.name = name;
+        btn.dataset.price = price;
+
+        dropdown.classList.remove('show');
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+
+        if (!card) return;
+
+        const priceEl = card.querySelector('.price');
+        const newPriceEl = priceEl?.querySelector('.new-price');
+
+        let basePrice = parseFloat(card.dataset.basePrice);
+
+        if (!basePrice) {
+          basePrice = parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+          card.dataset.basePrice = basePrice;
+        }
+
+        const finalPrice = basePrice + price;
+
+        if (newPriceEl) {
+          newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        } else {
+          priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        }
+      };
+    });
+  });
+}
+
+document.querySelectorAll('.card').forEach(card => {
+  const badges = card.dataset.badges || card.dataset.badge;
+  if (!badges) return;
+
+  badges.split(',').forEach(type => {
+    const badge = document.createElement('div');
+    badge.className = 'card-badge ' + type.trim();
+
+    switch(type.trim()) {
+      case 'classic':
+        badge.textContent = 'Классика';
+        break;
+      case 'popular':
+        badge.textContent = 'Популярно';
+        break;
+      case 'new':
+        badge.textContent = 'Новинка';
+        break;
+    }
+
+    card.appendChild(badge);
+  });
+});
+
+let maxWidth = 0;
+
+function findMaxWidth() {
+  maxWidth = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const w = card.offsetWidth;
+    if (w > maxWidth) maxWidth = w;
+  });
+}
+
+// 10 уровней до 110%
+function getZoom(width) {
+  const ratio = maxWidth / width;
+
+  let t = (ratio - 1);
+  t = Math.max(0, Math.min(t, 1));
+
+  const step = Math.round(t * 9);
+
+  const zoomLevels = [
+    100, 101, 102, 103, 104,
+    105, 106, 107, 108, 110
+  ];
+
+  return zoomLevels[step];
+}
+
+function updateZoom() {
+  document.querySelectorAll('.card').forEach(card => {
+    const width = card.offsetWidth;
+    const zoom = getZoom(width);
+
+    const photo = card.querySelector('.photo');
+    if (photo) {
+      photo.style.setProperty('--zoom', zoom + '%');
+    }
+  });
+}
+
+function refresh() {
+  findMaxWidth();
+  updateZoom();
+}
+
+window.addEventListener('load', refresh);
+window.addEventListener('resize', updateZoom);
+
+const observer = new ResizeObserver(updateZoom);
+document.querySelectorAll('.card').forEach(card => observer.observe(card));
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function positionHint() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const hint = document.getElementById("compactHint");
+  const content = hint.querySelector(".hint-content");
+
+  if (!btn || !isMobile()) return;
+
+  const rect = btn.getBoundingClientRect();
+
+  // позиция подсказки
+  const top = rect.top - 100;
+  const left = rect.left;
+
+  content.style.top = top + "px";
+  content.style.left = (left + rect.width / 2.1) + "px";
+}
+
+function showCompactHint() {
+  if (!isMobile()) return;
+
+  const hint = document.getElementById("compactHint");
+  hint.style.display = "block";
+
+  positionHint();
+}
+
+function closeCompactHint() {
+  document.getElementById("compactHint").style.display = "none";
+}
+
+window.addEventListener("load", () => {
+  if (!isMobile()) return;
+
+  const lastShown = localStorage.getItem("compactHintLastShown");
+  const now = Date.now();
+
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+
+  // если ещё не показывали или прошло больше суток
+  if (!lastShown || now - Number(lastShown) > ONE_DAY) {
+    setTimeout(() => {
+      showCompactHint();
+
+      // сохраняем время показа
+      localStorage.setItem("compactHintLastShown", now);
+    }, 600);
+  }
+});
+
+window.addEventListener("scroll", positionHint);
+window.addEventListener("resize", positionHint);
+
+const btn = document.querySelector(".view-toggle-btn");
+
+if (btn) {
+  btn.addEventListener("click", () => {
+    closeCompactHint();
+  });
+}
+
+function isMobile() {
+  return window.innerWidth <= 767;
+}
+
+function isCompactMode() {
+  return document.body.classList.contains("compact");
+}
+
+function shouldShow() {
+  const last = localStorage.getItem("compactModalLastShown");
+  if (!last) return true;
+
+  return Date.now() - parseInt(last, 10) > 24 * 60 * 60 * 1000;
+}
+
+/* включить блок */
+function enableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.add("blocked");
+  if (blocker) blocker.style.display = "block";
+
+  document.body.classList.add("compact-modal-active");
+}
+
+/* выключить блок */
+function disableBlock() {
+  const btn = document.querySelector(".view-toggle-btn");
+  const blocker = document.getElementById("compactBlocker");
+
+  if (btn) btn.classList.remove("blocked");
+  if (blocker) blocker.style.display = "none";
+
+  document.body.classList.remove("compact-modal-active");
+}
+
+/* показать модалку */
+function showCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "flex";
+  enableBlock();
+}
+
+/* закрыть */
+function closeCompactModeModal() {
+  document.getElementById("compactModeModal").style.display = "none";
+
+  disableBlock();
+
+  localStorage.setItem("compactModalLastShown", Date.now().toString());
+}
+
+/* проверка */
+function checkModal() {
+  if (!isMobile()) return;
+  if (!isCompactMode()) return;
+  if (!shouldShow()) return;
+
+  showCompactModeModal();
+}
+
+/* старт */
+window.addEventListener("load", () => {
+  setTimeout(checkModal, 500);
+});
+
+/* если переключили режим */
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".view-toggle-btn")) {
+    setTimeout(checkModal, 200);
+  }
+});
 
 updateCartUI();
+
 
 </script>
 </body>
