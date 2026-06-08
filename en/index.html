@@ -1162,7 +1162,7 @@ function updateOrderButtonText() {
 
     const payment = checkoutForm.payment.value;
 
-    if (payment === 'Карта онлайн') {
+    if (payment === 'card') {
         placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
         placeOrderBtn.textContent = 'Оформить заказ';
@@ -1917,7 +1917,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!checkoutForm || !placeOrderBtn || !paymentSelect) return;
 
   function updateButton() {
-    if (paymentSelect.value === 'Карта онлайн') {
+    if (paymentSelect.value === 'card') {
       placeOrderBtn.textContent = 'Перейти к оплате';
     } else {
       placeOrderBtn.textContent = 'Оформить заказ';
