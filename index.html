@@ -1485,11 +1485,11 @@ async function loadToppingPrices() {
 
       const cols = lines[i].split(",");
 
-      const id = (cols[0] || "").trim().toLowerCase();
-      const price = parseFloat((cols[1] || "0").replace(",", ".")) || 0;
+      const id = (cols[1] || "").trim().toLowerCase();
+      const price = parseFloat((cols[2] || "0").replace(",", ".")) || 0;
 
-      const activeRaw = (cols[4] || "").trim().toLowerCase();
-      const hiddenRaw = (cols[5] || "").trim().toLowerCase();
+      const activeRaw = (cols[5] || "").trim().toLowerCase();
+      const hiddenRaw = (cols[6] || "").trim().toLowerCase();
 
       const isActive = activeRaw === "true";
       const isHidden = hiddenRaw === "true";
