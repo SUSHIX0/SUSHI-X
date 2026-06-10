@@ -289,11 +289,11 @@
     <div class="roll-select-wrapper">
       <button class="select-btn" type="button">Juustukate<span class="arrow">▼</span></button>
       <ul class="select-dropdown">
-  <li data-id="cheese_topping" data-price="0">Juustukate</li>
+  <li data-id="cheese_topping" data-price="1.5">Juustukate</li>
   <li data-id="fish_topping" data-price="1.5">Kalakate</li>
-  <li data-id="spicy_topping" data-price="1.2">Spicy kaste</li>
-  <li data-id="crab_topping" data-price="1.4">Krabikate</li>
-  <li data-id="shrimp_topping" data-price="1.64">Krevetikate</li>
+  <li data-id="spicy_topping" data-price="1.5">Spicy kaste</li>
+  <li data-id="crab_topping" data-price="1.5">Krabikate</li>
+  <li data-id="shrimp_topping" data-price="1.5">Krevetikate</li>
 </ul>
     </div>
           </div>
@@ -312,11 +312,11 @@
     <div class="roll-select-wrapper">
       <button class="select-btn" type="button">Juustukate<span class="arrow">▼</span></button>
       <ul class="select-dropdown">
-  <li data-id="cheese_topping" data-price="0">Juustukate</li>
+  <li data-id="cheese_topping" data-price="1.5">Juustukate</li>
   <li data-id="fish_topping" data-price="1.5">Kalakate</li>
-  <li data-id="spicy_topping" data-price="1.2">Spicy kaste</li>
-  <li data-id="crab_topping" data-price="1.4">Krabikate</li>
-  <li data-id="shrimp_topping" data-price="1.64">Krevetikate</li>
+  <li data-id="spicy_topping" data-price="1.5">Spicy kaste</li>
+  <li data-id="crab_topping" data-price="1.5">Krabikate</li>
+  <li data-id="shrimp_topping" data-price="1.5">Krevetikate</li>
 </ul>
     </div>
           </div>
@@ -783,7 +783,7 @@ if (item['id'] && item['id'].toLowerCase() === 'free_delivery_limit') {
         if (!el.querySelector('.discount-badge')) {
           const badge = document.createElement('div');
           badge.className = 'discount-badge';
-          badge.textContent = 'Скидка';
+          badge.textContent = 'Allahindlus';
           el.querySelector('.photo').appendChild(badge);
         }
       } else {
@@ -2779,13 +2779,13 @@ document.querySelectorAll('.card').forEach(card => {
 
     switch(type.trim()) {
       case 'classic':
-        badge.textContent = 'Классика';
+        badge.textContent = 'Klassika';
         break;
       case 'popular':
-        badge.textContent = 'Популярно';
+        badge.textContent = 'Populaarne';
         break;
       case 'new':
-        badge.textContent = 'Новинка';
+        badge.textContent = 'Uus';
         break;
     }
 
