@@ -289,11 +289,11 @@
     <div class="roll-select-wrapper">
       <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
       <ul class="select-dropdown">
-  <li data-id="cheese_topping" data-price="0">Сырная шапочка</li>
+  <li data-id="cheese_topping" data-price="1.5">Сырная шапочка</li>
   <li data-id="fish_topping" data-price="1.5">Рыбная шапочка</li>
-  <li data-id="spicy_topping" data-price="1.2">Спайси шапочка</li>
-  <li data-id="crab_topping" data-price="1.4">Шапочка с крабом</li>
-  <li data-id="shrimp_topping" data-price="1.64">Шапочка с креветкой</li>
+  <li data-id="spicy_topping" data-price="1.5">Спайси шапочка</li>
+  <li data-id="crab_topping" data-price="1.5">Шапочка с крабом</li>
+  <li data-id="shrimp_topping" data-price="1.5">Шапочка с креветкой</li>
 </ul>
     </div>
           </div>
@@ -312,11 +312,11 @@
     <div class="roll-select-wrapper">
       <button class="select-btn" type="button">Сырная шапочка<span class="arrow">▼</span></button>
       <ul class="select-dropdown">
-  <li data-id="cheese_topping" data-price="0">Сырная шапочка</li>
+  <li data-id="cheese_topping" data-price="1.5">Сырная шапочка</li>
   <li data-id="fish_topping" data-price="1.5">Рыбная шапочка</li>
-  <li data-id="spicy_topping" data-price="1.2">Спайси шапочка</li>
-  <li data-id="crab_topping" data-price="1.4">Шапочка с крабом</li>
-  <li data-id="shrimp_topping" data-price="1.64">Шапочка с креветкой</li>
+  <li data-id="spicy_topping" data-price="1.5">Спайси шапочка</li>
+  <li data-id="crab_topping" data-price="1.5">Шапочка с крабом</li>
+  <li data-id="shrimp_topping" data-price="1.5">Шапочка с креветкой</li>
 </ul>
     </div>
           </div>
@@ -2216,7 +2216,7 @@ function renderCalendar() {
   for(const [key, monthDates] of Object.entries(months)){
     const monthLabel = document.createElement('div');
     monthLabel.className = 'month-label';
-    monthLabel.textContent = monthDates[0].toLocaleString('ru-RU', { month: 'long', year: 'numeric' })
+    monthLabel.textContent = monthDates[0].toLocaleString('en-GB', { month: 'long', year: 'numeric' })
     .replace(/^./, c => c.toUpperCase());
     monthLabel.style.marginTop = "20px";
     deliveryCalendar.appendChild(monthLabel);
