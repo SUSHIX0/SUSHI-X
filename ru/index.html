@@ -1094,10 +1094,9 @@ if(cart.has(finalId)){
         const finalPrice = unitPrice;
 
 cart.set(finalId, {
-  productId: id,
-  toppingName: toppingName,
+  name: toppingName ? `${name} (${toppingName})` : name,
   unitPrice: finalPrice,
-  originalPrice,
+  originalPrice: originalPrice,
   qty: 1
 });
         showToast('Товар добавлен в корзину');
@@ -1248,13 +1247,10 @@ if (payment === 'card') {
 
 const cartData = [];
 cart.forEach((item, id) => {
-  const productName = item.toppingName
-  ? `${getProductNameById(item.productId)} (${item.toppingName})`
-  : getProductNameById(item.productId);
     // Отправляем все товары, включая бесплатные
     cartData.push({
         id,
-        name: productName,
+        name: item.name,
         unitPrice: item.unitPrice > 0 ? item.unitPrice : 0.01, // 1 цент вместо 0
         qty: item.qty,
         promoFree: item.promoFree || false
@@ -1780,34 +1776,7 @@ function resetCheckoutExtras() {
     }
 }
 
-function getProductNameById(id) {
 
-  const card = document.querySelector(`.card[data-id="${id}"]`);
-
-  if (card) {
-    return card.querySelector('.title .name')?.textContent.trim() || id;
-  }
-
-  // поиск для запечённых роллов с шапками
-  const parts = id.split('_');
-
-  if (parts.length > 1) {
-    const baseId = parts.slice(0, -1).join('_');
-
-    const baseCard = document.querySelector(`.card[data-id="${baseId}"]`);
-
-    if (baseCard) {
-      const baseName =
-        baseCard.querySelector('.title .name')?.textContent.trim() || baseId;
-
-      const topping = parts[parts.length - 1];
-
-      return `${baseName} (${topping})`;
-    }
-  }
-
-  return id;
-}
 // ========================================================
 // 5. ОСНОВНАЯ ЛОГИКА ПРИ РЕНДЕРЕ КОРЗИНЫ
 // ========================================================
@@ -1820,11 +1789,7 @@ cart.forEach((item, id) => {
     // Пропускаем бесплатные позиции по промокоду
     if (item.unitPrice === 0 && item.promoFree) return;
 
-    const baseId = id.split('_promo')[0];
-
-const cardEl =
-  document.querySelector(`.card[data-id="${baseId}"]`) ||
-  document.querySelector(`.card[data-id="${id.split('_').slice(0, -1).join('_')}"]`);
+    const cardEl = document.querySelector(`.card[data-id="${id}"]`);
     if (!cardEl) return;
 
     const priceEl = cardEl.querySelector('.price');
@@ -1894,16 +1859,12 @@ if (FREE_DELIVERY_LIMIT > 0) {
   cart.forEach((item, id) => {
     const lineTotal = item.unitPrice * item.qty;
 
-    const productName = item.promoFree
-  ? getProductNameById(activePromo?.itemId || id)
-  : getProductNameById(id);
-
     const el = document.createElement('div');
     el.className = 'cart-item';
     el.dataset.id = id;
 
     el.innerHTML = `
-      <div class="name">${escapeHtml(productName)}</div>
+      <div class="name">${escapeHtml(item.name)}</div>
       <div class="unit">
         ${item.unitPrice.toFixed(2)} €
         ${item.originalPrice && item.originalPrice > item.unitPrice ? `<span class="old-price">${item.originalPrice.toFixed(2)} €</span>` : ''}
