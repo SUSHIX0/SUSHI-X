@@ -1191,7 +1191,7 @@ const fields = [
 
 fields.forEach(f => {
   const value = f.isBtn ? f.el.textContent : f.el.value;
-  if (f.required && (!value || (f.isBtn && !value.includes('Дата')))) {
+  if (f.required && (!value || (f.isBtn && !value.includes('Kuupäev')))) {
     f.el.classList.add('error');
     hasError = true;
   } else {
@@ -1217,7 +1217,7 @@ if (hasError) {
     const addressInput = document.getElementById('deliveryAddress');
 
     // ===== проверка даты =====
-    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Дата'))) {
+    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Kuupäev'))) {
         showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
         return;
     }
@@ -2408,9 +2408,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateButton() {
     if (paymentSelect.value === 'card') {
-      placeOrderBtn.textContent = 'Перейти к оплате';
+      placeOrderBtn.textContent = 'Mine maksmisele';
     } else {
-      placeOrderBtn.textContent = 'Оформить заказ';
+      placeOrderBtn.textContent = 'Esita tellimus';
     }
   }
 
