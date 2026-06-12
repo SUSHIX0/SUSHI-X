@@ -1035,9 +1035,11 @@ function cleanupCart() {
 
     for (const [cartId] of cart.entries()) {
 
-        const card = document.querySelector(
-            `.card[data-id="${cartId}"]`
-        );
+        const productId = cartId.split('_').slice(0, -1).join('_') || cartId;
+
+const card = document.querySelector(
+    `.card[data-id="${productId}"]`
+);
 
         if (
             !card ||
