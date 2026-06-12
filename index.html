@@ -1219,7 +1219,7 @@ const fields = [
 
 fields.forEach(f => {
   const value = f.isBtn ? f.el.textContent : f.el.value;
-  if (f.required && (!value || (f.isBtn && !value.includes('Kuupäev')))) {
+  if (f.required && (!value || (f.isBtn && !value.includes('')))) {
     f.el.classList.add('error');
     hasError = true;
   } else {
@@ -1245,7 +1245,7 @@ if (hasError) {
     const addressInput = document.getElementById('deliveryAddress');
 
     // ===== проверка даты =====
-    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Kuupäev'))) {
+    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes(''))) {
         showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
         return;
     }
@@ -2313,7 +2313,7 @@ dayDiv.addEventListener('click', () => {
     // selectedDate в формате дд.мм.гггг
     selectedDate = `${dayStr}.${monthStr}.${yearStr}`;
 
-    chooseDateBtn.textContent = "Kuupäev: " + selectedDate;
+    chooseDateBtn.textContent = "" + selectedDate;
     deliveryCalendar.style.display = "none";
 
     renderCalendar();
