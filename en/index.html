@@ -642,7 +642,7 @@ window.addEventListener('DOMContentLoaded', () => {
     resetPromo();
     resetCheckoutExtras();
     checkoutForm.reset();
-    if (dateBtn) dateBtn.textContent = isDelivery ? 'Выбрать дату доставки' : 'Выбрать дату самовывоза';
+    if (dateBtn) dateBtn.textContent = isDelivery ? 'Select delivery date' : 'Select pickup date';
     if (timeSelect) timeSelect.value = '';
     if (addressInput) addressInput.value = '';
 
@@ -2193,13 +2193,13 @@ function updateDeliveryFields() {
 
     // Сбрасываем дату и время при смене метода
     selectedDate = null;
-    chooseDateBtn.textContent = method === "delivery" ? "Выбрать дату *" : "Выбрать дату *";
+    chooseDateBtn.textContent = method === "delivery" ? "Select date *" : "Select date *";
     deliveryTime.innerHTML = "";
   } else {
     deliveryFields.style.display = "none";
     deliveryCalendar.style.display = "none";
     selectedDate = null;
-    chooseDateBtn.textContent = "Выбрать дату";
+    chooseDateBtn.textContent = "Select date *";
     deliveryTime.innerHTML = "";
   }
 }
