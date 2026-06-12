@@ -291,7 +291,7 @@
       <ul class="select-dropdown">
   <li data-id="cheese_topping" data-price="1.5">Сырная шапочка</li>
   <li data-id="fish_topping" data-price="1.5">Рыбная шапочка</li>
-  <li data-id="spicy_topping" data-price="1.5">Спайси шапочка</li>
+  <li data-id="spicy_topping" data-price="1.5">Spicy шапочка</li>
   <li data-id="crab_topping" data-price="1.5">Шапочка с крабом</li>
   <li data-id="shrimp_topping" data-price="1.5">Шапочка с креветкой</li>
 </ul>
@@ -314,7 +314,7 @@
       <ul class="select-dropdown">
   <li data-id="cheese_topping" data-price="1.5">Сырная шапочка</li>
   <li data-id="fish_topping" data-price="1.5">Рыбная шапочка</li>
-  <li data-id="spicy_topping" data-price="1.5">Спайси шапочка</li>
+  <li data-id="spicy_topping" data-price="1.5">Spicy шапочка</li>
   <li data-id="crab_topping" data-price="1.5">Шапочка с крабом</li>
   <li data-id="shrimp_topping" data-price="1.5">Шапочка с креветкой</li>
 </ul>
@@ -1219,7 +1219,7 @@ const fields = [
 
 fields.forEach(f => {
   const value = f.isBtn ? f.el.textContent : f.el.value;
-  if (f.required && (!value || (f.isBtn && !value.includes('Дата')))) {
+  if (f.required && (!value || (f.isBtn && !value.includes('')))) {
     f.el.classList.add('error');
     hasError = true;
   } else {
@@ -1245,7 +1245,7 @@ if (hasError) {
     const addressInput = document.getElementById('deliveryAddress');
 
     // ===== проверка даты =====
-    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes('Дата'))) {
+    if ((isDelivery || isPickup) && (!dateBtn || !dateBtn.textContent.includes(''))) {
         showToast(isDelivery ? 'Заполните все обязательные поля' : 'Заполните все обязательные поля', true);
         return;
     }
@@ -2313,7 +2313,7 @@ dayDiv.addEventListener('click', () => {
     // selectedDate в формате дд.мм.гггг
     selectedDate = `${dayStr}.${monthStr}.${yearStr}`;
 
-    chooseDateBtn.textContent = "Дата: " + selectedDate;
+    chooseDateBtn.textContent = "" + selectedDate;
     deliveryCalendar.style.display = "none";
 
     renderCalendar();
