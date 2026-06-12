@@ -823,6 +823,8 @@ document.body.addEventListener('click', function(e) {
     // Специальные предложения
     updateSpecialOffersSection();
 
+cleanupCart();
+
 updateCartUI();
 
   } catch (e) { }
@@ -1025,6 +1027,30 @@ function loadCart(){
         for(const [id,item] of Object.entries(obj)){
             cart.set(id,item);
         }
+    }
+}
+
+function cleanupCart() {
+    let changed = false;
+
+    for (const [cartId] of cart.entries()) {
+
+        const card = document.querySelector(
+            `.card[data-id="${cartId}"]`
+        );
+
+        if (
+            !card ||
+            card.classList.contains('unavailable') ||
+            card.style.display === 'none'
+        ) {
+            cart.delete(cartId);
+            changed = true;
+        }
+    }
+
+    if (changed) {
+        saveCart();
     }
 }
 
