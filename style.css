@@ -1520,7 +1520,7 @@ body.compact {
     margin: -5px -3px;
   }
 
-  @media (max-width: 450px) {
+  @media (max-width: 440px) {
     .discount {
       display: none !important;
     }
