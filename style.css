@@ -1517,7 +1517,7 @@ body.compact {
     padding: 0 16px;
     height: 30px;
     width: 70px;
-    margin: -5px -3px;
+    margin: -4px 6px;
   }
 
   @media (max-width: 440px) {
