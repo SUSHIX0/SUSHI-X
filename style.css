@@ -1724,14 +1724,6 @@ body.compact {
   opacity: 0.5;
 }
 
-.photo {
-  transition: opacity 0.25s ease-out;
-}
-
-.photo.is-fading {
-  opacity: 0;
-}
-
 .card-badge {
   position: absolute;
   top: 6px;
@@ -1813,10 +1805,18 @@ body.compact .card-badge {
   overflow-wrap: anywhere;
 }
 
-.card .photo {
+.card {
   background-position: center;
   background-size: var(--zoom, 100%);
   transition: background-size 0.3s ease;
+}
+
+.photo {
+  transition: opacity 0.25s ease-out;
+}
+
+.photo.is-fading {
+  opacity: 0;
 }
 
 .footer-bottom-inner {
