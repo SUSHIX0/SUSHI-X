@@ -2159,8 +2159,16 @@ if (FREE_DELIVERY_LIMIT > 0) {
     el.className = 'cart-item';
     el.dataset.id = id;
 
+    const match = item.name.match(/^(.+?)(?:\s*\((.+)\))?$/);
+
+const rollName = match?.[1] || item.name;
+const topping = match?.[2] || "";
+
     el.innerHTML = `
-      <div class="name">${escapeHtml(item.name)}</div>
+      <div class="name">
+      ${escapeHtml(rollName)}
+      ${topping ? `<span class="topping">${escapeHtml(topping)}</span>` : ""}
+    </div>
       <div class="unit">
         ${item.unitPrice.toFixed(2)} €
         ${item.originalPrice && item.originalPrice > item.unitPrice ? `<span class="old-price">${item.originalPrice.toFixed(2)} €</span>` : ''}

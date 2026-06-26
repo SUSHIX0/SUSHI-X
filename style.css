@@ -2052,3 +2052,11 @@ body.compact-modal-active > *:not(.compact-modal):not(.compact-modal-block) {
     display: none !important;
   }
 }
+
+.topping {
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-block;
+}
