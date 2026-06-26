@@ -1087,9 +1087,11 @@ function updateSpecialOffersSection() {
 
   if (discountedCards.length > 0) {
     discountedCards.forEach(card => {
-      const clone = card.cloneNode(true);
-      specialGrid.appendChild(clone);
-    });
+  const clone = card.cloneNode(true);
+  specialGrid.appendChild(clone);
+
+  initCardEvents(clone);
+});
 
     specialSection.style.display = 'block';
     specialSection.classList.add('special-offers-section');
