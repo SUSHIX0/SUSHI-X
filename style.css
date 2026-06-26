@@ -459,6 +459,16 @@ body {
   font-family: 'Arial', sans-serif;
 }
 
+.card.has-discount .roll-select-wrapper {
+    margin-top: 22px;
+}
+
+@media (max-width:767px){
+    .card.has-discount .roll-select-wrapper{
+        margin-top: 48px;
+    }
+}
+
 @media (max-width:799px) {
   .roll-select-wrapper {
   position: relative;
