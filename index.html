@@ -3069,37 +3069,22 @@ applyToppingImage(card, item.dataset.id);
         if (!card) return;
 
         const priceEl = card.querySelector('.price');
-const newPriceEl = priceEl?.querySelector('.new-price');
-const oldPriceEl = priceEl?.querySelector('.old-price');
+        const newPriceEl = priceEl?.querySelector('.new-price');
 
-let baseNewPrice = parseFloat(card.dataset.baseNewPrice);
-let baseOldPrice = parseFloat(card.dataset.baseOldPrice);
+        let basePrice = parseFloat(card.dataset.basePrice);
 
-if (isNaN(baseNewPrice)) {
-  baseNewPrice = newPriceEl
-    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || 0
-    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || 0;
+        if (!basePrice) {
+          basePrice = parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
+          card.dataset.basePrice = basePrice;
+        }
 
-  card.dataset.baseNewPrice = baseNewPrice;
-}
+        const finalPrice = basePrice + price;
 
-if (isNaN(baseOldPrice)) {
-  baseOldPrice = oldPriceEl
-    ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || baseNewPrice
-    : baseNewPrice;
-
-  card.dataset.baseOldPrice = baseOldPrice;
-}
-
-if (newPriceEl) {
-  newPriceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
-} else {
-  priceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
-}
-
-if (oldPriceEl) {
-  oldPriceEl.textContent = (baseOldPrice + price).toFixed(2).replace('.', ',') + ' €';
-}
+        if (newPriceEl) {
+          newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        } else {
+          priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+        }
       };
     });
   });
