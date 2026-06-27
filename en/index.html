@@ -1643,28 +1643,36 @@ if (card) {
       const newPriceEl = priceEl?.querySelector('.new-price');
       const oldPriceEl = priceEl?.querySelector('.old-price');
 
-      let basePrice = parseFloat(card.dataset.basePrice);
+      // ===== БАЗОВЫЕ ЦЕНЫ =====
+let baseNewPrice = parseFloat(card.dataset.baseNewPrice);
+let baseOldPrice = parseFloat(card.dataset.baseOldPrice);
 
-      if (!basePrice) {
-        const priceText = (newPriceEl || priceEl).textContent;
-        basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
-        card.dataset.basePrice = basePrice;
-      }
+if (isNaN(baseNewPrice)) {
+  baseNewPrice = newPriceEl
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0
+    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
 
-      const finalPrice = basePrice + price;
+  card.dataset.baseNewPrice = baseNewPrice;
+}
 
-      if (newPriceEl) {
-        newPriceEl.textContent =
-          finalPrice.toFixed(2).replace('.', ',') + ' €';
-      } else {
-        priceEl.textContent =
-          finalPrice.toFixed(2).replace('.', ',') + ' €';
-      }
+if (isNaN(baseOldPrice)) {
+  baseOldPrice = oldPriceEl
+    ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || baseNewPrice
+    : baseNewPrice;
 
-      if (oldPriceEl) {
-        oldPriceEl.textContent =
-          (basePrice + price).toFixed(2).replace('.', ',') + ' €';
-      }
+  card.dataset.baseOldPrice = baseOldPrice;
+}
+
+// ===== ОБНОВЛЯЕМ ЦЕНЫ =====
+if (newPriceEl) {
+  newPriceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
+} else {
+  priceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
+}
+
+if (oldPriceEl) {
+  oldPriceEl.textContent = (baseOldPrice + price).toFixed(2).replace('.', ',') + ' €';
+}
     }
   });
 }
@@ -2591,26 +2599,35 @@ if (item.classList.contains('disabled')) {
     const oldPriceEl = priceEl.querySelector('.old-price');
 
     // ===== БАЗОВАЯ ЦЕНА =====
-    let basePrice = parseFloat(card.dataset.basePrice);
+    // ===== БАЗОВЫЕ ЦЕНЫ =====
+let baseNewPrice = parseFloat(card.dataset.baseNewPrice);
+let baseOldPrice = parseFloat(card.dataset.baseOldPrice);
 
-    if (!basePrice) {
-      const priceText = (newPriceEl || priceEl).textContent;
-      basePrice = parseFloat(priceText.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
-      card.dataset.basePrice = basePrice;
-    }
+if (isNaN(baseNewPrice)) {
+  baseNewPrice = newPriceEl
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0
+    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
 
-    // ===== НОВАЯ ЦЕНА =====
-    const finalPrice = basePrice + price;
+  card.dataset.baseNewPrice = baseNewPrice;
+}
 
-    // ===== ОБНОВЛЯЕМ UI =====
-    if (newPriceEl) {
-  newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+if (isNaN(baseOldPrice)) {
+  baseOldPrice = oldPriceEl
+    ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g, '').replace(',', '.')) || baseNewPrice
+    : baseNewPrice;
+
+  card.dataset.baseOldPrice = baseOldPrice;
+}
+
+// ===== ОБНОВЛЯЕМ ЦЕНЫ =====
+if (newPriceEl) {
+  newPriceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
 } else {
-  priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
+  priceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
 }
 
 if (oldPriceEl) {
-  oldPriceEl.textContent = (basePrice + price).toFixed(2).replace('.', ',') + ' €';
+  oldPriceEl.textContent = (baseOldPrice + price).toFixed(2).replace('.', ',') + ' €';
 }
   });
 });
@@ -2786,22 +2803,37 @@ applyToppingImage(card, item.dataset.id);
         if (!card) return;
 
         const priceEl = card.querySelector('.price');
-        const newPriceEl = priceEl?.querySelector('.new-price');
+const newPriceEl = priceEl?.querySelector('.new-price');
+const oldPriceEl = priceEl?.querySelector('.old-price');
 
-        let basePrice = parseFloat(card.dataset.basePrice);
+let baseNewPrice = parseFloat(card.dataset.baseNewPrice);
+let baseOldPrice = parseFloat(card.dataset.baseOldPrice);
 
-        if (!basePrice) {
-          basePrice = parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',','.')) || 0;
-          card.dataset.basePrice = basePrice;
-        }
+if (isNaN(baseNewPrice)) {
+  baseNewPrice = newPriceEl
+    ? parseFloat(newPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || 0
+    : parseFloat(priceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || 0;
 
-        const finalPrice = basePrice + price;
+  card.dataset.baseNewPrice = baseNewPrice;
+}
 
-        if (newPriceEl) {
-          newPriceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
-        } else {
-          priceEl.textContent = finalPrice.toFixed(2).replace('.', ',') + ' €';
-        }
+if (isNaN(baseOldPrice)) {
+  baseOldPrice = oldPriceEl
+    ? parseFloat(oldPriceEl.textContent.replace(/[^\d.,]/g,'').replace(',', '.')) || baseNewPrice
+    : baseNewPrice;
+
+  card.dataset.baseOldPrice = baseOldPrice;
+}
+
+if (newPriceEl) {
+  newPriceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
+} else {
+  priceEl.textContent = (baseNewPrice + price).toFixed(2).replace('.', ',') + ' €';
+}
+
+if (oldPriceEl) {
+  oldPriceEl.textContent = (baseOldPrice + price).toFixed(2).replace('.', ',') + ' €';
+}
       };
     });
   });
